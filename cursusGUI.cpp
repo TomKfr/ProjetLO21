@@ -1,5 +1,5 @@
 #include "cursus.h"
-#include "menu.h"
+#include "cursusGUI.h"
 #include "UTProfiler.h"
 #include <QMessageBox>
 

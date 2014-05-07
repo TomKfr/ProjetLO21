@@ -1,4 +1,4 @@
-#include"projet.h"
+#include"uvGUI.h"
 #include<QApplication>
 #include<QWidget>
 #include<QLineEdit>
@@ -10,7 +10,7 @@
 #include"UTProfiler.h"
 #include "cursus.h"
 #include <QDebug>
-#include "menu.h"
+#include "cursusGUI.h"
 
 
 int main(int argc,char*argv[]) {

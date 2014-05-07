@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "UTProfiler.h"
-#include "menu.h"
+#include "cursusGUI.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
