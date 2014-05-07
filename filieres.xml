@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formations>
+    <formation>
+        <nom>première</nom>
+        <nbcred>100</nbcred>
+        <nbsem>4</nbsem>
+    </formation>
+    <formation>
+        <nom>deuxième</nom>
+        <nbcred>140</nbcred>
+        <nbsem>5</nbsem>
+    </formation>
+    <formation>
+        <nom>troisième</nom>
+        <nbcred>220</nbcred>
+        <nbsem>6</nbsem>
+    </formation>
+</formations>
