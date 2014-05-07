@@ -21,6 +21,8 @@
 #include<QMessageBox>
 #include"UTProfiler.h"
 
+//salu cest joli
+
 class Debut : public QWidget {
     Q_OBJECT
     QPushButton* modifier;
