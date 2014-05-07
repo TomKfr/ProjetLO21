@@ -22,8 +22,8 @@ fenetre.show();*/
 cursusManager* m=new cursusManager();
 UVManager& u=UVManager::getInstance();
 m->chargerCursus();
-QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier d'Uvs");
-u.load(chemin);
+
+u.load(QFileDialog::getOpenFileName());
 
 menuFormation* fenetre =new menuFormation(m,&u);
 fenetre->show();
