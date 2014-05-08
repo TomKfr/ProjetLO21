@@ -52,15 +52,16 @@ QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }
 
-UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file(""){
+UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file("")
+{
+    this->load();
 }
 
 
-void UVManager::load(const QString& f){
-    if (file!=f) this->~UVManager();
-    file=f;
-
-    QFile fin(file);
+void UVManager::load(){
+    QString fileOut = QDir::currentPath()+ "/UV_UTC.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    QFile fin(fileOut);
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw UTProfilerException("Erreur ouverture fichier UV");

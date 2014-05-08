@@ -118,7 +118,7 @@ private:
 
 public:
 
-    void load(const QString& f);
+    void load();
     void save(const QString& f);
     static UVManager& getInstance();
     static void libererInstance();

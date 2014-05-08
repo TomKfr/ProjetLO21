@@ -6,6 +6,7 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamReader>
 #include <QFileDialog>
+#include <QDir>
 
 formation* cursusManager::trouverForm(const QString& n)
 {
@@ -121,9 +122,9 @@ void cursusManager::sauverCursus(QWidget *parent)
 
 void cursusManager::chargerCursus()
 {
-    qDebug()<<"Chargement!";
-    QString chemin = QFileDialog::getOpenFileName(0,"Ouvrir un fichier de formations","D:/Qt projects/LO21_Thomas_v1");
-    QFile f(chemin);
+    QString fileOut = QDir::currentPath()+ "/formations.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    QFile f(fileOut);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
     QXmlStreamReader xml(&f);
     while(!xml.atEnd() && !xml.hasError()) {

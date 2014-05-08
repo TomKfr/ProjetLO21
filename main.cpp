@@ -21,9 +21,6 @@ fenetre.show();*/
 
 cursusManager* m=new cursusManager();
 UVManager& u=UVManager::getInstance();
-m->chargerCursus();
-
-u.load(QFileDialog::getOpenFileName());
 
 menuFormation* fenetre =new menuFormation(m,&u);
 fenetre->show();

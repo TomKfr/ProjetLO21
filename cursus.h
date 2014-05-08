@@ -71,7 +71,7 @@ class cursusManager // gestionnaire des cursus
     friend class modifFormation;//idem ! (faire un itérateur !);
 
 public:
-    cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {}
+    cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {this->chargerCursus();}
     ~cursusManager() {delete[] formations; delete[] filieres; qDebug()<<"Destruction cursusManager";}
     int getnbFor() const {return nbFor;}
     int getnbFil() const {return nbFil;}
