@@ -7,6 +7,7 @@
 #include <QXmlStreamReader>
 #include <QFileDialog>
 #include <QDir>
+#include <QStringList>
 
 formation* cursusManager::trouverForm(const QString& n)
 {
@@ -78,6 +79,7 @@ void cursusManager::supprimerFormation(const QString &nom)
     unsigned int i=0;
     while(formations[i]->getNom()!=nom && formations[i]!=0){i++;}
     if(formations[i]==0) throw UTProfilerException("La formation recherchée n'existe pas !");
+    delete formations[i];
     for(unsigned int k=i;k<nbFor-2;k++)
     {
         formations[k]=formations[k+1];
@@ -92,11 +94,12 @@ void cursusManager::supprimerFormation(unsigned int index)
 
 void cursusManager::sauverCursus(QWidget *parent)
 {
-    qDebug()<<"Sauvegarde!";
-    QString chemin = QFileDialog::getOpenFileName(parent,"Ouvrir un fichier de formations","D:/Qt projects/LO21_Thomas_v1");
-    if(!chemin.isEmpty())
+    QString fileOut = QDir::currentPath()+ "/formations.xml";
+    qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
+
+    if(!fileOut.isEmpty())
     {
-        QFile f(chemin);
+        QFile f(fileOut);
         if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException("Erreur ouverture fichier xml!");
         QXmlStreamWriter stream(&f);
         stream.setAutoFormatting(true);
@@ -110,6 +113,12 @@ void cursusManager::sauverCursus(QWidget *parent)
             stream.writeTextElement("nbcred",cr);
             cr.setNum(formations[i]->getNbSem());
             stream.writeTextElement("nbsem", cr);
+            stream.writeStartElement("uvs");
+            for(iterateur<UV>& it=formations[i]->getIterateurUV(); !it.isDone(); it.next())
+            {
+                stream.writeTextElement("uv",it.courant()->getCode());
+            }
+            stream.writeEndElement();
             stream.writeEndElement();
         }
         stream.writeEndElement();
@@ -136,6 +145,7 @@ void cursusManager::chargerCursus()
                 QString nom;
                 unsigned int nbCredits;
                 unsigned int nbSem;
+                QStringList list;
 
                 xml.readNext();
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "formation")) {
@@ -144,15 +154,29 @@ void cursusManager::chargerCursus()
                             xml.readNext(); nom=xml.text().toString();
                         }
                         if(xml.name() == "nbcred") {
-                            xml.readNext(); nbCredits=xml.text().toString().toUInt();
+                            xml.readNext(); nbCredits=xml.text().toUInt();
                         }
                         if(xml.name() == "nbsem") {
                             xml.readNext(); nbSem=xml.text().toUInt();
+                        }
+                        if(xml.name() == "uvs")
+                        {
+                            xml.readNext();
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
+                            {
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
+                                {
+                                    xml.readNext();
+                                    list<<xml.text().toString();
+                                }
+                                xml.readNext();
+                            }
                         }
                     }
                     xml.readNext();
                 }
                 ajouterFormation(nom,nbCredits,nbSem);
+                qDebug()<<"liste des uvs : "<<list;
             }
         }
     }

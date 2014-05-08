@@ -119,7 +119,7 @@ private:
 public:
 
     void load();
-    void save(const QString& f);
+    void save();
     static UVManager& getInstance();
     static void libererInstance();
     void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);

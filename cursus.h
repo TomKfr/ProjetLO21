@@ -33,7 +33,7 @@ class formation
 public:
     void ajouter_UV(UV*);//template method ??
     void supprimer_UV(const QString &code);
-    ~formation();
+    ~formation() {delete uvs;}
     QString getNom() const {return nom;}
     unsigned int getNbCred() const {return nbCredits;}
     unsigned int getNbSem() const {return nbSemestres;}
@@ -66,9 +66,6 @@ class cursusManager // gestionnaire des cursus
     filiere** filieres;
     unsigned int nbFil;
     unsigned int nbMaxFil;
-
-    friend class menuFormation; //Achtung !!! à supprimer !!!
-    friend class modifFormation;//idem ! (faire un itérateur !);
 
 public:
     cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {this->chargerCursus();}
