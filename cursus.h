@@ -4,6 +4,7 @@
 #include <iostream>
 #include "UTProfiler.h"
 #include "cursusGUI.h"
+#include "visiteur.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -13,9 +14,12 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QDebug>
+#include <QStringList>
 
-
+class UV;
+template<class I> class iterateur;
 class menuFormation;
+class UVManager;
 
 class formation
 {
@@ -39,6 +43,7 @@ public:
     unsigned int getNbSem() const {return nbSemestres;}
     void modif(const QString& n, unsigned int c, unsigned int s);
     const UV* trouverUV(const QString& code);
+    //void accept(visiteur* v) {v->visitFormation(this);}
 
     class iterateur<UV>;
     iterateur<UV>& getIterateurUV();

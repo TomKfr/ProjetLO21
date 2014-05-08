@@ -3,7 +3,11 @@
 
 #include <QString>
 #include <QTextStream>
+#include "visiteur.h"
+
 using namespace std;
+
+class visiteur;
 
 class UTProfilerException{
 public:
@@ -126,6 +130,8 @@ public:
     void supprimerUV(const QString& c);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);
+    void accept(visiteur* v);
+
 
     class iterateur<UV>;
     iterateur<UV>& getIterateur()

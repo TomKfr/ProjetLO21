@@ -71,6 +71,15 @@ void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigne
             delete[] old;
         }
         formations[nbFor++]=new formation(nom,c,s);
+
+        /*for(int i=0; i<list.length(); i++)
+        {
+            QString code=list.first();
+            list.removeFirst();
+
+            formations[nbFor]->ajouter_UV(); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        }*/
     }
 }
 

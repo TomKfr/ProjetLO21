@@ -5,6 +5,7 @@
 #include <QtXml>
 #include <QMessageBox>
 
+
 QTextStream& operator<<(QTextStream& f, const UV& uv){
     return f<<uv.getCode()<<", "<<uv.getCategorie()<<", "<<uv.getNbCredits()<<" credits, "<<uv.getTitre();
 }

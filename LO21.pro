@@ -7,12 +7,15 @@ HEADERS += \
     UTProfiler.h \
     cursusGUI.h \
     uvGUI.h \
-    cursus.h
+    cursus.h \
+    visiteur.h \
+    includes.h
 
 SOURCES += \
     main.cpp \
     UTProfiler.cpp \
     cursusGUI.cpp \
     uvGUI.cpp \
-    cursus.cpp
+    cursus.cpp \
+    visiteur.cpp
 

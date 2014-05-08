@@ -14,6 +14,7 @@
 #include <QComboBox>
 
 class cursusManager;
+class UVManager;
 
 class menuFormation : public QWidget
 {
