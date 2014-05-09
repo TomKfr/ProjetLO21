@@ -4,6 +4,8 @@
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
+#include <QFileDialog>
+
 
 QTextStream& operator<<(QTextStream& f, const UV& uv){
     return f<<uv.getCode()<<", "<<uv.getCategorie()<<", "<<uv.getNbCredits()<<" credits, "<<uv.getTitre();
@@ -51,6 +53,8 @@ QString CategorieToString(Categorie c){
 QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }
+
+
 
 UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file(""){
 }
@@ -249,4 +253,5 @@ void UVManager::supprimerUV(const QString& c) {
     }
 
 }
+
 

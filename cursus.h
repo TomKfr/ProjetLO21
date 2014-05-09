@@ -16,6 +16,9 @@
 
 
 class menuFormation;
+class UV;
+class UVManager;
+template<class I> class iterateur;
 
 class formation
 {

@@ -3,7 +3,9 @@
 
 #include <QString>
 #include <QTextStream>
+#include"cursus.h"
 using namespace std;
+class formation;
 
 class UTProfilerException{
 public:
@@ -215,8 +217,7 @@ public:
     void setResultat(Note newres) { resultat=newres; }
 };
 
-class Dossier {
-};
+
 
 class Formation{
 };
