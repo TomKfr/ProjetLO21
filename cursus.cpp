@@ -7,6 +7,18 @@
 #include <QXmlStreamReader>
 #include <QFileDialog>
 
+cursusManager::Handler cursusManager::handler=Handler();
+
+
+cursusManager& cursusManager::getInstance() {
+    if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
+    return *handler.instance;
+}
+
+void cursusManager::libererInstance() {
+    if (handler.instance) { delete handler.instance; handler.instance=0; }
+}
+
 formation* cursusManager::trouverForm(const QString& n)
 {
     for(unsigned int i=0;i<nbFor;i++)
@@ -374,7 +386,7 @@ void selectUVsFormation::ajouterUV()
 void selectUVsFormation::update()
 {
     choix->clear();
-    for(iterateur<UV>& it=uman->getIterateur();!it.isDone();it.next())
+    for(iterateur<UV>& it=uman->getIterateurForm();!it.isDone();it.next())
     {
         if(!objet->trouverUV(it.courant()->getCode())) choix->addItem(it.courant()->getCode());
     }

@@ -38,10 +38,10 @@ public :
 
 public slots:
     void ajout();
-    void suppression();
-    void modif();
+    //void suppression();
+    //void modif();
 };
-
+/*
 class DossierSuppression : public QWidget {
     Q_OBJECT
     DossierManager& M;
@@ -71,28 +71,27 @@ public : DossierModif(UVManager & uvm);
 
 public slots :
     void modifDossier();
-};
+};*/
 
 class DossierAjout : public QWidget{
     Q_OBJECT
 
-
+    UV** nouvelle_liste;
     DossierManager& M;
-
     QLineEdit* num;
     QLabel* numLabel;
     QLineEdit* nom;
     QLabel* nomLabel;
     QLineEdit* prenom;
     QLabel* prenomLabel;
-    QSpinBox* formation;
+    QComboBox* f;
     QLabel* formationLabel;
-    QSpinBox* listeUV;
+
     QLabel* listeUVLabel;
     QLabel* Label;
 
+    QPushButton* SelectUV;
     QPushButton* sauver;
-    QPushButton* annuler;
 
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
@@ -102,11 +101,42 @@ class DossierAjout : public QWidget{
 
 public:
  DossierAjout(DossierManager& uvm);
+ void setListe(UV** liste) {nouvelle_liste=liste;}
 public slots:
  void slot_ajoutDossier();
+ void slot_selectUV();
+ void update();
 
 };
 
+class AjoutUV : public QWidget {
+    Q_OBJECT
+
+    QComboBox * Liste;
+    QComboBox * Result ;
+    QLabel* LabelListe;
+    QLabel* LabelResult;
+    QPushButton * submit ;
+    QPushButton * retour;
+
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+
+    UV** listUV;
+    DossierAjout * DA;
+
+
+public :
+    AjoutUV(DossierAjout* dossier);
+
+public slots :
+    void end_listeUV();
+    void ajout_UVDossier();
+    void update();
+
+};
+
+/*
 class DossierEditeur : public QWidget {
     Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
     Dossier& dos;
@@ -137,6 +167,6 @@ public:
 public slots:
     void sauverDossier();
 
-};
+};*/
 
 #endif // DOSSIERGUI_H

@@ -104,7 +104,6 @@ private:
     void addItem(UV* uv);
     void removeItem(UV* uv);
     bool modification;
-    UV* trouverUV(const QString& c) const;
     UVManager(const UVManager& um);
     UVManager& operator=(const UVManager& um);
     UVManager();
@@ -128,13 +127,14 @@ public:
     void supprimerUV(const QString& c);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);
-
+    UV* trouverUV(const QString& c) const;
     class iterateur<UV>;
-    iterateur<UV>& getIterateur()
+    iterateur<UV>& getIterateurForm()
     {
         iterateur<UV>* it=new iterateur<UV>(uvs,nbUV);
         return *it;
     }
+
 
     /*class Iterator {
         friend class UVManager;

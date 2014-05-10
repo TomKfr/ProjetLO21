@@ -20,22 +20,21 @@ class Dossier {
     unsigned int numero;
     QString nom;
     QString prenom;
-    formation* F;
+    QString F;
     UV** listeUV;
 
 public :
 
-    Dossier(unsigned int num, const QString& n, const QString& p, formation* f, UV** tab) : numero(num), nom(n), prenom(p), F(f), listeUV(tab) {}
-
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, UV** liste=0);
     unsigned int getNumero() const {return numero;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
-    const formation* getFormation() const {return F;}
+    const QString& getFormation() const {return F;}
     UV** getlisteUV() const {return listeUV;}
     void setNumero(unsigned int n) { numero=n; }
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
-    void setFormation(formation* f) { F=f; }
+    void setFormation(const QString& f) { F=f; }
     void setListeUV(UV** l) { listeUV=l; }
 
 };
@@ -45,8 +44,9 @@ class DossierManager {
     Dossier** tabDossiers;
     unsigned int nbDos;
     unsigned int nbMaxDos;
+    QString file;
     DossierManager():tabDossiers(0), nbDos(0), nbMaxDos(0) {}
-    ~DossierManager() {delete[] tabDossiers;}
+    ~DossierManager();
     void operator=(const DossierManager&);
     DossierManager(const DossierManager&);
     friend struct Handler;
@@ -59,13 +59,13 @@ class DossierManager {
 
 
 public:
-    void load();
-
+    void load(const QString& f);
+    void save(const QString& f);
     unsigned int getnbDos() const {return nbDos;}
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
 
-    void ajouterDossier(unsigned int num, const QString& n, const QString& p, formation* f, UV** tab);
+    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f, UV** tab);
 
     void addItem(Dossier* dos);
     void supprimerDossier(unsigned int n);

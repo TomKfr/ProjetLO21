@@ -72,10 +72,18 @@ class cursusManager // gestionnaire des cursus
 
     friend class menuFormation; //Achtung !!! à supprimer !!!
     friend class modifFormation;//idem ! (faire un itérateur !);
-
-public:
     cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {}
     ~cursusManager() {delete[] formations; delete[] filieres; qDebug()<<"Destruction cursusManager";}
+
+    friend struct Handler;
+    struct Handler{
+        cursusManager* instance;
+        Handler():instance(0){}
+        ~Handler(){ if (instance) delete instance; instance=0; }
+    };
+    static Handler handler;
+
+public:
     int getnbFor() const {return nbFor;}
     int getnbFil() const {return nbFil;}
     formation* trouverForm(const QString &n);
@@ -86,6 +94,10 @@ public:
     void supprimerFormation(const QString& nom);
     void supprimerFormation(unsigned int index);
     void sauverCursus(QWidget* parent);
+
+
+    static cursusManager& getInstance();
+    static void libererInstance();
 
     class iterateur<formation>;
     iterateur<formation>& getIterateurForm();

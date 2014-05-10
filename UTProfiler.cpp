@@ -255,3 +255,5 @@ void UVManager::supprimerUV(const QString& c) {
 }
 
 
+
+

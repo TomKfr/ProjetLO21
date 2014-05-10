@@ -23,15 +23,15 @@ DebutDossier::DebutDossier() {
     setLayout(coucheV);
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
-    QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
-    QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
+    //QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
+    //QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
 
 }
 
 
 
 
-DossierModif::DossierModif(DossierManager& m) : M(m) {
+/*DossierModif::DossierModif(DossierManager& m) : M(m) {
 
     codeLabel=new QLabel("Numero de dossier", this);
     code= new QLineEdit("", this);
@@ -57,7 +57,7 @@ void DossierModif::modifDossier(){
     DossierEditeur * fenetre= new DossierEditeur(*(mana.trouverDossier(numero->text())), mana);
     fenetre->show();
 
-}
+}*/
 
 
 void DebutDossier::ajout() {
@@ -67,12 +67,12 @@ void DebutDossier::ajout() {
     try {
         mana.load(chemin);
     }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
+    catch (UTProfilerException e) {qDebug()<<e.getInfo();} //marche jusqu'ici
 
     DossierAjout * fenetre= new DossierAjout(mana);
     fenetre->show();
 }
-
+/*
 
 DossierEditeur::DossierEditeur(Dossier& dossierToEdit, DossierManager& dosm, QWidget* parent) : QWidget(parent), dos(uvToEdit), M(dosm) {
 
@@ -88,8 +88,8 @@ DossierEditeur::DossierEditeur(Dossier& dossierToEdit, DossierManager& dosm, QWi
     nom=new QTextEdit(uv.getNom(), this);
     prenom=new QTextEdit(uv.getPrenom(), this);
     formation=new QSpinBox(this);
-    /*credits->setRange(1,8);
-    credits->setValue(uv.getNbCredits());*/
+    credits->setRange(1,8);
+    credits->setValue(uv.getNbCredits());
 
     sauver=new QPushButton("Sauver", this);
     annuler=new QPushButton("Annuler", this);
@@ -144,11 +144,11 @@ void DossierEditeur::sauverDossier() {
 }
 
 
-/*void UVEditeur::activerSauver(QString s){
+void UVEditeur::activerSauver(QString s){
     sauver->setEnabled(true); //une modification entraine une activation du bouton sauver
 }*/
 
-DossierSuppression::DossierSuppression(DossierManager& dm) : M(dm) {
+/*DossierSuppression::DossierSuppression(DossierManager& dm) : M(dm) {
 
     numLabel=new QLabel("numero de dossier", this);
     code2= new QLineEdit("", this);
@@ -178,7 +178,7 @@ void DossierSuppression::supprDossier() {
     catch (UTProfilerException e) {qDebug()<<code2->text()<<e.getInfo();}
 
     QMessageBox::information(this, "sauvegarde", "Dossier supprime");
-}
+}*/
 
 
 
@@ -190,46 +190,32 @@ DossierAjout::DossierAjout(DossierManager& dm) : M(dm) {
     nomLabel=new QLabel("nom", this);
     prenomLabel=new QLabel("prenom", this);
     formationLabel=new QLabel("formation", this);
-    listeUVLabel=new QLabel("liste UV", this);
+    SelectUV= new QPushButton("Remplir la liste des UVs");
+    sauver=new QPushButton("Sauver", this);
 
     num= new QLineEdit("", this);
     nom= new QLineEdit("", this);
     prenom= new QLineEdit("", this);
 
-    formation=new QSpinBox(this);
-    /*credits->setRange(1,8);
-    credits->setValue(1);*/
-
-    /*categorie=new QComboBox(this);
-    categorie->addItem("CS");
-    categorie->addItem("TM");
-    categorie->addItem("SP");
-    categorie->addItem("TSH");
-    categorie->setCurrentIndex(0);*/
-
-    sauver=new QPushButton("Sauver", this);
-    annuler=new QPushButton("Annuler", this);
+    f=new QComboBox(this);
 
     //on cree plusieurs couches horizontales qu'on superpose ensuite en une couche veerticale
     coucheH1=new QHBoxLayout;
-    coucheH1->addWidget(codeLabel);
-    coucheH1->addWidget(code);
-    coucheH1->addWidget(categorieLabel);
-    coucheH1->addWidget(categorie);
-    coucheH1->addWidget(creditsLabel);
-    coucheH1->addWidget(credits);
+    coucheH1->addWidget(numLabel);
+    coucheH1->addWidget(num);
+    coucheH1->addWidget(nomLabel);
+    coucheH1->addWidget(nom);
+    coucheH1->addWidget(prenomLabel);
+    coucheH1->addWidget(prenom);
 
     coucheH2=new QHBoxLayout;
-    coucheH2->addWidget(titreLabel);
-    coucheH2->addWidget(titre);
+    coucheH2->addWidget(formationLabel);
+    coucheH2->addWidget(f);
 
     coucheH3=new QHBoxLayout;
-    coucheH3->addWidget(ouvertureLabel);
-    coucheH3->addWidget(automne);
-    coucheH3->addWidget(printemps);
+    coucheH3->addWidget(SelectUV);
 
     coucheH4=new QHBoxLayout;
-    coucheH4->addWidget(annuler);
     coucheH4->addWidget(sauver);
 
     couche=new QVBoxLayout;
@@ -245,19 +231,121 @@ DossierAjout::DossierAjout(DossierManager& dm) : M(dm) {
     //sauver->setEnabled(false);
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
+   QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
+
+   update();
 
    //pour que ça sactive que si modif :
    //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
 
+
+void DossierAjout::update()
+{
+    f->clear();
+    cursusManager& m=cursusManager::getInstance();
+    for(iterateur<formation>& it=m.getIterateurForm();!it.isDone();it.next())
+    {
+        f->addItem(it.courant()->getNom());
+    }
+}
+
 void DossierAjout::slot_ajoutDossier() {
 
-    M.ajouterDossier(num->text(), nom->text() , prenom->text(), formation->value());
+    bool ok;
+
+    unsigned int n=num->text().toInt(&ok);
+    const QString& name=nom->text();
+    const QString& fn=prenom->text();
+    const QString& F=f->currentText();
+
+    M.ajouterDossier(n, name , fn, F, nouvelle_liste);
+    Dossier* dos=M.trouverDossier(n);
+
     //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegardee");
 }
 
+void AjoutUV::update()
+{
+    Liste->clear();
+    UVManager& m=UVManager::getInstance();
+    for(iterateur<UV>& it=m.getIterateurForm();!it.isDone();it.next())
+    {
+        Liste->addItem(it.courant()->getCode());
+    }
+}
 
+AjoutUV::AjoutUV(DossierAjout* dossier) {
+    DA=dossier;
+    listUV = new UV*[50];
+    Liste = new QComboBox(this);
+    LabelListe= new QLabel("Sélectionnez l'UV ", this);
+    LabelResult= new QLabel("Resultat : ", this);
+    Result= new QComboBox(this);
+    Result->addItem("A");
+    Result->addItem("B");
+    Result->addItem("C");
+    Result->addItem("D");
+    Result->addItem("E");
+    Result->addItem("F");
+    Result->addItem("FX");
+    Result->addItem("En cours");
+    submit=new QPushButton("Ajouter cette UV a la liste", this);
+    retour=new QPushButton("J'ai saisi toutes les UVs : retour", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(LabelListe);
+    coucheH1->addWidget(Liste);
+    coucheH1->addWidget(LabelResult);
+    coucheH1->addWidget(Result);
+    coucheH1->addWidget(submit);
+    coucheH1->addWidget(retour);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    setLayout(couche);
+
+    update();
+
+    QObject::connect(submit, SIGNAL(clicked()), this, SLOT(ajout_UVDossier()));
+    QObject::connect(retour, SIGNAL(clicked()), this, SLOT(end_listeUV()));
+
+}
+
+void DossierAjout::slot_selectUV() {
+
+    AjoutUV* fenetre= new AjoutUV(this);
+    fenetre->show();
+}
+
+void AjoutUV::ajout_UVDossier() {
+    //on rentre l'UV dans la liste correspondante puis on attache cette liste au dossier correspondant
+
+unsigned int i=0;
+     qDebug()<<"avant while!";
+while (listUV[i]!=0) i++;
+     qDebug()<<"ici!";
+UVManager& m=UVManager::getInstance();
+        qDebug()<<"ajout a la liste!";
+UV* nouvelleUV=m.trouverUV(Liste->currentText());
+
+
+listUV[i]=nouvelleUV;
+
+DA->setListe(listUV);}
+
+
+
+
+void AjoutUV::end_listeUV() {
+this->close();
+}
+
+
+//void returnAjoutDossier() {}
+
+/*
 void DebutDossier::suppression() { //lancement de la fenetre de suppression pour rentrer le code
 
     DossierManager& m=DossierManager::getInstance();
@@ -284,5 +372,5 @@ void DebutDossier::modif() {
     DossierModif * fenetre = new DossierModif(m);
     fenetre->show();
 
-}
+}*/
 
