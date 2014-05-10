@@ -1,10 +1,12 @@
 #include "UTProfiler.h"
+#include "visiteur.h"
 #include <sstream>
 #include <QFile>
 #include <QTextCodec>
 #include <QtXml>
 #include <QMessageBox>
 #include <QFileDialog>
+
 
 
 QTextStream& operator<<(QTextStream& f, const UV& uv){
@@ -54,17 +56,22 @@ QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }
 
+<<<<<<< HEAD
 
 
 UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file(""){
+=======
+UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file("")
+{
+    this->load();
+>>>>>>> enregistrement_formations
 }
 
 
-void UVManager::load(const QString& f){
-    if (file!=f) this->~UVManager();
-    file=f;
-
-    QFile fin(file);
+void UVManager::load(){
+    QString fileOut = QDir::currentPath()+ "/UV_UTC.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    QFile fin(fileOut);
     // If we can't open it, let's show an error message.
     if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throw UTProfilerException("Erreur ouverture fichier UV");
@@ -143,12 +150,12 @@ void UVManager::load(const QString& f){
 
 
 
-void UVManager::save(const QString& f){
-    qDebug() << "Save";
-    file=f;
-    QFile newfile( file);
-    if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
-     QXmlStreamWriter stream(&newfile);
+void UVManager::save(){
+    QString fileOut = QDir::currentPath()+ "/UV_UTC.xml";
+    qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
+    QFile f(fileOut);
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
+     QXmlStreamWriter stream(&f);
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
      stream.writeStartElement("uvs");
@@ -166,13 +173,13 @@ void UVManager::save(const QString& f){
      stream.writeEndElement();
      stream.writeEndDocument();
 
-     newfile.close();
+     f.close();
 
 }
 
 UVManager::~UVManager(){
     qDebug() << "Destructeur";
-    if (file!="") save(file);
+    save();
     for(unsigned int i=0; i<nbUV; i++) delete uvs[i];
     delete[] uvs;
 }
@@ -254,6 +261,10 @@ void UVManager::supprimerUV(const QString& c) {
 
 }
 
+<<<<<<< HEAD
 
 
+=======
+void UVManager::accept(visiteur *v) {v->visitUVmanager();}
+>>>>>>> enregistrement_formations
 

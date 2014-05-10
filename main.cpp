@@ -20,6 +20,7 @@ QApplication app(argc, argv);
 
 /*Debut fenetre;
 fenetre.show();*/
+<<<<<<< HEAD
 
 cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
@@ -33,7 +34,16 @@ fenetre->show();*/
 DebutDossier fenetre;
 fenetre.show();
 
+=======
+try{
+cursusManager* m=new cursusManager();
+UVManager& u=UVManager::getInstance();
+
+menuFormation* fenetre =new menuFormation(m,&u);
+fenetre->show();
+}
+catch(UTProfilerException& e) {QMessageBox::warning(0,"Erreur",e.getInfo(),QMessageBox::Ok); exit(1);}
+>>>>>>> enregistrement_formations
 
 return app.exec();
-
 }

@@ -28,9 +28,8 @@ Debut::Debut() {
 void Debut::suppression() { //lancement de la fenetre de suppression pour rentrer le code
 
     UVManager& m=UVManager::getInstance();
-    QString chemin = QFileDialog::getOpenFileName();
     try {
-        m.load(chemin);
+        m.load();
     }
     catch (UTProfilerException e) {qDebug()<<e.getInfo();}
 
@@ -41,9 +40,8 @@ void Debut::suppression() { //lancement de la fenetre de suppression pour rentre
 void Debut::modif() {
 
     UVManager& m=UVManager::getInstance();
-    QString chemin = QFileDialog::getOpenFileName();
     try {
-        m.load(chemin);
+        m.load();
     }
     catch (UTProfilerException e) {qDebug()<<e.getInfo();}
 
@@ -95,9 +93,8 @@ void UVModif::modifUV(){
 void Debut::ajout() {
 
     UVManager& m=UVManager::getInstance();
-    QString chemin = QFileDialog::getOpenFileName();
     try {
-        m.load(chemin);
+        m.load();
     }
     catch (UTProfilerException e) {qDebug()<<e.getInfo();}
 

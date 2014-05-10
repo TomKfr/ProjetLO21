@@ -4,6 +4,7 @@
 #include <iostream>
 #include "UTProfiler.h"
 #include "cursusGUI.h"
+#include "visiteur.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -13,12 +14,19 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QDebug>
+#include <QStringList>
 
-
+class UV;
+template<class I> class iterateur;
 class menuFormation;
+<<<<<<< HEAD
 class UV;
 class UVManager;
 template<class I> class iterateur;
+=======
+class UVManager;
+//class visiteur;
+>>>>>>> enregistrement_formations
 
 class formation
 {
@@ -36,7 +44,7 @@ class formation
 public:
     void ajouter_UV(UV*);//template method ??
     void supprimer_UV(const QString &code);
-    ~formation();
+    ~formation() {delete uvs;}
     QString getNom() const {return nom;}
     unsigned int getNbCred() const {return nbCredits;}
     unsigned int getNbSem() const {return nbSemestres;}
@@ -70,9 +78,14 @@ class cursusManager // gestionnaire des cursus
     unsigned int nbFil;
     unsigned int nbMaxFil;
 
+<<<<<<< HEAD
     friend class menuFormation; //Achtung !!! à supprimer !!!
     friend class modifFormation;//idem ! (faire un itérateur !);
     cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {}
+=======
+public:
+    cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {this->chargerCursus();}
+>>>>>>> enregistrement_formations
     ~cursusManager() {delete[] formations; delete[] filieres; qDebug()<<"Destruction cursusManager";}
 
     friend struct Handler;
@@ -94,6 +107,7 @@ public:
     void supprimerFormation(const QString& nom);
     void supprimerFormation(unsigned int index);
     void sauverCursus(QWidget* parent);
+    void accept(visiteur* v);
 
 
     static cursusManager& getInstance();
@@ -101,7 +115,6 @@ public:
 
     class iterateur<formation>;
     iterateur<formation>& getIterateurForm();
-
 };
 
 

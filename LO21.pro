@@ -8,8 +8,13 @@ HEADERS += \
     cursusGUI.h \
     uvGUI.h \
     cursus.h \
+<<<<<<< HEAD
     dossierGUI.h \
     dossier.h
+=======
+    visiteur.h \
+    includes.h
+>>>>>>> enregistrement_formations
 
 SOURCES += \
     main.cpp \
@@ -17,6 +22,10 @@ SOURCES += \
     cursusGUI.cpp \
     uvGUI.cpp \
     cursus.cpp \
+<<<<<<< HEAD
     dossierGUI.cpp \
     dossier.cpp
+=======
+    visiteur.cpp
+>>>>>>> enregistrement_formations
 

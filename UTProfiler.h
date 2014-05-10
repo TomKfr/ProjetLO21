@@ -3,9 +3,16 @@
 
 #include <QString>
 #include <QTextStream>
+<<<<<<< HEAD
 #include"cursus.h"
+=======
+//#include "visiteur.h"
+
+>>>>>>> enregistrement_formations
 using namespace std;
 class formation;
+
+class visiteur;
 
 class UTProfilerException{
 public:
@@ -119,15 +126,21 @@ private:
 
 public:
 
-    void load(const QString& f);
-    void save(const QString& f);
+    void load();
+    void save();
     static UVManager& getInstance();
     static void libererInstance();
     void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     void supprimerUV(const QString& c);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);
+<<<<<<< HEAD
     UV* trouverUV(const QString& c) const;
+=======
+    void accept(visiteur* v);
+
+
+>>>>>>> enregistrement_formations
     class iterateur<UV>;
     iterateur<UV>& getIterateurForm()
     {
@@ -218,6 +231,11 @@ public:
 };
 
 
+<<<<<<< HEAD
+=======
+class Dossier {
+};
+>>>>>>> enregistrement_formations
 
 class Formation{
 };
