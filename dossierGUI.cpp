@@ -322,24 +322,19 @@ void DossierAjout::slot_selectUV() {
 void AjoutUV::ajout_UVDossier() {
     //on rentre l'UV dans la liste correspondante puis on attache cette liste au dossier correspondant
 
-unsigned int i=0;
-     qDebug()<<"avant while!";
-while (listUV[i]!=0) i++;
-     qDebug()<<"ici!";
-UVManager& m=UVManager::getInstance();
-        qDebug()<<"ajout a la liste!";
-UV* nouvelleUV=m.trouverUV(Liste->currentText());
-
-
-listUV[i]=nouvelleUV;
-
-DA->setListe(listUV);}
-
-
-
+    unsigned int i=0;
+    qDebug()<<"avant while!";
+    while (listUV[i]!=0) i++;
+    qDebug()<<"ici!";
+    UVManager& m=UVManager::getInstance();
+    qDebug()<<"ajout a la liste!";
+    UV* nouvelleUV=m.trouverUV(Liste->currentText());
+    listUV[i]=nouvelleUV;
+    DA->setListe(listUV);
+}
 
 void AjoutUV::end_listeUV() {
-this->close();
+    this->close();
 }
 
 

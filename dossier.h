@@ -36,6 +36,7 @@ public :
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setListeUV(UV** l) { listeUV=l; }
+    void ajouterUV(UV* nouv);
 
 };
 
