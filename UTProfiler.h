@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QTextStream>
-#include "visiteur.h"
+//#include "visiteur.h"
 
 using namespace std;
 
@@ -220,6 +220,7 @@ public:
     Note getResultat() const { return resultat; }
     void setResultat(Note newres) { resultat=newres; }
 };
+
 
 class Dossier {
 };

@@ -20,6 +20,7 @@ class UV;
 template<class I> class iterateur;
 class menuFormation;
 class UVManager;
+//class visiteur;
 
 class formation
 {
@@ -43,7 +44,6 @@ public:
     unsigned int getNbSem() const {return nbSemestres;}
     void modif(const QString& n, unsigned int c, unsigned int s);
     const UV* trouverUV(const QString& code);
-    //void accept(visiteur* v) {v->visitFormation(this);}
 
     class iterateur<UV>;
     iterateur<UV>& getIterateurUV();
@@ -85,10 +85,10 @@ public:
     void supprimerFormation(const QString& nom);
     void supprimerFormation(unsigned int index);
     void sauverCursus(QWidget* parent);
+    void accept(visiteur* v);
 
     class iterateur<formation>;
     iterateur<formation>& getIterateurForm();
-
 };
 
 

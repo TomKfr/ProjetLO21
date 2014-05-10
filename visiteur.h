@@ -3,21 +3,23 @@
 
 #include "cursus.h"
 #include "UTProfiler.h"
-#include "visiteur.h"
 
 class formation;
 class UV;
 class UVManager;
+class cursusManager;
 
 class visiteur
 {
+    QString nom;
     QStringList list;
     UV** tab;
+    int taille;
 
 public:
-    visiteur(const QStringList& l): list(l), tab(0) {}
-    void visitUVmanager(UVManager* uman);
-    void visitFormation(formation* f);
+    visiteur(const QString& n, const QStringList& l): nom(n), list(l), tab(0), taille(list.length()) {}
+    void visitUVmanager();
+    void visitCursusManager(cursusManager* cman);
 };
 
 #endif // VISITEUR_H

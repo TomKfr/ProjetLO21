@@ -71,15 +71,6 @@ void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigne
             delete[] old;
         }
         formations[nbFor++]=new formation(nom,c,s);
-
-        /*for(int i=0; i<list.length(); i++)
-        {
-            QString code=list.first();
-            list.removeFirst();
-
-            formations[nbFor]->ajouter_UV(); !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        }*/
     }
 }
 
@@ -185,7 +176,12 @@ void cursusManager::chargerCursus()
                     xml.readNext();
                 }
                 ajouterFormation(nom,nbCredits,nbSem);
-                qDebug()<<"liste des uvs : "<<list;
+                if(!list.empty())
+                {
+                    visiteur* v=new visiteur(nom,list);
+                    v->visitUVmanager();
+                    this->accept(v);
+                }
             }
         }
     }
@@ -200,6 +196,9 @@ iterateur<formation>& cursusManager::getIterateurForm()
     iterateur<formation>* it=new iterateur<formation>(formations,nbFor);
     return *it;
 }
+
+void cursusManager::accept(visiteur *v) {v->visitCursusManager(this);}
+
 
 ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
 

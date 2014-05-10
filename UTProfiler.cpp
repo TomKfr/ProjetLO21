@@ -1,4 +1,5 @@
 #include "UTProfiler.h"
+#include "visiteur.h"
 #include <sstream>
 #include <QFile>
 #include <QTextCodec>
@@ -251,4 +252,6 @@ void UVManager::supprimerUV(const QString& c) {
     }
 
 }
+
+void UVManager::accept(visiteur *v) {v->visitUVmanager();}
 
