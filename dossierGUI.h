@@ -78,6 +78,7 @@ class DossierAjout : public QWidget{
     Q_OBJECT
 
     UV** nouvelle_liste;
+    int nbUV;
     DossierManager& M;
     QLineEdit* num;
     QLabel* numLabel;
@@ -103,6 +104,11 @@ class DossierAjout : public QWidget{
 public:
  DossierAjout(DossierManager& uvm);
  void setListe(UV** liste) {nouvelle_liste=liste;}
+ void ajouter_UV(UV* nouv);
+ void affichUVS_debug() //Affiche la liste des uvs de l'outil d'ajout dans la fenetre de debug
+ {
+     for(int i=0;i<nbUV;i++) qDebug()<<nouvelle_liste[i]->getCode();
+ }
 
 public slots:
  void slot_ajoutDossier();

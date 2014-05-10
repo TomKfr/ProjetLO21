@@ -182,7 +182,7 @@ void DossierSuppression::supprDossier() {
 
 
 
-DossierAjout::DossierAjout(DossierManager& dm) : M(dm) {
+DossierAjout::DossierAjout(DossierManager& dm) : nbUV(0),M(dm) {
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
@@ -239,6 +239,16 @@ DossierAjout::DossierAjout(DossierManager& dm) : M(dm) {
    //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
 
+void DossierAjout::ajouter_UV(UV *nouv) //Fonction qui ajoute une UV dans l'attribut nouvelle_liste de la classe DossierAjout
+{
+    UV** newtab=new UV*[nbUV+1];
+    for(int i=0; i<nbUV; i++) newtab[i]=nouvelle_liste[i];
+    UV** old=nouvelle_liste;
+    nouvelle_liste=newtab;
+    delete[] old;
+    nouvelle_liste[nbUV++]=nouv;
+    qDebug()<<"UV ajoutée : "<<nouv->getCode();
+}
 
 void DossierAjout::update()
 {
@@ -319,7 +329,7 @@ void DossierAjout::slot_selectUV() {
     fenetre->show();
 }
 
-void AjoutUV::ajout_UVDossier() {
+/*void AjoutUV::ajout_UVDossier() {
     //on rentre l'UV dans la liste correspondante puis on attache cette liste au dossier correspondant
 
     unsigned int i=0;
@@ -331,10 +341,18 @@ void AjoutUV::ajout_UVDossier() {
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     listUV[i]=nouvelleUV;
     DA->setListe(listUV);
+}*/
+
+void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
+{
+    UVManager& m=UVManager::getInstance();
+    UV* nouvelleUV=m.trouverUV(Liste->currentText());
+    DA->ajouter_UV(nouvelleUV);
 }
 
 void AjoutUV::end_listeUV() {
     this->close();
+    DA->affichUVS_debug(); //s'exécute à la fermeture de la fenêtre d'ajout pour afficher les uvs enregistrées.
 }
 
 
