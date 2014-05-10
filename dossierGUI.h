@@ -103,6 +103,7 @@ class DossierAjout : public QWidget{
 public:
  DossierAjout(DossierManager& uvm);
  void setListe(UV** liste) {nouvelle_liste=liste;}
+
 public slots:
  void slot_ajoutDossier();
  void slot_selectUV();
