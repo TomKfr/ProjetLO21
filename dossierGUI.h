@@ -35,6 +35,7 @@ class DebutDossier : public QWidget {
 
 public :
     DebutDossier();
+    ~DebutDossier() {}
 
 public slots:
     void ajout();

@@ -3,12 +3,10 @@
 
 #include <QString>
 #include <QTextStream>
-<<<<<<< HEAD
-#include"cursus.h"
-=======
-//#include "visiteur.h"
 
->>>>>>> enregistrement_formations
+#include"cursus.h"
+
+
 using namespace std;
 class formation;
 
@@ -134,13 +132,9 @@ public:
     void supprimerUV(const QString& c);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);
-<<<<<<< HEAD
     UV* trouverUV(const QString& c) const;
-=======
     void accept(visiteur* v);
 
-
->>>>>>> enregistrement_formations
     class iterateur<UV>;
     iterateur<UV>& getIterateurForm()
     {
@@ -228,16 +222,6 @@ public:
     Semestre getSemestre() const { return semestre; }
     Note getResultat() const { return resultat; }
     void setResultat(Note newres) { resultat=newres; }
-};
-
-
-<<<<<<< HEAD
-=======
-class Dossier {
-};
->>>>>>> enregistrement_formations
-
-class Formation{
 };
 
 #endif

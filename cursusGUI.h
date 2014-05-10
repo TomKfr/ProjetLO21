@@ -15,11 +15,8 @@
 
 class cursusManager;
 class UVManager;
-<<<<<<< HEAD
 class UV;
 template<class I> class iterateur;
-=======
->>>>>>> enregistrement_formations
 
 class menuFormation : public QWidget
 {

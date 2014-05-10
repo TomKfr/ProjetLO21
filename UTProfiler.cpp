@@ -56,15 +56,10 @@ QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }
 
-<<<<<<< HEAD
 
-
-UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file(""){
-=======
 UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file("")
 {
     this->load();
->>>>>>> enregistrement_formations
 }
 
 
@@ -261,10 +256,8 @@ void UVManager::supprimerUV(const QString& c) {
 
 }
 
-<<<<<<< HEAD
+class visiteur;
 
-
-=======
 void UVManager::accept(visiteur *v) {v->visitUVmanager();}
->>>>>>> enregistrement_formations
+
 

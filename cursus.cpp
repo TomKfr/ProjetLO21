@@ -11,6 +11,7 @@
 
 cursusManager::Handler cursusManager::handler=Handler();
 
+class visiteur;
 
 cursusManager& cursusManager::getInstance() {
     if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
