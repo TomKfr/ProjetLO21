@@ -14,6 +14,7 @@
 #include <QComboBox>
 #include <QDebug>
 
+//Ceci est la dernière version !
 
 class Dossier {
 
