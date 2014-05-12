@@ -10,7 +10,7 @@
 #include"UTProfiler.h"
 #include "cursus.h"
 #include"dossier.h"
-#include"dossierGUI.h"
+#include"dossierGUI2.h"
 #include <QDebug>
 #include "cursusGUI.h"
 
@@ -26,11 +26,11 @@ UVManager& u=UVManager::getInstance();
 //m.chargerCursus();
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier d'Uvs");
 //u.load(chemin);
+/*
+menuFormation* fenetre =new menuFormation(&m,&u);
+fenetre->show();*/
 
-//menuFormation* fenetre =new menuFormation(&m,&u);
-//fenetre->show();
-
-DebutDossier fenetre;
+MenuDossier fenetre;
 fenetre.show();
 
 return app.exec();

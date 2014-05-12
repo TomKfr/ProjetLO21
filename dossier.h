@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "UTProfiler.h"
+#include"visiteur2.h"
 #include "cursusGUI.h"
 #include <QString>
 #include <QWidget>
@@ -15,6 +16,7 @@
 #include <QDebug>
 
 //Ceci est la dernière version !
+class visiteur2;
 
 class Dossier {
 
@@ -23,10 +25,12 @@ class Dossier {
     QString prenom;
     QString F;
     UV** listeUV;
+    unsigned int nbUV;
+    unsigned int nbMaxUV;
 
 public :
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, UV** liste=0);
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbUV(0), nbMaxUV(0), listeUV(0) {}
     unsigned int getNumero() const {return numero;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
@@ -38,6 +42,9 @@ public :
     void setFormation(const QString& f) { F=f; }
     void setListeUV(UV** l) { listeUV=l; }
     void ajouterUV(UV* nouv);
+
+    class iterateur<UV>;
+    iterateur<UV>& getIterateurUV();
 
 };
 
@@ -67,15 +74,16 @@ public:
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
 
-    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f, UV** tab);
+    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f);
 
     void addItem(Dossier* dos);
-    void supprimerDossier(unsigned int n);
     static DossierManager& getInstance();
     static void libererInstance();
+    void accept(visiteur2* v);
 
     class iterateur<Dossier>;
     iterateur<Dossier>& getIterateurForm();
+
 
 };
 
