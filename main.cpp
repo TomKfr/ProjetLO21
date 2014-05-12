@@ -23,6 +23,9 @@ fenetre.show();*/
 
 cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
+DossierManager& d=DossierManager::getInstance();
+QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
+d.load(chemin);
 //m.chargerCursus();
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier d'Uvs");
 //u.load(chemin);

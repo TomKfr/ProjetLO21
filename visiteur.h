@@ -9,6 +9,7 @@ class UV;
 class UVManager;
 class cursusManager;
 
+
 class visiteur
 {
     QString nom;
@@ -21,5 +22,6 @@ public:
     void visitUVmanager();
     void visitCursusManager(cursusManager* cman);
 };
+
 
 #endif // VISITEUR_H

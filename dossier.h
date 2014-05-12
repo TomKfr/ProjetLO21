@@ -30,7 +30,7 @@ class Dossier {
 
 public :
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbUV(0), nbMaxUV(0), listeUV(0) {}
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), listeUV(0), nbUV(0), nbMaxUV(0) {}
     unsigned int getNumero() const {return numero;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
@@ -80,11 +80,10 @@ public:
     static DossierManager& getInstance();
     static void libererInstance();
     void accept(visiteur2* v);
+    bool listempty() {return tabDossiers==0;}
 
     class iterateur<Dossier>;
-    iterateur<Dossier>& getIterateurForm();
-
-
+    iterateur<Dossier>& getIterateurDos();
 };
 
 #endif // DOSSIER_H

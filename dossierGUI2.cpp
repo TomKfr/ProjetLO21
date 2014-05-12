@@ -2,46 +2,103 @@
 #include"UTProfiler.h"
 #include"dossier.h"
 #include<QDebug>
+#include<sstream>
 
 
 
 MenuDossier::MenuDossier() {
 
     this->setWindowTitle(QString("Opération choisie sur les dossiers ?"));
-
+    dman=&DossierManager::getInstance();
+    dossiers=new QComboBox(this);
+    visu=new QPushButton("Visualiser dossier",this);
     ajouter=new QPushButton("Ajouter", this);
     modifier=new QPushButton("Consulter/Modifier des informations", this);
     sup=new QPushButton("Supprimer", this);
+    sauver=new QPushButton("sauver",this);
 
     coucheH=new QHBoxLayout;
+    coucheH->addWidget(visu);
     coucheH->addWidget(sup);
     coucheH->addWidget(ajouter);
     coucheH->addWidget(modifier);
+    coucheH->addWidget(sauver);
 
     coucheV=new QVBoxLayout;
+    coucheV->addWidget(dossiers);
     coucheV->addLayout(coucheH);
     setLayout(coucheV);
+
+    update();
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
     //QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     //QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
+    QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
+    QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
 
 }
 
-void MenuDossier::ajout() {
-
-    DossierManager& mana=DossierManager::getInstance();
-    QString chemin = QFileDialog::getOpenFileName();
-    try {
-        mana.load(chemin);
+void MenuDossier::update()
+{
+    dossiers->clear();
+    for(iterateur<Dossier>& it=dman->getIterateurDos();!it.isDone();it.next())
+    {
+        dossiers->addItem(QString::number(it.courant()->getNumero()));
     }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
-    DossierAjout * fenetre= new DossierAjout(mana);
+}
+
+void MenuDossier::ajout() {
+    DossierAjout * fenetre= new DossierAjout(*dman,this);
     fenetre->show();
 }//OK
 
+void MenuDossier::visualiser()
+{
+    if(!dman->listempty())
+    {
+        Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
+        qDebug()<<"envoi du dossier à l'adresse :"<<d;
+        if(d!=0)
+        {
+            visualiserDossier* fen=new visualiserDossier(d);
+            fen->show();
+        }
+    }
+    else QMessageBox::information(this,"erreur","Pas de dossier !",QMessageBox::Ok);
+}
 
-DossierAjout::DossierAjout(DossierManager& dm) : nbUV(0), nbMaxUV(0), M(dm) {
+void MenuDossier::sauvegarder()
+{
+    QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
+    dman->save(chemin);
+    QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
+}
+
+visualiserDossier::visualiserDossier(Dossier *d)
+{
+    qDebug()<<"réception de l'adresse :"<<d;
+    dos=d;
+    numdos=new QLabel(dos->getNom(),this);
+    listuv=new QLabel(this);
+    mainbox=new QHBoxLayout();
+    quit=new QPushButton("fermer",this);
+    mainbox->addWidget(numdos);
+    mainbox->addWidget(listuv);
+    mainbox->addWidget(quit);
+    setLayout(mainbox);
+    QString uvs="";
+    for(iterateur<UV>& it=dos->getIterateurUV();!it.isDone();it.next())
+    {
+        uvs+=it.courant()->getCode()+"\n";
+    }
+    listuv->setText(uvs);
+
+    QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
+}
+
+
+DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
@@ -89,6 +146,8 @@ DossierAjout::DossierAjout(DossierManager& dm) : nbUV(0), nbMaxUV(0), M(dm) {
     //bouton desactive par defaut
     //sauver->setEnabled(false);
 
+    QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
+
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
 
@@ -111,14 +170,14 @@ void DossierAjout::slot_ajoutDossier() {
 
     //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
+    parent->update();
 }
 
 void DossierAjout::slot_selectUV() {
-    DossierManager& m=DossierManager::getInstance();
     bool ok;
-
+    //ATTENTION ! ajouter le dossier avant !!
     unsigned int n=num->text().toInt(&ok);
-    Dossier* d=m.trouverDossier(n);
+    Dossier* d=M.trouverDossier(n);
 
     qDebug()<<"ad du dossier avant selectuv"<<d; // CEST BON
 
@@ -171,8 +230,8 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     qDebug()<<nouvelleUV->getCode(); // OK  A CE NIVEAU
     qDebug()<<"ajout uv dossier";
     dos->ajouterUV(nouvelleUV);
-
-    DossierManager& m2=DossierManager::getInstance();
+    QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
+    /*DossierManager& m2=DossierManager::getInstance();
 
     unsigned int n=dos->getNumero();
 
@@ -181,7 +240,7 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     qDebug()<<"dossier:"<<d;
     UV** l2=d->getlisteUV();
     qDebug()<<l2[0]->getCode(); // OK OK OK  LUV EST BIEN DANS LE DOSSIER
-    //this->update
+    //this->update*/
 }
 
 

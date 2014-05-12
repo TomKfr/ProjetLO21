@@ -21,11 +21,12 @@ void visiteur2::visitUVmanager()
 
 void visiteur2::visitDossierManager(DossierManager* man)
 {
-    //retrouver la formation qui vient d'être créée dans le cursus manager.
+    //retrouver le dossier qui vient d'être créée dans le cursus manager.
     Dossier* dos=man->trouverDossier(num);
     for(int i=0;i<taille;i++)
     {
         dos->ajouterUV(tab[i]);
     }
+    qDebug()<<"UVs récupérées !";
 }
 

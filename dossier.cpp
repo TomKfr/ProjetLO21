@@ -44,8 +44,6 @@ qDebug()<<"ajouterUV";
         delete[] old;
     }
     listeUV[nbUV++]=uv;
-    qDebug()<<listeUV[0];
-    qDebug()<<listeUV[0]->getCode(); //OK
 
 }
 
@@ -148,14 +146,12 @@ void DossierManager::save(const QString& f){
          stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
          stream.writeTextElement("formation",tabDossiers[i]->getFormation());
          qDebug()<<"dans le save avant la liste";
-         unsigned int j=0;
 
          stream.writeStartElement("uvs");
          for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
          {
-             qDebug()<<it.courant()->getCode(); //CHAINE VIDE
-
-             //stream.writeTextElement("uv",it.courant()->getCode());
+             qDebug()<<"ecriture de l'uv: "<<it.courant()->getCode(); //CHAINE VIDE
+             stream.writeTextElement("uv",it.courant()->getCode());
          }
          stream.writeEndElement();
          stream.writeEndElement();
@@ -164,12 +160,11 @@ void DossierManager::save(const QString& f){
      stream.writeEndDocument();
 
      newfile.close();
-
 }
 
 DossierManager::~DossierManager(){
     qDebug() << "Destructeur DossiersManager";
-    if (file!="") save(file);
+    //if (file!="") save(file);
     for(unsigned int i=0; i<nbDos; i++) delete tabDossiers[i];
     delete[] tabDossiers;
 }
@@ -189,14 +184,17 @@ void DossierManager::libererInstance() {
 iterateur<UV>& Dossier::getIterateurUV()
 {
     qDebug()<<"creation de literateur";
-    qDebug()<<listeUV;
-    qDebug()<<listeUV[0]->getCode();
-
-    qDebug()<<nbUV;
+    qDebug()<<"nbuv : "<<nbUV;
     iterateur<UV>* it=new iterateur<UV>(listeUV,nbUV);
     return *it;
 }
 
 void DossierManager::accept(visiteur2* v) {
     v->visitDossierManager(this);
+}
+
+iterateur<Dossier>& DossierManager::getIterateurDos()
+{
+    iterateur<Dossier>* it=new iterateur<Dossier>(tabDossiers,nbDos);
+    return *it;
 }

@@ -26,8 +26,12 @@
 
 class MenuDossier : public QWidget {
     Q_OBJECT
+    DossierManager* dman;
+    QComboBox* dossiers;
+    QPushButton* visu;
     QPushButton* modifier;
     QPushButton* sup;
+    QPushButton* sauver;
     QPushButton* ajouter;
     QHBoxLayout* coucheH;
     QVBoxLayout* coucheV;
@@ -35,13 +39,30 @@ class MenuDossier : public QWidget {
 
 public :
     MenuDossier();
+    void update();
 
 public slots:
     void ajout();
     //void suppression();
     //void modif();
+    void visualiser();
+    void sauvegarder();
 };
 
+
+class visualiserDossier : public QWidget
+{
+    Q_OBJECT
+
+    Dossier* dos;
+    QLabel* numdos;
+    QLabel* listuv;
+    QHBoxLayout* mainbox;
+    QPushButton* quit;
+
+public:
+    visualiserDossier(Dossier* d);
+};
 
 class DossierAjout : public QWidget{
     Q_OBJECT
@@ -50,6 +71,7 @@ class DossierAjout : public QWidget{
     unsigned int nbUV;
     unsigned int nbMaxUV;
     DossierManager& M;
+    MenuDossier* parent;
     QLineEdit* num;
     QLabel* numLabel;
     QLineEdit* nom;
@@ -72,7 +94,7 @@ class DossierAjout : public QWidget{
     QHBoxLayout* coucheH4;
 
 public:
- DossierAjout(DossierManager& uvm);
+ DossierAjout(DossierManager& uvm, MenuDossier* p);
 
  void ajouter_UV(UV* nouv);
 
