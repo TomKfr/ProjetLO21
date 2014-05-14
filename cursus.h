@@ -34,28 +34,24 @@ class formation
     QString nom;
     unsigned int nbCredits; //Le nombre de credits à obtenir pour valider la formation
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
-    UV** uvs; //la liste des uvs appartenant à la formation mais à aucune de ses filières
-    QMap<QString,UV*> uvs2;
-    unsigned int nbUV;
-    unsigned int nbMaxUV;
+    QMap<QString,UV*> uvs; //la liste des uvs appartenant à la formation mais à aucune de ses filières
 
-    formation(const QString& n, unsigned int c, unsigned int s): nom(n), nbCredits(c), nbSemestres(s), uvs(0), nbUV(0), nbMaxUV(0) {}
+    formation(const QString& n, unsigned int c, unsigned int s): nom(n), nbCredits(c), nbSemestres(s) {}
 
 public:
     void ajouter_UV(UV*);//template method ??
-    void ajouter_UV2(UV* newuv);
     void supprimer_UV(const QString &code);
-    ~formation() {delete uvs;}
+    ~formation() {}
     QString getNom() const {return nom;}
     unsigned int getNbCred() const {return nbCredits;}
     unsigned int getNbSem() const {return nbSemestres;}
     void modif(const QString& n, unsigned int c, unsigned int s);
-    const UV* trouverUV(const QString& code);
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
 
-    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs2.begin();}
-    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs2.end();}
-    class iterateur<UV>;
-    iterateur<UV>& getIterateurUV();
+    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
+    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
+    /*class iterateur<UV>;
+    iterateur<UV>& getIterateurUV();*/
 };
 
 class filiere

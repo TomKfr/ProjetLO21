@@ -14,24 +14,6 @@ cursusManager::Handler cursusManager::handler=Handler();
 class visiteur;
 
 
-// ////////////////////////////////////////////////////////////////////////
-
-void formation::ajouter_UV2(UV *newuv) {uvs2.insert(newuv->getCode(),newuv);}
-
-
-
-
-
-
-
-
-
-
-
-
-// //////////////////////////////////////////////////////////////////////
-
-
 cursusManager& cursusManager::getInstance() {
     if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
     return *handler.instance;
@@ -52,42 +34,27 @@ formation* cursusManager::trouverForm(const QString& n)
 
 void formation::ajouter_UV(UV* uv)
 {
-    if (nbUV==nbMaxUV){
-        UV** newtab=new UV*[nbMaxUV+5];
-        for(unsigned int i=0; i<nbUV; i++) newtab[i]=uvs[i];
-        nbMaxUV+=5;
-        UV** old=uvs;
-        uvs=newtab;
-        delete[] old;
-    }
-    uvs[nbUV++]=uv;
+    uvs.insert(uv->getCode(),uv);
 }
 
 void formation::supprimer_UV(const QString& code)
 {
     if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" de la formation "+nom+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
-        unsigned int i=0;
-        while(uvs[i]->getCode()!=code) i++;
-        for(unsigned int k=i;k<nbUV-1;k++) uvs[k]=uvs[k+1];
-        uvs[nbUV--]=0;
+        uvs.erase(uvs.find(code));
     }
 }
 
-const UV* formation::trouverUV(const QString &code)
+const QMap<QString,UV*>::const_iterator formation::trouverUV(const QString &code)
 {
-    for(unsigned int i=0;i<nbUV;i++)
-    {
-        if(uvs[i]->getCode()==code) return uvs[i];
-    }
-    return 0;
+    return uvs.find(code);
 }
 
-iterateur<UV>& formation::getIterateurUV()
+/*iterateur<UV>& formation::getIterateurUV()
 {
     iterateur<UV>* it=new iterateur<UV>(uvs,nbUV);
     return *it;
-}
+}*/
 
 void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s)
 {
@@ -146,9 +113,9 @@ void cursusManager::sauverCursus(QWidget *parent)
             cr.setNum(formations[i]->getNbSem());
             stream.writeTextElement("nbsem", cr);
             stream.writeStartElement("uvs");
-            for(iterateur<UV>& it=formations[i]->getIterateurUV(); !it.isDone(); it.next())
+            for(QMap<QString,UV*>::iterator it=formations[i]->getQmapIteratorUVbegin();it!=formations[i]->getQmapIteratorUVend(); it++)
             {
-                stream.writeTextElement("uv",it.courant()->getCode());
+                stream.writeTextElement("uv",it.key());
             }
             stream.writeEndElement();
             stream.writeEndElement();
@@ -389,11 +356,6 @@ void visualiserFormation::update()
     supprUV->clear();
     uvs->clear();
     QString txt="";
-    /*for(iterateur<UV>& it=objet->getIterateurUV();!it.isDone();it.next())
-    {
-        supprUV->addItem(it.courant()->getCode());
-        txt+=it.courant()->getCode()+"\n";
-    }*/
     for(QMap<QString,UV*>::iterator it=objet->getQmapIteratorUVbegin();it!=objet->getQmapIteratorUVend(); it++)
     {
         supprUV->addItem(it.key());
@@ -435,7 +397,7 @@ selectUVsFormation::selectUVsFormation(cursusManager* cm, UVManager* um, formati
 
 void selectUVsFormation::ajouterUV()
 {
-    objet->ajouter_UV2(&uman->getUV(choix->currentText())); // MODIF ICI %%%§§§%
+    objet->ajouter_UV(&uman->getUV(choix->currentText())); // MODIF ICI %%%§§§%
     QMessageBox::information(this,"Ajout d'une UV","UV "+choix->currentText()+" ajoutée à la formation "+objet->getNom(),QMessageBox::Ok);
     parent->update();
     this->update();
@@ -446,6 +408,6 @@ void selectUVsFormation::update()
     choix->clear();
     for(iterateur<UV>& it=uman->getIterateurForm();!it.isDone();it.next())
     {
-        if(!objet->trouverUV(it.courant()->getCode())) choix->addItem(it.courant()->getCode());
+        if(objet->trouverUV(it.courant()->getCode())==objet->getQmapIteratorUVend()) choix->addItem(it.courant()->getCode());
     }
 }
