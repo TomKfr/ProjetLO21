@@ -13,6 +13,25 @@ cursusManager::Handler cursusManager::handler=Handler();
 
 class visiteur;
 
+
+// ////////////////////////////////////////////////////////////////////////
+
+void formation::ajouter_UV2(UV *newuv) {uvs2.insert(newuv->getCode(),newuv);}
+
+
+
+
+
+
+
+
+
+
+
+
+// //////////////////////////////////////////////////////////////////////
+
+
 cursusManager& cursusManager::getInstance() {
     if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
     return *handler.instance;
@@ -370,10 +389,15 @@ void visualiserFormation::update()
     supprUV->clear();
     uvs->clear();
     QString txt="";
-    for(iterateur<UV>& it=objet->getIterateurUV();!it.isDone();it.next())
+    /*for(iterateur<UV>& it=objet->getIterateurUV();!it.isDone();it.next())
     {
         supprUV->addItem(it.courant()->getCode());
         txt+=it.courant()->getCode()+"\n";
+    }*/
+    for(QMap<QString,UV*>::iterator it=objet->getQmapIteratorUVbegin();it!=objet->getQmapIteratorUVend(); it++)
+    {
+        supprUV->addItem(it.key());
+        txt+=it.key()+"\n";
     }
     uvs->setText(txt);
 }
@@ -411,7 +435,7 @@ selectUVsFormation::selectUVsFormation(cursusManager* cm, UVManager* um, formati
 
 void selectUVsFormation::ajouterUV()
 {
-    objet->ajouter_UV(&uman->getUV(choix->currentText()));
+    objet->ajouter_UV2(&uman->getUV(choix->currentText())); // MODIF ICI %%%§§§%
     QMessageBox::information(this,"Ajout d'une UV","UV "+choix->currentText()+" ajoutée à la formation "+objet->getNom(),QMessageBox::Ok);
     parent->update();
     this->update();

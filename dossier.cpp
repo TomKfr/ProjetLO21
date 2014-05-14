@@ -231,7 +231,7 @@ void Dossier::ajouterResultat(const QString & res){
             qDebug()<<"4";
             listeResultats=newtab;
             qDebug()<<"5";
-            //delete[] old;
+            delete[] old;
              qDebug()<<"6";
         }
          qDebug()<<"avant ecriture res";

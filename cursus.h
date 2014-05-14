@@ -15,14 +15,17 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QStringList>
+#include <QMap>
 
 class UV;
 template<class I> class iterateur;
 class menuFormation;
-class UV;
 class UVManager;
-template<class I> class iterateur;
-class UVManager;
+
+class abstract_cursus_item
+{
+
+};
 
 class formation
 {
@@ -32,6 +35,7 @@ class formation
     unsigned int nbCredits; //Le nombre de credits à obtenir pour valider la formation
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
     UV** uvs; //la liste des uvs appartenant à la formation mais à aucune de ses filières
+    QMap<QString,UV*> uvs2;
     unsigned int nbUV;
     unsigned int nbMaxUV;
 
@@ -39,6 +43,7 @@ class formation
 
 public:
     void ajouter_UV(UV*);//template method ??
+    void ajouter_UV2(UV* newuv);
     void supprimer_UV(const QString &code);
     ~formation() {delete uvs;}
     QString getNom() const {return nom;}
@@ -47,6 +52,8 @@ public:
     void modif(const QString& n, unsigned int c, unsigned int s);
     const UV* trouverUV(const QString& code);
 
+    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs2.begin();}
+    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs2.end();}
     class iterateur<UV>;
     iterateur<UV>& getIterateurUV();
 };

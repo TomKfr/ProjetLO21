@@ -24,17 +24,14 @@ fenetre.show();*/
 cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
 DossierManager& d=DossierManager::getInstance();
-QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
-d.load(chemin);
-//m.chargerCursus();
-//QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier d'Uvs");
-//u.load(chemin);
-/*
-menuFormation* fenetre =new menuFormation(&m,&u);
-fenetre->show();*/
+//QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
+//d.load(chemin);
 
-MenuDossier fenetre;
-fenetre.show();
+menuFormation* fenetre =new menuFormation(&m,&u);
+fenetre->show();
+
+//MenuDossier fenetre;
+//fenetre.show();
 
 return app.exec();
 }
