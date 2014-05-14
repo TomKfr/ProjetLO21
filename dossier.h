@@ -25,23 +25,28 @@ class Dossier {
     QString prenom;
     QString F;
     UV** listeUV;
+    QString * listeResultats;
     unsigned int nbUV;
     unsigned int nbMaxUV;
+    unsigned int nbResultats;
+    unsigned int nbMaxResultats;
 
 public :
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), listeUV(0), nbUV(0), nbMaxUV(0) {}
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), listeUV(0), nbUV(0), nbMaxUV(0), nbResultats(0), nbMaxResultats(0) {}
     unsigned int getNumero() const {return numero;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
     UV** getlisteUV() const {return listeUV;}
+    QString* getlisteResultats() const {return listeResultats;}
     void setNumero(unsigned int n) { numero=n; }
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setListeUV(UV** l) { listeUV=l; }
     void ajouterUV(UV* nouv);
+    void ajouterResultat(const QString & res);
 
     class iterateur<UV>;
     iterateur<UV>& getIterateurUV();

@@ -39,63 +39,11 @@ MenuDossier::MenuDossier() {
 
 }
 
-void MenuDossier::update()
-{
-    dossiers->clear();
-    for(iterateur<Dossier>& it=dman->getIterateurDos();!it.isDone();it.next())
-    {
-        dossiers->addItem(QString::number(it.courant()->getNumero()));
-    }
-}
-
 void MenuDossier::ajout() {
     DossierAjout * fenetre= new DossierAjout(*dman,this);
     fenetre->show();
 }//OK
 
-void MenuDossier::visualiser()
-{
-    if(!dman->listempty())
-    {
-        Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
-        qDebug()<<"envoi du dossier à l'adresse :"<<d;
-        if(d!=0)
-        {
-            visualiserDossier* fen=new visualiserDossier(d);
-            fen->show();
-        }
-    }
-    else QMessageBox::information(this,"erreur","Pas de dossier !",QMessageBox::Ok);
-}
-
-void MenuDossier::sauvegarder()
-{
-    QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
-    dman->save(chemin);
-    QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
-}
-
-visualiserDossier::visualiserDossier(Dossier *d)
-{
-    qDebug()<<"réception de l'adresse :"<<d;
-    dos=d;
-    numdos=new QLabel(dos->getNom(),this);
-    listuv=new QLabel(this);
-    mainbox=new QHBoxLayout();
-    quit=new QPushButton("fermer",this);
-    mainbox->addWidget(numdos);
-    mainbox->addWidget(listuv);
-    mainbox->addWidget(quit);
-    setLayout(mainbox);
-    QString uvs="";
-    for(iterateur<UV>& it=dos->getIterateurUV();!it.isDone();it.next())
-    {
-        uvs+=it.courant()->getCode()+"\n";
-    }
-    listuv->setText(uvs);
-
-    QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
-}
 
 
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
@@ -173,6 +121,7 @@ void DossierAjout::slot_ajoutDossier() {
     parent->update();
 }
 
+
 void DossierAjout::slot_selectUV() {
     bool ok;
     //ATTENTION ! ajouter le dossier avant !!
@@ -227,20 +176,72 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
 {
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
+    QString res=Result->currentText();
+
     qDebug()<<nouvelleUV->getCode(); // OK  A CE NIVEAU
     qDebug()<<"ajout uv dossier";
     dos->ajouterUV(nouvelleUV);
+    dos->ajouterResultat(res);
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
-    /*DossierManager& m2=DossierManager::getInstance();
 
-    unsigned int n=dos->getNumero();
+}
 
-    Dossier * d=m2.trouverDossier(n);
 
-    qDebug()<<"dossier:"<<d;
-    UV** l2=d->getlisteUV();
-    qDebug()<<l2[0]->getCode(); // OK OK OK  LUV EST BIEN DANS LE DOSSIER
-    //this->update*/
+
+
+
+void MenuDossier::update()
+{
+    dossiers->clear();
+    for(iterateur<Dossier>& it=dman->getIterateurDos();!it.isDone();it.next())
+    {
+        dossiers->addItem(QString::number(it.courant()->getNumero()));
+    }
+}
+
+
+void MenuDossier::visualiser()
+{
+    if(!dman->listempty())
+    {
+        Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
+        qDebug()<<"envoi du dossier à l'adresse :"<<d;
+        if(d!=0)
+        {
+            visualiserDossier* fen=new visualiserDossier(d);
+            fen->show();
+        }
+    }
+    else QMessageBox::information(this,"erreur","Pas de dossier !",QMessageBox::Ok);
+}
+
+void MenuDossier::sauvegarder()
+{
+    QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
+    dman->save(chemin);
+    QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
+}
+
+visualiserDossier::visualiserDossier(Dossier *d)
+{
+    qDebug()<<"réception de l'adresse :"<<d;
+    dos=d;
+    numdos=new QLabel(dos->getNom(),this);
+    listuv=new QLabel(this);
+    mainbox=new QHBoxLayout();
+    quit=new QPushButton("fermer",this);
+    mainbox->addWidget(numdos);
+    mainbox->addWidget(listuv);
+    mainbox->addWidget(quit);
+    setLayout(mainbox);
+    QString uvs="";
+    for(iterateur<UV>& it=dos->getIterateurUV();!it.isDone();it.next())
+    {
+        uvs+=it.courant()->getCode()+"\n";
+    }
+    listuv->setText(uvs);
+
+    QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
 }
 
 

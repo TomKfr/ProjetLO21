@@ -75,7 +75,8 @@ void DossierManager::load(const QString& fichier)
                 QString nom;
                 QString prenom;
                 QString formation;
-                QStringList list;
+                QStringList listUV;
+                QStringList listResult;
 
 
                 xml.readNext();
@@ -101,8 +102,15 @@ void DossierManager::load(const QString& fichier)
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
                                     xml.readNext();
-                                    list<<xml.text().toString();
+                                    listUV<<xml.text().toString();
                                 }
+
+                                /*if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="result")
+                                {
+                                    xml.readNext();
+                                    listResult<<xml.text().toString();
+                                }*/
+
                                 xml.readNext();
                             }
                         }
@@ -111,9 +119,9 @@ void DossierManager::load(const QString& fichier)
                 }
                 ajouterDossier(numero,nom, prenom, formation);//ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LA LISTE
-                if(!list.empty())
+                if(!listUV.empty())
                 {
-                    visiteur2* v=new visiteur2(numero,list);
+                    visiteur2* v=new visiteur2(numero,listUV);
                     v->visitUVmanager();
                     this->accept(v);
                 }
@@ -147,11 +155,21 @@ void DossierManager::save(const QString& f){
          stream.writeTextElement("formation",tabDossiers[i]->getFormation());
          qDebug()<<"dans le save avant la liste";
 
+         //ecriture des UV
+
+         QString * listeRes=tabDossiers[i]->getlisteResultats();
+         unsigned int j=0;
+         qDebug()<<listeRes[0];
+
          stream.writeStartElement("uvs");
          for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
          {
              qDebug()<<"ecriture de l'uv: "<<it.courant()->getCode(); //CHAINE VIDE
              stream.writeTextElement("uv",it.courant()->getCode());
+             //ecriture du resultat correspondant
+             stream.writeTextElement("result",listeRes[j]);
+             j++;
+
          }
          stream.writeEndElement();
          stream.writeEndElement();
@@ -197,4 +215,28 @@ iterateur<Dossier>& DossierManager::getIterateurDos()
 {
     iterateur<Dossier>* it=new iterateur<Dossier>(tabDossiers,nbDos);
     return *it;
+}
+//coucou
+void Dossier::ajouterResultat(const QString & res){
+
+    qDebug()<<"ajouterResultat";
+        if (nbResultats==nbMaxResultats){
+            qDebug()<<"1";
+            QString * newtab=new QString[nbMaxResultats+5];
+            qDebug()<<"2";
+            for(unsigned int i=0; i<nbResultats; i++) newtab[i]=listeResultats[i];
+            nbMaxResultats+=5;
+            qDebug()<<"3";
+            QString* old=listeResultats;
+            qDebug()<<"4";
+            listeResultats=newtab;
+            qDebug()<<"5";
+            //delete[] old;
+             qDebug()<<"6";
+        }
+         qDebug()<<"avant ecriture res";
+        listeResultats[nbResultats++]=res;
+
+        qDebug()<<"fin de ajouter resultat";
+
 }
