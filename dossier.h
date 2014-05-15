@@ -24,34 +24,40 @@ class Dossier {
     QString nom;
     QString prenom;
     QString F;
-    UV** listeUV;
+    //UV** listeUV;
+    QMap<QString,UV*> listeUV;
     QString * listeResultats;
     unsigned int nbUV;
     unsigned int nbMaxUV;
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbUV(0), nbMaxUV(0), nbResultats(0), nbMaxResultats(0) {}
+    friend class DossierManager;
 
 public :
-
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), listeUV(0), nbUV(0), nbMaxUV(0), nbResultats(0), nbMaxResultats(0) {}
     unsigned int getNumero() const {return numero;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
-    UV** getlisteUV() const {return listeUV;}
+    //UV** getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
     void setNumero(unsigned int n) { numero=n; }
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
-    void setListeUV(UV** l) { listeUV=l; }
+    //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
     void ajouterResultat(const QString & res);
 
-    class iterateur<UV>;
-    iterateur<UV>& getIterateurUV();
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
+
+    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
+    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}
+
+    /*class iterateur<UV>;
+    iterateur<UV>& getIterateurUV();*/
 
 };
 

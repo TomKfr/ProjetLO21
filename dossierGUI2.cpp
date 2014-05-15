@@ -41,7 +41,7 @@ MenuDossier::MenuDossier() {
 void MenuDossier::ajout() {
     DossierAjout * fenetre= new DossierAjout(*dman,this);
     fenetre->show();
-}//OK
+}
 
 void MenuDossier::modif() {
     bool ok;
@@ -71,9 +71,7 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
         throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
     }else{
     dm.removeDossier(dos);
-    qDebug()<<"apres la suppression du dossier";
     Dossier* dos=dm.trouverDossier(num);
-    qDebug()<<dos;//affiche donc ça ne la pas supprimé
     }
 
 }
@@ -125,9 +123,6 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
     setLayout(couche);
 
-    //bouton desactive par defaut
-    //sauver->setEnabled(false);
-
     QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
@@ -136,8 +131,6 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
    update();
 
-   //pour que ça sactive que si modif :
-   //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
 
 void DossierAjout::slot_ajoutDossier() {
@@ -149,9 +142,9 @@ void DossierAjout::slot_ajoutDossier() {
     const QString& fn=prenom->text();
     const QString& F=f->currentText();
 
-    M.ajouterDossier(n, name , fn, F); //DABORD LES AJOUTS SIMPLES. PUIS ON GERE LES UVS
+    M.ajouterDossier(n, name , fn, F);
 
-    //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
+
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
     parent->update();
 }
@@ -159,11 +152,8 @@ void DossierAjout::slot_ajoutDossier() {
 
 void DossierAjout::slot_selectUV() {
     bool ok;
-    //ATTENTION ! ajouter le dossier avant !!
     unsigned int n=num->text().toInt(&ok);
     Dossier* d=M.trouverDossier(n);
-
-    qDebug()<<"ad du dossier avant selectuv"<<d; // CEST BON
 
     AjoutUV* fenetre= new AjoutUV(d, this);
     fenetre->show();
@@ -212,9 +202,6 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
-
-    qDebug()<<nouvelleUV->getCode(); // OK  A CE NIVEAU
-    qDebug()<<"ajout uv dossier";
     dos->ajouterUV(nouvelleUV);
     dos->ajouterResultat(res);
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
@@ -240,7 +227,6 @@ void MenuDossier::visualiser()
     if(!dman->listempty())
     {
         Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
-        qDebug()<<"envoi du dossier à l'adresse :"<<d;
         if(d!=0)
         {
             visualiserDossier* fen=new visualiserDossier(d);
@@ -258,7 +244,6 @@ void MenuDossier::sauvegarder()
 
 visualiserDossier::visualiserDossier(Dossier *d)
 {
-    qDebug()<<"réception de l'adresse :"<<d;
     dos=d;
     numdos=new QLabel(dos->getNom(),this);
     listuv=new QLabel(this);
@@ -269,20 +254,16 @@ visualiserDossier::visualiserDossier(Dossier *d)
     mainbox->addWidget(quit);
     setLayout(mainbox);
     QString uvs="";
-    for(iterateur<UV>& it=dos->getIterateurUV();!it.isDone();it.next())
+
+     for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin();it!=dos->getQmapIteratorUVend(); it++)
     {
-        uvs+=it.courant()->getCode()+"\n";
+        uvs+=it.key()+"\n";
     }
     listuv->setText(uvs);
 
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
 }
 
-
-
-
-
-//OSEF de cette partie ça marche bien :
 void DossierAjout::update()
 {
     f->clear();
@@ -370,8 +351,6 @@ void ModifierDossier::slot_modifFormation() {
 }
 
 void ModifFormation::enregistrer_formation() {
-    qDebug()<<"enregistrer la formation";
-    qDebug()<<f->currentText();
       dossier->setFormation(f->currentText());
       QMessageBox::information(this, "sauvegarde", "Formation enregistree");
       this->close();
@@ -399,7 +378,6 @@ ModifFormation ::ModifFormation(Dossier * d)
 
     setLayout(couche);
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer_formation()));
-    qDebug()<<"apres connect";
 
 }
 
@@ -415,7 +393,6 @@ void ModifFormation::update() {
 }
 
 void ModifierDossier::slot_finModifDossier() {
-    //COMPLETER SI BESOIN
     this->close();
 }
 

@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QStringList>
+#include<QMap>
 
 cursusManager::Handler cursusManager::handler=Handler();
 
