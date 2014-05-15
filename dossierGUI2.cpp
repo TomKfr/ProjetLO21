@@ -32,7 +32,7 @@ MenuDossier::MenuDossier() {
     update();
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
-    //QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
+    QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     //QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
     QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
     QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
@@ -44,18 +44,43 @@ void MenuDossier::ajout() {
     fenetre->show();
 }//OK
 
+void MenuDossier::suppression() {
+    bool ok;
+
+    QString n1=dossiers->currentText();
+    unsigned int n2=n1.toInt(&ok);
+    supDossier(n2, *dman);
+
+    update();
+
+}
+
+void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
+    Dossier* dos=dm.trouverDossier(num);
+
+    if (dos==0) {
+        throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
+    }else{
+    dm.removeDossier(dos);
+    qDebug()<<"apres la suppression du dossier";
+    Dossier* dos=dm.trouverDossier(num);
+    qDebug()<<dos;//affiche donc ça ne la pas supprimé
+    }
+
+}
+
 
 
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
-    numLabel=new QLabel("num", this);
-    nomLabel=new QLabel("nom", this);
-    prenomLabel=new QLabel("prenom", this);
-    formationLabel=new QLabel("formation", this);
-    SelectUV= new QPushButton("Remplir la liste des UVs");
-    sauver=new QPushButton("Sauver", this);
+    numLabel=new QLabel("numero de dossier", this);
+    nomLabel=new QLabel("nom de l'etudiant", this);
+    prenomLabel=new QLabel("prenom de l'etudiant", this);
+    formationLabel=new QLabel("formation suivie", this);
+    SelectUV= new QPushButton("2 - Remplir la liste des UVs");
+    sauver=new QPushButton("1 - Sauver", this);
 
     num= new QLineEdit("", this);
     nom= new QLineEdit("", this);
@@ -86,8 +111,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
-    couche->addLayout(coucheH3);
     couche->addLayout(coucheH4);
+    couche->addLayout(coucheH3);
 
     setLayout(couche);
 
@@ -98,6 +123,7 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
+
 
    update();
 

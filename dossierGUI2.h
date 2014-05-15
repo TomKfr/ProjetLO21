@@ -43,7 +43,8 @@ public :
 
 public slots:
     void ajout();
-    //void suppression();
+    void suppression();
+    void supDossier(unsigned int num, DossierManager& dm);
     //void modif();
     void visualiser();
     void sauvegarder();
@@ -105,6 +106,8 @@ public slots:
  void update();
 
 };
+
+
 
 class AjoutUV : public QWidget {
     Q_OBJECT

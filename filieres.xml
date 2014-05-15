@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<formations>
-    <formation>
-        <nom>première</nom>
-        <nbcred>100</nbcred>
-        <nbsem>4</nbsem>
-    </formation>
-    <formation>
-        <nom>deuxième</nom>
-        <nbcred>140</nbcred>
-        <nbsem>5</nbsem>
-    </formation>
-    <formation>
-        <nom>troisième</nom>
-        <nbcred>220</nbcred>
-        <nbsem>6</nbsem>
-    </formation>
-</formations>
+<dossiers>
+    <dossier>
+        <numero>8452</numero>
+        <nom>ik</nom>
+        <prenom>ghjk</prenom>
+        <formation>thomastheboss</formation>
+        <uvs>
+            <uv>BL01</uv>
+            <result>A</result>
+        </uvs>
+    </dossier>
+</dossiers>

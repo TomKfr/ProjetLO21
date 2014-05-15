@@ -32,6 +32,19 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
 
 }
 
+void DossierManager::removeDossier(Dossier* dsup){
+
+    unsigned int i=0;
+    while (tabDossiers[i]!=dsup) i++;
+    qDebug()<<"remove dossier";
+    qDebug()<<"numero de dossier a supprimer : "<<i;
+    Dossier* tmp ;
+    for (unsigned int j=i; j<nbDos-2; j++) {tmp=tabDossiers[j]; tabDossiers[j]=tabDossiers[j+1]; tabDossiers[j+1]=tmp;}
+    delete tabDossiers[nbDos-1];
+    nbDos--;
+
+    }
+
 
 void Dossier::ajouterUV(UV* uv) {
 qDebug()<<"ajouterUV";
@@ -96,20 +109,22 @@ void DossierManager::load(const QString& fichier)
                         }
                         if(xml.name() == "uvs")
                         {
+                            unsigned int nbUVs=0;
                             xml.readNext();
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
                             {
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
+                                    nbUVs++;
                                     xml.readNext();
                                     listUV<<xml.text().toString();
                                 }
 
-                                /*if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="result")
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="result")
                                 {
                                     xml.readNext();
                                     listResult<<xml.text().toString();
-                                }*/
+                                }
 
                                 xml.readNext();
                             }
@@ -118,10 +133,10 @@ void DossierManager::load(const QString& fichier)
                     xml.readNext();
                 }
                 ajouterDossier(numero,nom, prenom, formation);//ON FAIT LES TYPES SIMPLES A CE NIVEAU
-                //PUIS ON GERE LA LISTE
+                //PUIS ON GERE LES LISTES
                 if(!listUV.empty())
                 {
-                    visiteur2* v=new visiteur2(numero,listUV);
+                    visiteur2* v=new visiteur2(numero,listUV, listResult);
                     v->visitUVmanager();
                     this->accept(v);
                 }

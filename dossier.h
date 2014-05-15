@@ -45,6 +45,7 @@ public :
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setListeUV(UV** l) { listeUV=l; }
+    void setListeResultats(QString* l) { listeResultats=l; }
     void ajouterUV(UV* nouv);
     void ajouterResultat(const QString & res);
 
@@ -80,6 +81,7 @@ public:
     Dossier* trouverDossier(unsigned int n) const;
 
     void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f);
+    void removeDossier(Dossier * dos);
 
     void addItem(Dossier* dos);
     static DossierManager& getInstance();
