@@ -45,7 +45,7 @@ public slots:
     void ajout();
     void suppression();
     void supDossier(unsigned int num, DossierManager& dm);
-    //void modif();
+    void modif();
     void visualiser();
     void sauvegarder();
 };
@@ -128,7 +128,7 @@ class AjoutUV : public QWidget {
 
 
 public :
-    AjoutUV(DossierAjout* dossier, Dossier* d);
+    AjoutUV(Dossier* d, DossierAjout* dossier=0);
 
 public slots :
     void end_listeUV();
@@ -137,4 +137,102 @@ public slots :
 
 };
 
+class ModifierDossier : public QWidget
+{
+    Q_OBJECT
+
+
+    DossierManager& M;
+    Dossier* dos;
+
+    QLineEdit* num;
+    QLabel* numLabel;
+    QLineEdit* nom;
+    QLabel* nomLabel;
+    QLineEdit* prenom;
+    QLabel* prenomLabel;
+
+    QLabel* formationLabel;
+
+    QPushButton* modifUV;
+    QPushButton* sauver;
+    QPushButton* modifFormation;
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
+    QHBoxLayout* coucheH3;
+
+
+public:
+ ModifierDossier(DossierManager& uvm, Dossier * dos);
+
+public slots:
+ void slot_modifFormation();
+ void slot_modifUV();
+ void slot_finModifDossier();
+
+
+};
+
+class ModifFormation : public QWidget
+{
+    Q_OBJECT
+    Dossier * dossier;
+    QLabel * formationLabel;
+    QComboBox* f;
+    QPushButton* valider;
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
+
+public :
+    ModifFormation(Dossier* d);
+
+public slots :
+   void enregistrer_formation();
+   void update();
+
+
+};
+
+class ModifUV : public QWidget
+{
+    Q_OBJECT
+
+    QPushButton* ajouter;
+    QPushButton* supprimer;
+    QPushButton* fin;
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    Dossier* dos;
+
+
+public :
+    ModifUV(Dossier* d);
+
+public slots :
+   void ajouterUV();
+   void supprimerUV();
+   void finUV();
+};
+
+class SuppressionUV : public QWidget
+{
+    Q_OBJECT
+    QComboBox* liste;
+    QPushButton* supprimer;
+    QPushButton* fin;
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    Dossier* dos;
+
+
+public :
+    SuppressionUV(Dossier* d);
+    void update();
+
+public slots :
+   void suppression_une_uv();
+   void finSuppression();
+};
 #endif // DOSSIERGUI_H

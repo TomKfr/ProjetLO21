@@ -47,6 +47,7 @@ public :
     void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
     void ajouterUV(UV* nouv);
+    void supprimerUV(UV* uv);
     void ajouterResultat(const QString & res);
 
     class iterateur<UV>;
@@ -74,8 +75,8 @@ class DossierManager {
 
 
 public:
-    void load(const QString& f);
-    void save(const QString& f);
+    void load();
+    void save();
     unsigned int getnbDos() const {return nbDos;}
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
