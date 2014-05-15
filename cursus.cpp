@@ -13,25 +13,6 @@ cursusManager::Handler cursusManager::handler=Handler();
 
 class visiteur;
 
-
-cursusManager& cursusManager::getInstance() {
-    if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
-    return *handler.instance;
-}
-
-void cursusManager::libererInstance() {
-    if (handler.instance) { delete handler.instance; handler.instance=0; }
-}
-
-formation* cursusManager::trouverForm(const QString& n)
-{
-    for(unsigned int i=0;i<nbFor;i++)
-    {
-        if(formations[i]->getNom()==n) return formations[i];
-    }
-    return 0;
-}
-
 void formation::ajouter_UV(UV* uv)
 {
     uvs.insert(uv->getCode(),uv);
@@ -56,39 +37,35 @@ const QMap<QString,UV*>::const_iterator formation::trouverUV(const QString &code
     return *it;
 }*/
 
+cursusManager& cursusManager::getInstance() {
+    if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
+    return *handler.instance;
+}
+
+void cursusManager::libererInstance() {
+    if (handler.instance) { delete handler.instance; handler.instance=0; }
+}
+
+formation* cursusManager::trouverForm(const QString& n)
+{
+    return formations.find(n).value();
+}
+
 void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s)
 {
-    if (trouverForm(nom)) {
-        throw UTProfilerException(QString("erreur, cursusManager, formation ")+nom+QString("déja existante"));
-    }else{
-        if (nbFor==nbMaxFor){
-            formation** newtab=new formation*[nbMaxFor+3];
-            for(unsigned int i=0; i<nbFor; i++) newtab[i]=formations[i];
-            nbMaxFor+=3;
-            formation** old=formations;
-            formations=newtab;
-            delete[] old;
-        }
-        formations[nbFor++]=new formation(nom,c,s);
+    if (formations.find(nom)!=formations.end())
+    {
+        throw UTProfilerException(QString("erreur, cursusManager, formation ")+nom+QString(" déja existante"));
+    }
+    else
+    {
+        formations.insert(nom,new formation(nom,c,s));
     }
 }
 
 void cursusManager::supprimerFormation(const QString &nom)
 {
-    unsigned int i=0;
-    while(formations[i]->getNom()!=nom && formations[i]!=0){i++;}
-    if(formations[i]==0) throw UTProfilerException("La formation recherchée n'existe pas !");
-    delete formations[i];
-    for(unsigned int k=i;k<nbFor-2;k++)
-    {
-        formations[k]=formations[k+1];
-    }
-    formations[nbFor--]=0;
-}
-void cursusManager::supprimerFormation(unsigned int index)
-{
-    for(unsigned int i=index;i<nbFor-1;i++) {formations[i]=formations[i+1];}
-    formations[nbFor--]=0;
+    formations.erase(formations.find(nom));
 }
 
 void cursusManager::sauverCursus(QWidget *parent)
@@ -104,16 +81,16 @@ void cursusManager::sauverCursus(QWidget *parent)
         stream.setAutoFormatting(true);
         stream.writeStartDocument();
         stream.writeStartElement("formations");
-        for(unsigned int i=0; i<nbFor; i++)
+        for(QMap<QString,formation*>::iterator form=formations.begin();form!=formations.end();form++)
         {
             stream.writeStartElement("formation");
-            stream.writeTextElement("nom",formations[i]->getNom());
-            QString cr; cr.setNum(formations[i]->getNbCred());
+            stream.writeTextElement("nom",form.key());
+            QString cr; cr.setNum(form.value()->getNbCred());
             stream.writeTextElement("nbcred",cr);
-            cr.setNum(formations[i]->getNbSem());
+            cr.setNum(form.value()->getNbSem());
             stream.writeTextElement("nbsem", cr);
             stream.writeStartElement("uvs");
-            for(QMap<QString,UV*>::iterator it=formations[i]->getQmapIteratorUVbegin();it!=formations[i]->getQmapIteratorUVend(); it++)
+            for(QMap<QString,UV*>::iterator it=form.value()->getQmapIteratorUVbegin();it!=form.value()->getQmapIteratorUVend(); it++)
             {
                 stream.writeTextElement("uv",it.key());
             }
@@ -190,11 +167,11 @@ void cursusManager::chargerCursus()
     xml.clear();
 }
 
-iterateur<formation>& cursusManager::getIterateurForm()
+/*iterateur<formation>& cursusManager::getIterateurForm()
 {
     iterateur<formation>* it=new iterateur<formation>(formations,nbFor);
     return *it;
-}
+}*/
 
 void cursusManager::accept(visiteur *v) {v->visitCursusManager(this);}
 

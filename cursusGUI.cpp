@@ -44,20 +44,16 @@ menuFormation::menuFormation(cursusManager *man, UVManager* u)
 
 void menuFormation::voir()
 {
-    try{
-    if(m->getnbFor()==0) {throw UTProfilerException("Aucune formation à afficher !");}
     visualiserFormation* fenetre=new visualiserFormation(m,uvman,m->trouverForm(select->currentText()));
     fenetre->show();
-    }
-    catch(UTProfilerException& e) {QMessageBox::information(0,"Erreur",e.getInfo(),QMessageBox::Ok);}
 }
 
 void menuFormation::update()
 {
     select->clear();
-    for(iterateur<formation>& it=m->getIterateurForm();!it.isDone();it.next())
+    for(QMap<QString,formation*>::iterator it=m->getQmapIteratorFormbegin();it!=m->getQmapIteratorFormend();it++)
     {
-        select->addItem(it.courant()->getNom());
+        select->addItem(it.key());
     }
 }
 
@@ -69,27 +65,18 @@ void menuFormation::ajout()
 
 void menuFormation::modif()
 {
-    try{
-    if(m->getnbFor()==0) {throw UTProfilerException("Aucune formation à modifier !");}
     modifFormation* fenetre=new modifFormation(m,m->trouverForm(select->currentText()));
     fenetre->show();
-    }
-    catch(UTProfilerException& e) {QMessageBox::information(0,"Erreur",e.getInfo(),QMessageBox::Ok);}
 }
 
 void menuFormation::suppr()
 {
-    try{
-    if(m->getnbFor()==0) {throw UTProfilerException("Aucune formation à supprimer !");}
     if(QMessageBox::information(this,"Suppression","Voulez-vous supprimer la formation "+select->currentText()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
-        int index=select->currentIndex();
-        m->supprimerFormation(index);
+        m->supprimerFormation(select->currentText());
         QMessageBox::information(this,"Suppression","Formation supprimée !",QMessageBox::Ok);
         this->update();
     }
-    }
-    catch(UTProfilerException& e) {QMessageBox::information(0,"Erreur",e.getInfo(),QMessageBox::Ok);}
 }
 void menuFormation::save()
 {

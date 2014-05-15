@@ -3,6 +3,7 @@
 
 #include "cursus.h"
 #include "UTProfiler.h"
+#include <QDebug>
 
 class formation;
 class UV;
@@ -14,11 +15,11 @@ class visiteur
 {
     QString nom;
     QStringList list;
-    UV** tab;
+    QMap<QString,UV*> listuvs;
     int taille;
 
 public:
-    visiteur(const QString& n, const QStringList& l): nom(n), list(l), tab(0), taille(list.length()) {}
+    visiteur(const QString& n, const QStringList& l): nom(n), list(l), taille(list.length()) {}
     void visitUVmanager();
     void visitCursusManager(cursusManager* cman);
 };

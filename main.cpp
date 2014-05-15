@@ -20,7 +20,7 @@ QApplication app(argc, argv);
 
 /*Debut fenetre;
 fenetre.show();*/
-
+try {
 cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
 DossierManager& d=DossierManager::getInstance();
@@ -29,6 +29,8 @@ DossierManager& d=DossierManager::getInstance();
 
 menuFormation* fenetre =new menuFormation(&m,&u);
 fenetre->show();
+}
+catch(UTProfilerException& e){qDebug()<<e.getInfo(); exit(0);}
 
 //MenuDossier fenetre;
 //fenetre.show();

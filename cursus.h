@@ -58,28 +58,22 @@ class filiere
 {
     QString nom;
     formation* form; //formation à laquelle appartieint la filière
-    UV** uvs; //la liste des uvs appartenant à la filière et donc à la formation à laquelle appartient la filière
-    unsigned int nbUV;
-    unsigned int nbMaxUV;
+    QMap<QString,UV*> uvs; //la liste des uvs appartenant à la filière et donc à la formation à laquelle appartient la filière
 
 public:
-    filiere(const QString& n="", formation* f=0): nom(n), form(f), uvs(0), nbUV(0), nbMaxUV(0) {}
+    filiere(const QString& n="", formation* f=0): nom(n), form(f) {}
     void ajouter_UV(const UV&);
     ~filiere();
 };
 
 class cursusManager // gestionnaire des cursus
 {
-    formation** formations;
-    unsigned int nbFor;
-    unsigned int nbMaxFor;
-    filiere** filieres;
-    unsigned int nbFil;
-    unsigned int nbMaxFil;
+    QMap<QString,formation*> formations;
+    QMap<QString,filiere*> filieres;
 
 public:
-    cursusManager(): formations(0), nbFor(0), nbMaxFor(0), filieres(0), nbFil(0), nbMaxFil(0) {this->chargerCursus();}
-    ~cursusManager() {delete[] formations; delete[] filieres; qDebug()<<"Destruction cursusManager";}
+    cursusManager() {this->chargerCursus();}
+    ~cursusManager() {qDebug()<<"Destruction cursusManager";}
 
     friend struct Handler;
     struct Handler{
@@ -89,24 +83,22 @@ public:
     };
     static Handler handler;
 
-    int getnbFor() const {return nbFor;}
-    int getnbFil() const {return nbFil;}
     formation* trouverForm(const QString &n);
-    formation* getFormation(int index){return formations[index];}
     void ajouterFiliere(const QString& nom, formation* fo);
     void chargerCursus();
     void ajouterFormation(const QString& nom, unsigned int c, unsigned int s);
     void supprimerFormation(const QString& nom);
-    void supprimerFormation(unsigned int index);
     void sauverCursus(QWidget* parent);
     void accept(visiteur* v);
 
+    QMap<QString,formation*>::iterator getQmapIteratorFormbegin() {return formations.begin();}
+    QMap<QString,formation*>::iterator getQmapIteratorFormend() {return formations.end();}
 
     static cursusManager& getInstance();
     static void libererInstance();
 
-    class iterateur<formation>;
-    iterateur<formation>& getIterateurForm();
+    /*class iterateur<formation>;
+    iterateur<formation>& getIterateurForm();*/
 };
 
 
