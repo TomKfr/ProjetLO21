@@ -385,9 +385,9 @@ void ModifFormation::update() {
 
         f->clear();
         cursusManager& m=cursusManager::getInstance();
-        for(iterateur<formation>& it=m.getIterateurForm();!it.isDone();it.next())
+        for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
         {
-            f->addItem(it.courant()->getNom());
+            f->addItem(it.key());
         }
 
 }
