@@ -11,12 +11,15 @@ void visiteur2::visitUVmanager()
     //aller dans l'uv manager pour récupérer un tableau de pointeurs d'uvs correspondant à l'attribut stringlist
     UVManager& uman=UVManager::getInstance();
     tab = new UV*[taille];
-    //tab2= new QString[taille];
+
     for(int i=0;i<taille;i++)
     {
+        qDebug()<<"dans le visiteur";
+        qDebug()<<tabRes[i];
         UV& newuv=uman.getUV(list.first());
         tab[i]=&newuv;
         list.removeFirst();
+
     }
 }
 
@@ -27,7 +30,7 @@ void visiteur2::visitDossierManager(DossierManager* man)
     for(int i=0;i<taille;i++)
     {
         dos->ajouterUV(tab[i]);
-        //dos->ajouterResultat(tab2[i]);
+        dos->ajouterResultat(tabRes[i]);
     }
     qDebug()<<"UVs récupérées !";
 }

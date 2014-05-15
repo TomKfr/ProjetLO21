@@ -5,7 +5,6 @@
 #include<sstream>
 
 
-
 MenuDossier::MenuDossier() {
 
     this->setWindowTitle(QString("Opération choisie sur les dossiers ?"));
@@ -32,8 +31,8 @@ MenuDossier::MenuDossier() {
     update();
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
-    //QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
-    //QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
+    QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
+    QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
     QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
     QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
 
@@ -42,7 +41,40 @@ MenuDossier::MenuDossier() {
 void MenuDossier::ajout() {
     DossierAjout * fenetre= new DossierAjout(*dman,this);
     fenetre->show();
-}//OK
+}
+
+void MenuDossier::modif() {
+    bool ok;
+    QString n1=dossiers->currentText();
+    unsigned int n2=n1.toInt(&ok);
+
+    Dossier* dos=dman->trouverDossier(n2);
+    ModifierDossier * fenetre= new ModifierDossier(*dman,dos);
+    fenetre->show();
+}
+
+void MenuDossier::suppression() {
+    bool ok;
+
+    QString n1=dossiers->currentText();
+    unsigned int n2=n1.toInt(&ok);
+    supDossier(n2, *dman);
+
+    update();
+
+}
+
+void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
+    Dossier* dos=dm.trouverDossier(num);
+
+    if (dos==0) {
+        throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
+    }else{
+    dm.removeDossier(dos);
+    Dossier* dos=dm.trouverDossier(num);
+    }
+
+}
 
 
 
@@ -50,12 +82,12 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
-    numLabel=new QLabel("num", this);
-    nomLabel=new QLabel("nom", this);
-    prenomLabel=new QLabel("prenom", this);
-    formationLabel=new QLabel("formation", this);
-    SelectUV= new QPushButton("Remplir la liste des UVs");
-    sauver=new QPushButton("Sauver", this);
+    numLabel=new QLabel("numero de dossier", this);
+    nomLabel=new QLabel("nom de l'etudiant", this);
+    prenomLabel=new QLabel("prenom de l'etudiant", this);
+    formationLabel=new QLabel("formation suivie", this);
+    SelectUV= new QPushButton("2 - Remplir la liste des UVs");
+    sauver=new QPushButton("1 - Sauver", this);
 
     num= new QLineEdit("", this);
     nom= new QLineEdit("", this);
@@ -86,23 +118,19 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
-    couche->addLayout(coucheH3);
     couche->addLayout(coucheH4);
+    couche->addLayout(coucheH3);
 
     setLayout(couche);
-
-    //bouton desactive par defaut
-    //sauver->setEnabled(false);
 
     QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
 
+
    update();
 
-   //pour que ça sactive que si modif :
-   //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
 
 void DossierAjout::slot_ajoutDossier() {
@@ -114,9 +142,9 @@ void DossierAjout::slot_ajoutDossier() {
     const QString& fn=prenom->text();
     const QString& F=f->currentText();
 
-    M.ajouterDossier(n, name , fn, F); //DABORD LES AJOUTS SIMPLES. PUIS ON GERE LES UVS
+    M.ajouterDossier(n, name , fn, F);
 
-    //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
+
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
     parent->update();
 }
@@ -124,17 +152,14 @@ void DossierAjout::slot_ajoutDossier() {
 
 void DossierAjout::slot_selectUV() {
     bool ok;
-    //ATTENTION ! ajouter le dossier avant !!
     unsigned int n=num->text().toInt(&ok);
     Dossier* d=M.trouverDossier(n);
 
-    qDebug()<<"ad du dossier avant selectuv"<<d; // CEST BON
-
-    AjoutUV* fenetre= new AjoutUV(this, d);
+    AjoutUV* fenetre= new AjoutUV(d, this);
     fenetre->show();
 }
 
-AjoutUV::AjoutUV(DossierAjout* dossier, Dossier*d) {
+AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
     DA=dossier;
     dos=d;
 
@@ -177,9 +202,6 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
-
-    qDebug()<<nouvelleUV->getCode(); // OK  A CE NIVEAU
-    qDebug()<<"ajout uv dossier";
     dos->ajouterUV(nouvelleUV);
     dos->ajouterResultat(res);
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
@@ -205,7 +227,6 @@ void MenuDossier::visualiser()
     if(!dman->listempty())
     {
         Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
-        qDebug()<<"envoi du dossier à l'adresse :"<<d;
         if(d!=0)
         {
             visualiserDossier* fen=new visualiserDossier(d);
@@ -217,14 +238,12 @@ void MenuDossier::visualiser()
 
 void MenuDossier::sauvegarder()
 {
-    QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
-    dman->save(chemin);
+    dman->save();
     QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
 }
 
 visualiserDossier::visualiserDossier(Dossier *d)
 {
-    qDebug()<<"réception de l'adresse :"<<d;
     dos=d;
     numdos=new QLabel(dos->getNom(),this);
     listuv=new QLabel(this);
@@ -235,20 +254,16 @@ visualiserDossier::visualiserDossier(Dossier *d)
     mainbox->addWidget(quit);
     setLayout(mainbox);
     QString uvs="";
-    for(iterateur<UV>& it=dos->getIterateurUV();!it.isDone();it.next())
+
+     for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin();it!=dos->getQmapIteratorUVend(); it++)
     {
-        uvs+=it.courant()->getCode()+"\n";
+        uvs+=it.key()+"\n";
     }
     listuv->setText(uvs);
 
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
 }
 
-
-
-
-
-//OSEF de cette partie ça marche bien :
 void DossierAjout::update()
 {
     f->clear();
@@ -273,6 +288,197 @@ void AjoutUV::update()
 void AjoutUV::end_listeUV() {
     this->close();
 }
+
+ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d) : M(dm), dos(d)
+{
+    this->setWindowTitle(QString("Modification d'un dossier"));
+
+    unsigned int n1=d->getNumero();
+   QString n2=QString::number(n1);
+
+
+    const QString& name=d->getNom();
+    const QString& pn=d->getPrenom();
+    const QString& forma=d->getFormation();
+
+    num=new QLineEdit(n2, this);
+    numLabel=new QLabel("numero de dossier :", this);
+    nom=new QLineEdit(name, this);
+    nomLabel=new QLabel("nom de l'etudiant : ", this);
+    prenom=new QLineEdit(pn, this);
+    prenomLabel= new QLabel("prenom de l'etudiant : ", this);;
+
+    formationLabel=new QLabel("formation suivie : "+forma, this);
+
+    modifUV=new QPushButton("modifier les UVs de ce dossier", this);
+    modifFormation=new QPushButton("modifier la formation de l'etudiant", this);
+    sauver=new QPushButton("Modification terminee", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(numLabel);
+    coucheH1->addWidget(num);
+    coucheH1->addWidget(nomLabel);
+    coucheH1->addWidget(nom);
+    coucheH1->addWidget(prenomLabel);
+    coucheH1->addWidget(prenom);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(formationLabel);
+
+    coucheH3=new QHBoxLayout;
+    coucheH3->addWidget(modifUV);
+    coucheH3->addWidget(modifFormation);
+    coucheH3->addWidget(sauver);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    setLayout(couche);
+
+    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_finModifDossier()));
+    QObject::connect(modifUV, SIGNAL(clicked()), this, SLOT(slot_modifUV()));
+    QObject::connect(modifFormation, SIGNAL(clicked()), this, SLOT(slot_modifFormation()));
+
+
+};
+
+
+void ModifierDossier::slot_modifFormation() {
+
+    ModifFormation * fenetre= new ModifFormation(dos);
+    fenetre->show();
+}
+
+void ModifFormation::enregistrer_formation() {
+      dossier->setFormation(f->currentText());
+      QMessageBox::information(this, "sauvegarde", "Formation enregistree");
+      this->close();
+}
+
+ModifFormation ::ModifFormation(Dossier * d)
+{
+    this->setWindowTitle(QString("Modification de la formation de l'etudiant"));
+    dossier=d;
+    formationLabel=new QLabel("Choisissez une formation", this);
+    f= new QComboBox;
+    update();
+    valider=new QPushButton("Valider", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(formationLabel);
+    coucheH1->addWidget(f);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(valider);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+
+    setLayout(couche);
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer_formation()));
+
+}
+
+void ModifFormation::update() {
+
+        f->clear();
+        cursusManager& m=cursusManager::getInstance();
+        for(iterateur<formation>& it=m.getIterateurForm();!it.isDone();it.next())
+        {
+            f->addItem(it.courant()->getNom());
+        }
+
+}
+
+void ModifierDossier::slot_finModifDossier() {
+    this->close();
+}
+
+ModifUV::ModifUV(Dossier* d) : dos(d)
+{
+    this->setWindowTitle(QString("Que souhaitez-vous faire ?"));
+    ajouter=new QPushButton("Ajouter une UV", this);
+    supprimer=new QPushButton("Supprimer une UV", this);
+    fin=new QPushButton("Fin", this);
+    coucheH1=new QHBoxLayout;
+
+    coucheH1->addWidget(ajouter);
+    coucheH1->addWidget(supprimer);
+    coucheH1->addWidget(fin);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    setLayout(couche);
+
+    QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajouterUV()));
+    QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(supprimerUV()));
+    QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finUV()));
+
+};
+
+void ModifierDossier::slot_modifUV(){
+    ModifUV * fenetre= new ModifUV(dos);
+    fenetre->show();
+}
+
+void ModifUV::supprimerUV() {
+    SuppressionUV * fenetre= new SuppressionUV(dos);
+    fenetre->show();
+}
+void ModifUV::ajouterUV() {
+    AjoutUV * fenetre= new AjoutUV(dos);
+    fenetre->show();
+}
+void ModifUV::finUV() {
+    this->close();
+}
+SuppressionUV::SuppressionUV(Dossier* d) : dos(d)
+{
+    liste=new QComboBox;
+    update();
+    supprimer=new QPushButton("Supprimer cette UV", this);
+    fin=new QPushButton("Suppressions terminees", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(liste);
+    coucheH1->addWidget(supprimer);
+    coucheH1->addWidget(fin);
+
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    setLayout(couche);
+
+    QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(suppression_une_uv()));
+    QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finSuppression()));
+
+};
+
+void SuppressionUV::finSuppression(){
+
+    this->close();
+}
+
+void SuppressionUV::suppression_une_uv(){
+
+    const QString& uv=liste->currentText();
+    UVManager& uvm=UVManager::getInstance();
+    UV* u=uvm.trouverUV(uv);
+
+    dos->supprimerUV(u);
+}
+
+void SuppressionUV::update() {
+    liste->clear();
+    UVManager& m=UVManager::getInstance();
+    for(iterateur<UV>& it=m.getIterateurForm();!it.isDone();it.next())
+    {
+        liste->addItem(it.courant()->getCode());
+    }
+}
+
 
 
 

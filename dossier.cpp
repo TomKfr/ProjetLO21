@@ -25,17 +25,23 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
 
         tabDossiers[nbDos]=new Dossier(n, name, firstname, form);
         nbDos++;
-       //DOSSIER BIEN AJOUTE
-
-
     }
 
 }
 
+void DossierManager::removeDossier(Dossier* dsup){
+
+    unsigned int i=0;
+    while (tabDossiers[i]!=dsup) i++;
+    Dossier* tmp ;
+    for (unsigned int j=i; j<nbDos-2; j++) {tmp=tabDossiers[j]; tabDossiers[j]=tabDossiers[j+1]; tabDossiers[j+1]=tmp;}
+    delete tabDossiers[nbDos-1];
+    nbDos--;
+    }
+
 
 void Dossier::ajouterUV(UV* uv) {
-qDebug()<<"ajouterUV";
-    if (nbUV==nbMaxUV){
+   /* if (nbUV==nbMaxUV){
         UV** newtab=new UV*[nbMaxUV+5];
         for(unsigned int i=0; i<nbUV; i++) newtab[i]=listeUV[i];
         nbMaxUV+=5;
@@ -43,9 +49,41 @@ qDebug()<<"ajouterUV";
         listeUV=newtab;
         delete[] old;
     }
-    listeUV[nbUV++]=uv;
+    listeUV[nbUV++]=uv;*/
+    listeUV.insert(uv->getCode(),uv);
 
 }
+
+void Dossier::supprimerUV(UV* uv) {
+/*unsigned int i=0;
+while (listeUV[i]!=uv) i++;
+int limit=nbUV;
+
+limit-=2;
+
+UV* tmp ;
+QString tmp2;
+
+for (int j=i; j<limit; j++) {tmp=listeUV[j]; listeUV[j]=listeUV[j+1]; listeUV[j+1]=tmp;}
+for (int j=i; j<limit; j++) {tmp2=listeResultats[j]; listeResultats[j]=listeResultats[j+1]; listeResultats[j+1]=tmp2;}
+
+listeUV[nbUV-1]=0;//pour pas effacer l'uv si on fait un delete
+nbUV--;
+nbResultats--;*/
+
+
+    if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV du dossier ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
+    {
+        listeUV.erase(listeUV.find(uv->getCode()));
+    }
+
+}
+
+const QMap<QString,UV*>::const_iterator Dossier::trouverUV(const QString &code)
+{
+    return listeUV.find(code);
+}
+
 
 
 
@@ -58,11 +96,11 @@ Dossier* DossierManager::trouverDossier(unsigned int n)const{
 
 
 
-void DossierManager::load(const QString& fichier)
+void DossierManager::load(/*const QString& fichier*/)
 {
-        file=fichier;
+    file=QDir::currentPath()+"/dossiers.xml";
     qDebug()<<"Chargement Dossiers!";
-    QFile f(fichier);
+    QFile f(file);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
     QXmlStreamReader xml(&f);
     while(!xml.atEnd() && !xml.hasError()) {
@@ -96,20 +134,22 @@ void DossierManager::load(const QString& fichier)
                         }
                         if(xml.name() == "uvs")
                         {
+                            unsigned int nbUVs=0;
                             xml.readNext();
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
                             {
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
+                                    nbUVs++;
                                     xml.readNext();
                                     listUV<<xml.text().toString();
                                 }
 
-                                /*if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="result")
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="result")
                                 {
                                     xml.readNext();
                                     listResult<<xml.text().toString();
-                                }*/
+                                }
 
                                 xml.readNext();
                             }
@@ -118,10 +158,10 @@ void DossierManager::load(const QString& fichier)
                     xml.readNext();
                 }
                 ajouterDossier(numero,nom, prenom, formation);//ON FAIT LES TYPES SIMPLES A CE NIVEAU
-                //PUIS ON GERE LA LISTE
+                //PUIS ON GERE LES LISTES
                 if(!listUV.empty())
                 {
-                    visiteur2* v=new visiteur2(numero,listUV);
+                    visiteur2* v=new visiteur2(numero,listUV, listResult);
                     v->visitUVmanager();
                     this->accept(v);
                 }
@@ -135,10 +175,11 @@ void DossierManager::load(const QString& fichier)
     qDebug()<<"Chargement Dossiers termine!";
 }
 
-void DossierManager::save(const QString& f){
+void DossierManager::save(){
+
     qDebug() << "Save Dossier";
-    file=f;
-    QFile newfile( file);
+
+    QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
      QXmlStreamWriter stream(&newfile);
      stream.setAutoFormatting(true);
@@ -162,7 +203,15 @@ void DossierManager::save(const QString& f){
          qDebug()<<listeRes[0];
 
          stream.writeStartElement("uvs");
-         for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
+
+         for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
+         {
+             stream.writeTextElement("uv",it.key());
+             //ecriture du resultat correspondant
+             stream.writeTextElement("result",listeRes[j]);
+             j++;
+         }
+         /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
          {
              qDebug()<<"ecriture de l'uv: "<<it.courant()->getCode(); //CHAINE VIDE
              stream.writeTextElement("uv",it.courant()->getCode());
@@ -170,7 +219,7 @@ void DossierManager::save(const QString& f){
              stream.writeTextElement("result",listeRes[j]);
              j++;
 
-         }
+         }*/
          stream.writeEndElement();
          stream.writeEndElement();
      }
@@ -182,7 +231,6 @@ void DossierManager::save(const QString& f){
 
 DossierManager::~DossierManager(){
     qDebug() << "Destructeur DossiersManager";
-    //if (file!="") save(file);
     for(unsigned int i=0; i<nbDos; i++) delete tabDossiers[i];
     delete[] tabDossiers;
 }
@@ -192,20 +240,18 @@ DossierManager::Handler DossierManager::handler=Handler();
 DossierManager& DossierManager::getInstance() {
     if (!handler.instance) handler.instance = new DossierManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
     return *handler.instance;
-} //FAIRE UN TEMPLATE POUR CES FONCTIONS
+}
 
 void DossierManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-
+/*
 iterateur<UV>& Dossier::getIterateurUV()
 {
-    qDebug()<<"creation de literateur";
-    qDebug()<<"nbuv : "<<nbUV;
     iterateur<UV>* it=new iterateur<UV>(listeUV,nbUV);
     return *it;
-}
+}*/
 
 void DossierManager::accept(visiteur2* v) {
     v->visitDossierManager(this);
@@ -216,10 +262,9 @@ iterateur<Dossier>& DossierManager::getIterateurDos()
     iterateur<Dossier>* it=new iterateur<Dossier>(tabDossiers,nbDos);
     return *it;
 }
-//coucou
+
 void Dossier::ajouterResultat(const QString & res){
 
-    qDebug()<<"ajouterResultat";
         if (nbResultats==nbMaxResultats){
             qDebug()<<"1";
             QString * newtab=new QString[nbMaxResultats+5];
@@ -231,12 +276,9 @@ void Dossier::ajouterResultat(const QString & res){
             qDebug()<<"4";
             listeResultats=newtab;
             qDebug()<<"5";
-            delete[] old;
+            //delete[] old;
              qDebug()<<"6";
         }
-         qDebug()<<"avant ecriture res";
         listeResultats[nbResultats++]=res;
-
-        qDebug()<<"fin de ajouter resultat";
 
 }

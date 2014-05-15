@@ -25,15 +25,15 @@ cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
 DossierManager& d=DossierManager::getInstance();
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
-//d.load(chemin);
+//d.load(/*chemin*/);
 
 menuFormation* fenetre =new menuFormation(&m,&u);
 fenetre->show();
 }
 catch(UTProfilerException& e){qDebug()<<e.getInfo(); exit(0);}
 
-//MenuDossier fenetre;
-//fenetre.show();
+MenuDossier fenetre;
+fenetre.show();
 
 return app.exec();
 }
