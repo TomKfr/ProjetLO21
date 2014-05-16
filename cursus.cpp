@@ -14,6 +14,19 @@ cursusManager::Handler cursusManager::handler=Handler();
 
 class visiteur;
 
+// ///////////////////////////////////////////////////////////////////
+void abstract_cursus_item::ajouter_UV(UV *newuv) {uvs.insert(newuv->getCode(),newuv);}
+void abstract_cursus_item::supprimer_UV(const QString &code)
+{
+    if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
+    {
+        uvs.erase(uvs.find(code));
+    }
+}
+
+// ///////////////////////////////////////////////////////////////////
+
+
 void formation::ajouter_UV(UV* uv)
 {
     uvs.insert(uv->getCode(),uv);

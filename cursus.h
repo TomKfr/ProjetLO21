@@ -24,7 +24,23 @@ class UVManager;
 
 class abstract_cursus_item
 {
+    QString nom;
+    unsigned int nbCredits;
+    QMap<QString,UV*> uvs;
 
+    friend class cursusManager;
+    abstract_cursus_item(const QString& n, unsigned int c): nom(n), nbCredits(c) {}
+    virtual ~abstract_cursus_item() {}
+
+public:
+    void ajouter_UV(UV*);
+    virtual void supprimer_UV(const QString& code);
+    QString getNom() const {return nom;}
+    unsigned int getNbCred() const {return nbCredits;}
+    virtual void modif(const QString& n, unsigned int c)=0;
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
+    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
+    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
 };
 
 class formation
