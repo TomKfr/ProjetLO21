@@ -20,36 +20,46 @@ void abstract_cursus_item::supprimer_UV(const QString &code)
 {
     if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
-        uvs.erase(uvs.find(code));
+        uvs.remove(code);
     }
 }
-
+const QMap<QString,UV*>::const_iterator abstract_cursus_item::trouverUV(const QString &code){return uvs.constFind(code);}
 // ///////////////////////////////////////////////////////////////////
-
-
-void formation::ajouter_UV(UV* uv)
-{
-    uvs.insert(uv->getCode(),uv);
-}
 
 void formation::supprimer_UV(const QString& code)
 {
     if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" de la formation "+nom+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
-        uvs.erase(uvs.find(code));
+        uvs.remove(code);
     }
 }
 
-const QMap<QString,UV*>::const_iterator formation::trouverUV(const QString &code)
+void formation::modif(const QString &n, unsigned int c, unsigned int s)
 {
-    return uvs.find(code);
+    this->nom=n;
+    this->nbCredits=c;
+    nbSemestres=s;
 }
 
-/*iterateur<UV>& formation::getIterateurUV()
+// ///////////////////////////////////////////////////////////////////
+void filiere::supprimer_UV(const QString &code)
 {
-    iterateur<UV>* it=new iterateur<UV>(uvs,nbUV);
-    return *it;
-}*/
+    if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
+    {
+        uvs.remove(code);
+    }
+}
+
+void filiere::modif(const QString &n, unsigned int c, formation* f)
+{
+    this->nom=n;
+    this->nbCredits=c;
+    form=f;
+}
+
+// ///////////////////////////////////////////////////////////////////
+
+
 
 cursusManager& cursusManager::getInstance() {
     if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
@@ -273,13 +283,6 @@ modifFormation::modifFormation(cursusManager* m, formation* f)
     this->setLayout(mainbox);
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(modif()));
-}
-
-void formation::modif(const QString &n, unsigned int c, unsigned int s)
-{
-    nom=n;
-    nbCredits=c;
-    nbSemestres=s;
 }
 
 void modifFormation::modif()
