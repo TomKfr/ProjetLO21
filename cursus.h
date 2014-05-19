@@ -24,46 +24,51 @@ class UVManager;
 
 class abstract_cursus_item
 {
+    friend class cursusManager;
+protected:
+    QString nom;
+    unsigned int nbCredits;
+    QMap<QString,UV*> uvs;
 
+    abstract_cursus_item(const QString& n, unsigned int c): nom(n), nbCredits(c) {}
+    virtual ~abstract_cursus_item() {}
+
+public:
+    void ajouter_UV(UV*);
+    virtual void supprimer_UV(const QString& code);
+    QString getNom() const {return nom;}
+    unsigned int getNbCred() const {return nbCredits;}
+    virtual void modif(const QString& n, unsigned int c, unsigned int s)=0;
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
+    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
+    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
 };
 
-class formation
+class formation : public abstract_cursus_item
 {
     friend class cursusManager;
 
-    QString nom;
-    unsigned int nbCredits; //Le nombre de credits à obtenir pour valider la formation
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
-    QMap<QString,UV*> uvs; //la liste des uvs appartenant à la formation mais à aucune de ses filières
-
-    formation(const QString& n, unsigned int c, unsigned int s): nom(n), nbCredits(c), nbSemestres(s) {}
+    formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
+    ~formation() {}
 
 public:
-    void ajouter_UV(UV*);//template method ??
     void supprimer_UV(const QString &code);
-    ~formation() {}
-    QString getNom() const {return nom;}
-    unsigned int getNbCred() const {return nbCredits;}
     unsigned int getNbSem() const {return nbSemestres;}
-    void modif(const QString& n, unsigned int c, unsigned int s);
-    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
-
-    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
-    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
-    /*class iterateur<UV>;
-    iterateur<UV>& getIterateurUV();*/
+    virtual void modif(const QString& n, unsigned int c, unsigned int s);
 };
 
-class filiere
+class filiere : public abstract_cursus_item
 {
-    QString nom;
+    friend class cursusManager;
+
     formation* form; //formation à laquelle appartieint la filière
-    QMap<QString,UV*> uvs; //la liste des uvs appartenant à la filière et donc à la formation à laquelle appartient la filière
+    filiere(const QString& n, unsigned int c, formation* f=0): abstract_cursus_item(n,c), form(f) {}
+    ~filiere();
 
 public:
-    filiere(const QString& n="", formation* f=0): nom(n), form(f) {}
-    void ajouter_UV(const UV&);
-    ~filiere();
+    void supprimer_UV(const QString &code);
+    virtual void modif(const QString& n, unsigned int c, formation* f);
 };
 
 class cursusManager // gestionnaire des cursus
