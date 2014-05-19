@@ -3,17 +3,20 @@
 #include<QDebug>
 
 Debut::Debut() {
+    qDebug()<<"coucou1";
 
-    this->setWindowTitle(QString("Choix de début"));
+    this->setWindowTitle(QString("Operation choisie sur les UVs ?"));
 
-    ajouter=new QPushButton("Ajouter", this);
-    modifier=new QPushButton("Modifier", this);
-    sup=new QPushButton("Supprimer", this);
+    ajouter=new QPushButton("Ajouter une UV", this);
+    modifier=new QPushButton("Afficher/Modifier des informations sur une UV", this);
+    sup=new QPushButton("Supprimer une UV", this);
+    terminer=new QPushButton("Opérations sur les UVs terminées", this);
 
     coucheH=new QHBoxLayout;
     coucheH->addWidget(sup);
     coucheH->addWidget(ajouter);
     coucheH->addWidget(modifier);
+    coucheH->addWidget(terminer);
 
     coucheV=new QVBoxLayout;
     coucheV->addLayout(coucheH);
@@ -22,6 +25,9 @@ Debut::Debut() {
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
     QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
+    QObject::connect(terminer, SIGNAL(clicked()), this, SLOT(fin()));
+
+    qDebug()<<"coucou";
 
 }
 
@@ -35,6 +41,9 @@ void Debut::suppression() { //lancement de la fenetre de suppression pour rentre
 
     UVSuppression * fenetre = new UVSuppression(m);
     fenetre->show();
+}
+void Debut::fin() {
+    this->close();
 }
 
 void Debut::modif() {

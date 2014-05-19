@@ -30,10 +30,10 @@ MenuDebut::MenuDebut() {
 
     texte = new QLabel("Bienvenue ! Sur quel partie du projet souhaitez-vous travailler ?", this);
     op_UV=new QPushButton("Les UVs", this);
-    op_Dossiers=new QPushButton("Les dossiers etudiants", this);
+    op_Dossiers=new QPushButton("Les dossiers étudiants", this);
     op_Formations=new QPushButton("Les formations", this);
-    op_Filieres= new QPushButton("Les filieres", this);
-    no_op= new QPushButton("Aucune : je souhaite sortir", this);
+    op_Filieres= new QPushButton("Les filières", this);
+    no_op= new QPushButton("Terminer", this);
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(texte);
@@ -74,9 +74,10 @@ MenuDebut::MenuDebut() {
 }
 
 void MenuDebut::lancer_UV() {
-
-    Debut fenetre;
-    fenetre.show();
+qDebug()<<"lancer uv";
+    Debut * fenetre1 = new Debut;
+    qDebug()<<"apres constructeur";
+    fenetre1->show();
 
 }
 
@@ -84,17 +85,17 @@ void MenuDebut::lancer_UV() {
 void MenuDebut::lancer_Dossiers() {
     DossierManager& d=DossierManager::getInstance();
     d.load();
-    MenuDossier fenetre;
-    fenetre.show();
+    MenuDossier * fenetre= new MenuDossier;
+    fenetre->show();
 
 }
 void MenuDebut::lancer_Formations() {
 
-   /* cursusManager& m=cursusManager::getInstance();
+   /*cursusManager& m=cursusManager::getInstance();
     UVManager& u=UVManager::getInstance();
 
-    menuFormation* fenetre =new menuFormation(&m,&u);
-    fenetre->show();*/
+    menuFormation* fenetre3 =new menuFormation(&m,&u);
+    fenetre3->show();*/
 }
 void MenuDebut::lancer_Filieres(){//en attente
 }

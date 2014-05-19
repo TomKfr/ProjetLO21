@@ -27,6 +27,7 @@ class Debut : public QWidget {
     QPushButton* modifier;
     QPushButton* sup;
     QPushButton* ajouter;
+    QPushButton * terminer;
     QHBoxLayout* coucheH;
     QVBoxLayout* coucheV;
 
@@ -38,6 +39,7 @@ public slots:
     void ajout();
     void suppression();
     void modif();
+    void fin();
 };
 
 class UVSuppression : public QWidget {
