@@ -10,20 +10,27 @@ MenuDossier::MenuDossier() {
     this->setWindowTitle(QString("Opération choisie sur les dossiers ?"));
     dman=&DossierManager::getInstance();
     dossiers=new QComboBox(this);
-    visu=new QPushButton("Visualiser dossier",this);
+    //visu=new QPushButton("Visualiser dossier",this);
     ajouter=new QPushButton("Ajouter", this);
-    modifier=new QPushButton("Consulter/Modifier des informations", this);
+    modifier=new QPushButton("Consulter/Modifier ce dossier", this);
+    numero=new QLabel("Dossier n° :", this);
     sup=new QPushButton("Supprimer", this);
-    sauver=new QPushButton("sauver",this);
+    sauver=new QPushButton("Sauver les modifications",this);
+    terminer=new QPushButton("Operation sur les dossiers terminee", this);
+
+    coucheH0=new QHBoxLayout;
+    coucheH0->addWidget(numero);
 
     coucheH=new QHBoxLayout;
-    coucheH->addWidget(visu);
+    //coucheH->addWidget(visu);
     coucheH->addWidget(sup);
     coucheH->addWidget(ajouter);
     coucheH->addWidget(modifier);
     coucheH->addWidget(sauver);
+    coucheH->addWidget(terminer);
 
     coucheV=new QVBoxLayout;
+    coucheV->addLayout(coucheH0);
     coucheV->addWidget(dossiers);
     coucheV->addLayout(coucheH);
     setLayout(coucheV);
@@ -33,14 +40,19 @@ MenuDossier::MenuDossier() {
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
     QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
-    QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
+    //QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
     QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
+    QObject::connect(terminer, SIGNAL(clicked()),this, SLOT(fin()));
 
 }
 
 void MenuDossier::ajout() {
     DossierAjout * fenetre= new DossierAjout(*dman,this);
     fenetre->show();
+}
+
+void MenuDossier::fin() {
+    this->close();
 }
 
 void MenuDossier::modif() {
@@ -222,7 +234,7 @@ void MenuDossier::update()
 }
 
 
-void MenuDossier::visualiser()
+/*void MenuDossier::visualiser()
 {
     if(!dman->listempty())
     {
@@ -234,7 +246,7 @@ void MenuDossier::visualiser()
         }
     }
     else QMessageBox::information(this,"erreur","Pas de dossier !",QMessageBox::Ok);
-}
+}*/
 
 void MenuDossier::sauvegarder()
 {
@@ -242,7 +254,7 @@ void MenuDossier::sauvegarder()
     QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
 }
 
-visualiserDossier::visualiserDossier(Dossier *d)
+/*visualiserDossier::visualiserDossier(Dossier *d)
 {
     dos=d;
     numdos=new QLabel(dos->getNom(),this);
@@ -262,7 +274,7 @@ visualiserDossier::visualiserDossier(Dossier *d)
     listuv->setText(uvs);
 
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
-}
+}*/
 
 void DossierAjout::update()
 {

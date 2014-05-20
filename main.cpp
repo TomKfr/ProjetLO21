@@ -1,3 +1,4 @@
+#include"menu.h"
 #include"uvGUI.h"
 #include<QApplication>
 #include<QWidget>
@@ -7,16 +8,21 @@
 #include<QVBoxLayout>
 #include<QString>
 #include<QFileDialog>
+#include <QDebug>
 #include"UTProfiler.h"
 #include "cursus.h"
 #include"dossier.h"
 #include"dossierGUI2.h"
-#include <QDebug>
 #include "cursusGUI.h"
+
 
 
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
+<<<<<<< HEAD
+MenuDebut fenetre;
+fenetre.show();
+=======
 
 /*Debut fenetre;
 fenetre.show();*/
@@ -38,6 +44,8 @@ f->show();
 
 }
 catch(UTProfilerException& e){qDebug()<<e.getInfo(); exit(0);}
+>>>>>>> f85b1c97d71dc8cd6e0f53086e4d3014dff8b897
+
 
 return app.exec();
 }

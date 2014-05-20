@@ -27,13 +27,16 @@
 class MenuDossier : public QWidget {
     Q_OBJECT
     DossierManager* dman;
+    QLabel * numero;
     QComboBox* dossiers;
-    QPushButton* visu;
+    //QPushButton* visu;
     QPushButton* modifier;
     QPushButton* sup;
     QPushButton* sauver;
+    QPushButton* terminer;
     QPushButton* ajouter;
     QHBoxLayout* coucheH;
+    QHBoxLayout* coucheH0;
     QVBoxLayout* coucheV;
 
 
@@ -46,12 +49,13 @@ public slots:
     void suppression();
     void supDossier(unsigned int num, DossierManager& dm);
     void modif();
-    void visualiser();
+    void fin();
+    //void visualiser();
     void sauvegarder();
 };
 
 
-class visualiserDossier : public QWidget
+/*class visualiserDossier : public QWidget
 {
     Q_OBJECT
 
@@ -63,7 +67,7 @@ class visualiserDossier : public QWidget
 
 public:
     visualiserDossier(Dossier* d);
-};
+};*/
 
 class DossierAjout : public QWidget{
     Q_OBJECT

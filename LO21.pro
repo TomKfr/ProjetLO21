@@ -12,7 +12,8 @@ HEADERS += \
     includes.h \
     dossier.h \
     dossierGUI2.h \
-    visiteur2.h
+    visiteur2.h \
+    menu.h
 
 SOURCES += \
     main.cpp \
@@ -23,5 +24,6 @@ SOURCES += \
     visiteur.cpp \
     dossier.cpp \
     dossierGUI2.cpp \
-    visiteur2.cpp
+    visiteur2.cpp \
+    menu.cpp
 
