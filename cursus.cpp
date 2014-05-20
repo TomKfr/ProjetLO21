@@ -96,12 +96,14 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
     else
     {
         QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverFil(oldkey)->uvs);
-        qDebug()<<"copie de list ok";
         supprimerFiliere(oldkey);
         ajouterFiliere(newname,c);
-        qDebug()<<"cr&ation nouvelle ok";
-        trouverForm(newname)->uvs=*list; //Bug ici !!!
-        qDebug()<<"enregistrement ok";
+        filiere* newfil=trouverFil(newname);
+        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
+        {
+            newfil->ajouter_UV(it.value());
+        }
+        delete list;
     }
 }
 void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s)
@@ -109,10 +111,15 @@ void cursusManager::modifFormation(const QString &oldkey, const QString &newname
     if (formations.find(newname)!=formations.end()) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
     else
     {
-        QMap<QString,UV*>& list=trouverForm(oldkey)->uvs;
+        QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
         supprimerFormation(oldkey);
         ajouterFormation(newname,c,s);
-        trouverForm(newname)->uvs=list;
+        formation* newform=trouverForm(newname);
+        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
+        {
+            newform->ajouter_UV(it.value());
+        }
+        delete list;
     }
 }
 
