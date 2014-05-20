@@ -153,6 +153,21 @@ void cursusManager::sauverCursus(QWidget *parent)
             stream.writeEndElement();
         }
         stream.writeEndElement();
+        stream.writeEndDocument();
+        f.close();
+    }
+
+    // ////////////////// Ecriture des filieres
+    fileOut = QDir::currentPath()+ "/filieres.xml";
+    qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
+
+    if(!fileOut.isEmpty())
+    {
+        QFile f(fileOut);
+        if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException("Erreur ouverture fichier xml!");
+        QXmlStreamWriter stream(&f);
+        stream.setAutoFormatting(true);
+        stream.writeStartDocument();
         stream.writeStartElement("filieres");
         for(QMap<QString,filiere*>::iterator fil=filieres.begin();fil!=filieres.end();fil++)
         {
@@ -170,10 +185,9 @@ void cursusManager::sauverCursus(QWidget *parent)
         }
         stream.writeEndElement();
         stream.writeEndDocument();
-
         f.close();
-        QMessageBox::information(parent,"Sauvegarde","Formations sauvegardées", QMessageBox::Ok);
     }
+    QMessageBox::information(parent,"Sauvegarde","Cursus sauvegardés", QMessageBox::Ok);
 }
 
 void cursusManager::chargerCursus()
@@ -227,13 +241,68 @@ void cursusManager::chargerCursus()
                 {
                     visiteur* v=new visiteur(nom,list);
                     v->visitUVmanager();
-                    this->accept(v);
+                    this->accept(v,"form");
                 }
             }
         }
     }
     if(xml.hasError()) {
         throw UTProfilerException("Erreur lecteur fichier formations, parser xml");
+    }
+    xml.clear();
+    // /////////////////////// lectures des filières
+    fileOut = QDir::currentPath()+ "/filieres.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    f.setFileName(fileOut);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier filieres");}
+    xml.setDevice(&f);
+    while(!xml.atEnd() && !xml.hasError()) {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement) {
+            if(xml.name() == "filieres") continue;
+            if(xml.name() == "filiere") {
+                QString nom;
+                unsigned int nbCredits;
+                QStringList list;
+
+                xml.readNext();
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "filiere")) {
+                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
+                        if(xml.name() == "nom") {
+                            xml.readNext(); nom=xml.text().toString();
+                        }
+                        if(xml.name() == "nbcred") {
+                            xml.readNext(); nbCredits=xml.text().toUInt();
+                        }
+                        if(xml.name() == "uvs")
+                        {
+                            xml.readNext();
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
+                            {
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
+                                {
+                                    xml.readNext();
+                                    list<<xml.text().toString();
+                                }
+                                xml.readNext();
+                            }
+                        }
+                    }
+                    xml.readNext();
+                }
+                ajouterFiliere(nom,nbCredits);
+                if(!list.empty())
+                {
+                    visiteur* v=new visiteur(nom,list);
+                    v->visitUVmanager();
+                    this->accept(v,"fil");
+                }
+            }
+        }
+    }
+    if(xml.hasError()) {
+        throw UTProfilerException("Erreur lecteur fichier filieres, parser xml");
     }
     xml.clear();
 }
@@ -244,7 +313,7 @@ void cursusManager::chargerCursus()
     return *it;
 }*/
 
-void cursusManager::accept(visiteur *v) {v->visitCursusManager(this);}
+void cursusManager::accept(visiteur *v,QString type){v->visitCursusManager(this,type);}
 
 
 ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {

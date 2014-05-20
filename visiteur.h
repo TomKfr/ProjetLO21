@@ -10,7 +10,6 @@ class UV;
 class UVManager;
 class cursusManager;
 
-
 class visiteur
 {
     QString nom;
@@ -21,7 +20,7 @@ class visiteur
 public:
     visiteur(const QString& n, const QStringList& l): nom(n), list(l), taille(list.length()) {}
     void visitUVmanager();
-    void visitCursusManager(cursusManager* cman);
+    void visitCursusManager(cursusManager* cman, QString c);
 };
 
 

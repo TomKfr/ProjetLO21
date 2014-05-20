@@ -94,7 +94,7 @@ public:
     void modifFiliere(const QString& oldkey, const QString& newname, unsigned int c);
     void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s);
     void sauverCursus(QWidget* parent);
-    void accept(visiteur* v);
+    void accept(visiteur* v, QString type);
 
     QMap<QString,formation*>::iterator getQmapIteratorFormbegin() {return formations.begin();}
     QMap<QString,formation*>::iterator getQmapIteratorFormend() {return formations.end();}
