@@ -34,27 +34,14 @@ void formation::supprimer_UV(const QString& code)
     }
 }
 
-void formation::modif(const QString &n, unsigned int c, unsigned int s)
-{
-    this->nom=n;
-    this->nbCredits=c;
-    nbSemestres=s;
-}
-
 // ///////////////////////////////////////////////////////////////////
+
 void filiere::supprimer_UV(const QString &code)
 {
-    if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
+    if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" de la filiere "+nom+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
         uvs.remove(code);
     }
-}
-
-void filiere::modif(const QString &n, unsigned int c, formation* f)
-{
-    this->nom=n;
-    this->nbCredits=c;
-    form=f;
 }
 
 // ///////////////////////////////////////////////////////////////////
@@ -70,11 +57,6 @@ void cursusManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-formation* cursusManager::trouverForm(const QString& n)
-{
-    return formations.find(n).value();
-}
-
 void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s)
 {
     if (formations.find(nom)!=formations.end())
@@ -87,9 +69,51 @@ void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigne
     }
 }
 
+void cursusManager::ajouterFiliere(const QString &nom, unsigned int c)
+{
+    if(filieres.find(nom)!=filieres.end())
+    {
+        throw UTProfilerException(QString("erreur, cursusManager, filière ")+nom+QString(" déja existante"));
+    }
+    else
+    {
+        filieres.insert(nom,new filiere(nom,c));
+    }
+}
+
 void cursusManager::supprimerFormation(const QString &nom)
 {
     formations.erase(formations.find(nom));
+}
+void cursusManager::supprimerFiliere(const QString &nom)
+{
+    filieres.erase(filieres.find(nom));
+}
+
+void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, unsigned int c)
+{
+    if(filieres.find(newname)!=filieres.end()) throw UTProfilerException(QString("erreur, cursusManager, filière ")+newname+QString(" déja existante"));
+    else
+    {
+        QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverFil(oldkey)->uvs);
+        qDebug()<<"copie de list ok";
+        supprimerFiliere(oldkey);
+        ajouterFiliere(newname,c);
+        qDebug()<<"cr&ation nouvelle ok";
+        trouverForm(newname)->uvs=*list; //Bug ici !!!
+        qDebug()<<"enregistrement ok";
+    }
+}
+void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s)
+{
+    if (formations.find(newname)!=formations.end()) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
+    else
+    {
+        QMap<QString,UV*>& list=trouverForm(oldkey)->uvs;
+        supprimerFormation(oldkey);
+        ajouterFormation(newname,c,s);
+        trouverForm(newname)->uvs=list;
+    }
 }
 
 void cursusManager::sauverCursus(QWidget *parent)
@@ -115,6 +139,22 @@ void cursusManager::sauverCursus(QWidget *parent)
             stream.writeTextElement("nbsem", cr);
             stream.writeStartElement("uvs");
             for(QMap<QString,UV*>::iterator it=form.value()->getQmapIteratorUVbegin();it!=form.value()->getQmapIteratorUVend(); it++)
+            {
+                stream.writeTextElement("uv",it.key());
+            }
+            stream.writeEndElement();
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
+        stream.writeStartElement("filieres");
+        for(QMap<QString,filiere*>::iterator fil=filieres.begin();fil!=filieres.end();fil++)
+        {
+            stream.writeStartElement("filiere");
+            stream.writeTextElement("nom",fil.key());
+            QString cr; cr.setNum(fil.value()->getNbCred());
+            stream.writeTextElement("nbcred",cr);
+            stream.writeStartElement("uvs");
+            for(QMap<QString,UV*>::iterator it=fil.value()->getQmapIteratorUVbegin();it!=fil.value()->getQmapIteratorUVend(); it++)
             {
                 stream.writeTextElement("uv",it.key());
             }
@@ -235,7 +275,6 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     this->setLayout(mainbox);
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(ajout()));
-    //QObject::connect(valider, SIGNAL(clicked()),parent, SLOT(update()));
 }
 
 void ajoutFormation::ajout()
@@ -245,11 +284,12 @@ void ajoutFormation::ajout()
     parent->update();
     this->close();
 }
-modifFormation::modifFormation(cursusManager* m, formation* f)
+modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
 {
     this->setWindowTitle(QString("Ajout d'une formation"));
     this->setFixedWidth(200);
     man=m;
+    parent=p;
     form=f;
     mainbox=new QVBoxLayout(this);
     hbox1=new QHBoxLayout(this);
@@ -287,8 +327,9 @@ modifFormation::modifFormation(cursusManager* m, formation* f)
 
 void modifFormation::modif()
 {
-    form->modif(nom->text(),credits->value(), semstr->value());
+    man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value());
     QMessageBox::information(this,"Modification","Modification effectuée",QMessageBox::Ok);
+    parent->update();
     this->close();
 }
 

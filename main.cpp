@@ -27,8 +27,11 @@ DossierManager& d=DossierManager::getInstance();
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
 //d.load(chemin);
 
-menuFormation* fenetre =new menuFormation(&m,&u);
-fenetre->show();
+//menuFormation* fenetre =new menuFormation(&m,&u);
+//fenetre->show();
+
+menuFiliere* f=new menuFiliere();
+f->show();
 
 //MenuDossier fenetre;
 //fenetre.show();
