@@ -52,6 +52,111 @@ public slots:
     void save();
 };
 
+class ajoutFormation : public QWidget {
+    Q_OBJECT
+    cursusManager* man;
+    menuFormation* parent;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QLineEdit* nom;
+    QSpinBox* credits;
+    QSpinBox* semstr;
+    QPushButton* valider;
+
+
+public :
+    ajoutFormation(cursusManager *m, menuFormation* p);
+
+public slots:
+    void ajout();
+};
+
+class modifFormation : public QWidget {
+    Q_OBJECT
+    cursusManager* man;
+    menuFormation* parent;
+    formation* form;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QLineEdit* nom;
+    QSpinBox* credits;
+    QSpinBox* semstr;
+    QPushButton* valider;
+
+
+public :
+    modifFormation(cursusManager *m, menuFormation* p, formation* f);
+
+public slots:
+    void modif();
+};
+
+class visualiserFormation : public QWidget
+{
+    Q_OBJECT
+    cursusManager* cman;
+    UVManager* uman;
+    formation* objet;
+    QHBoxLayout* mainbox;
+    QVBoxLayout* vbox1;
+    QVBoxLayout* vbox2;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* form;
+    QLabel* cred;
+    QLabel* semstr;
+    QLabel* lbluvs;
+    QLabel* uvs;
+    QComboBox* supprUV;
+    QPushButton* retour;
+    QPushButton* modif;
+    QPushButton* suppr;
+
+public:
+    visualiserFormation(cursusManager* cmanager, UVManager* umanager, formation* f);
+public slots:
+    void moduvs();
+    void update();
+    void supprimer();
+
+};
+
+
+class selectUVsFormation : public QWidget
+{
+    Q_OBJECT
+    cursusManager* cman;
+    UVManager* uman;
+    formation* objet;
+    visualiserFormation* parent;
+    QVBoxLayout* mainbox;
+    QLabel* label1;
+    QComboBox* choix;
+    QPushButton* retour;
+    QPushButton* ajouter;
+
+public:
+    selectUVsFormation(cursusManager* cm, UVManager* um, formation* f, visualiserFormation* p);
+public slots:
+    void ajouterUV();
+    void update();
+
+};
+
+
+// ////////////////////// fin formations ////////////////////////
+
 class GestionFiliereFormation : public QWidget
 {
     Q_OBJECT

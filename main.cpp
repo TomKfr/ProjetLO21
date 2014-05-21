@@ -15,7 +15,36 @@
 #include"dossierGUI2.h"
 #include "cursusGUI.h"
 
+class menuFormation : public QWidget
+{
+    Q_OBJECT
+    cursusManager* m;
+    UVManager* uvman;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QLabel* titre;
+    QComboBox* select;
+    QPushButton* visualiser;
+    QPushButton* ajouter;
+    QPushButton* modifier;
+    QPushButton* fil;
+    QPushButton* supprimer;
+    QPushButton* quit;
+    QPushButton* sauver;
 
+public:
+    menuFormation();
+
+public slots:
+    void voir();
+    void ajout();
+    void modif();
+    void filir();
+    void suppr();
+    void update();
+    void save();
+};
 
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
