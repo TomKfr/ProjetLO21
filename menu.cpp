@@ -21,8 +21,7 @@
 #include"dossier.h"
 #include"dossierGUI2.h"
 #include"uvGUI.h"
-
-
+#include"cursusGUI.h"
 
 MenuDebut::MenuDebut() {
 
@@ -90,14 +89,10 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-
-   /*cursusManager& m=cursusManager::getInstance();
-    UVManager& u=UVManager::getInstance();
-
-    menuFormation* fenetre3 =new menuFormation(&m,&u);
-    fenetre3->show();*/
+    //menuFormation* fenetre3 =new menuFormation();
+    //fenetre3->show();
 }
-void MenuDebut::lancer_Filieres(){//en attente
+void MenuDebut::lancer_Filieres(){
 }
 void MenuDebut::lancer_rien(){
     this->close();

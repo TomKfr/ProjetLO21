@@ -16,7 +16,6 @@ HEADERS += \
     menu.h
 
 SOURCES += \
-    main.cpp \
     UTProfiler.cpp \
     cursusGUI.cpp \
     uvGUI.cpp \
@@ -25,5 +24,6 @@ SOURCES += \
     dossier.cpp \
     dossierGUI2.cpp \
     visiteur2.cpp \
+    main.cpp \
     menu.cpp
 

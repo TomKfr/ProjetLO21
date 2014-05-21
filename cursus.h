@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "UTProfiler.h"
-#include "cursusGUI.h"
 #include "visiteur.h"
 #include <QString>
 #include <QWidget>
@@ -16,6 +15,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QMap>
+#include "cursusGUI.h"
 
 class UV;
 template<class I> class iterateur;
@@ -43,19 +43,6 @@ public:
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
 };
 
-class formation : public abstract_cursus_item
-{
-    friend class cursusManager;
-
-    unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
-    formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
-    ~formation() {}
-
-public:
-    void supprimer_UV(const QString &code);
-    unsigned int getNbSem() const {return nbSemestres;}
-};
-
 class filiere : public abstract_cursus_item
 {
     friend class cursusManager;
@@ -65,6 +52,23 @@ class filiere : public abstract_cursus_item
 
 public:
     void supprimer_UV(const QString &code);
+};
+
+class formation : public abstract_cursus_item
+{
+    friend class cursusManager;
+
+    unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
+    QMap<QString,filiere*> filieres_associees; // liste des filières associées à cett formation.
+    formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
+    ~formation() {}
+
+public:
+    void supprimer_UV(const QString &code);
+    unsigned int getNbSem() const {return nbSemestres;}
+    void ajouter_filiere(filiere* f);
+    void supprimer_filiere(const QString& nom);
+    const QMap<QString,filiere*>::const_iterator trouver_filiere(const QString& nom);
 };
 
 class cursusManager // gestionnaire des cursus

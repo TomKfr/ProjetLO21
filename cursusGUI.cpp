@@ -3,10 +3,10 @@
 #include "UTProfiler.h"
 #include <QMessageBox>
 
-menuFormation::menuFormation(cursusManager *man, UVManager* u)
+menuFormation::menuFormation()
 {
-    m=man;
-    uvman=u;
+    m=&cursusManager::getInstance();
+    uvman=&UVManager::getInstance();
 
     mainbox=new QVBoxLayout(this);
     hbox1=new QHBoxLayout(this);
@@ -16,6 +16,7 @@ menuFormation::menuFormation(cursusManager *man, UVManager* u)
     visualiser=new QPushButton("Voir les détails",this);
     ajouter=new QPushButton("Ajouter une formation",this);
     modifier=new QPushButton("Modifier",this);
+    fil=new QPushButton("Gérer les filières",this);
     supprimer=new QPushButton("Supprimer",this);
     quit=new QPushButton("Quitter",this);
     sauver=new QPushButton("Sauver",this);
@@ -28,6 +29,7 @@ menuFormation::menuFormation(cursusManager *man, UVManager* u)
     hbox2->addWidget(visualiser);
     hbox2->addWidget(ajouter);
     hbox2->addWidget(modifier);
+    hbox2->addWidget(fil);
     hbox2->addWidget(supprimer);
     hbox2->addWidget(sauver);
     hbox2->addWidget(quit);
@@ -35,6 +37,7 @@ menuFormation::menuFormation(cursusManager *man, UVManager* u)
     QObject::connect(visualiser,SIGNAL(clicked()),this,SLOT(voir()));
     QObject::connect(ajouter,SIGNAL(clicked()),this, SLOT(ajout()));
     QObject::connect(modifier,SIGNAL(clicked()),this, SLOT(modif()));
+    QObject::connect(fil,SIGNAL(clicked()),this,SLOT(filir()));
     QObject::connect(supprimer,SIGNAL(clicked()),this, SLOT(suppr()));
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
     QObject::connect(sauver, SIGNAL(clicked()),this,SLOT(save()));
@@ -69,6 +72,12 @@ void menuFormation::modif()
     fenetre->show();
 }
 
+void menuFormation::filir()
+{
+    GestionFiliereFormation* f=new GestionFiliereFormation(m->trouverForm(select->currentText()));
+    f->show();
+}
+
 void menuFormation::suppr()
 {
     if(QMessageBox::information(this,"Suppression","Voulez-vous supprimer la formation "+select->currentText()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
@@ -82,6 +91,74 @@ void menuFormation::save()
 {
     m->sauverCursus(this);
 }
+// ///////////////////////////////////////////////////////////////////
+GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::getInstance()), cman(cursusManager::getInstance())
+{
+    mainbox=new QVBoxLayout(this);
+    hbox1=new QHBoxLayout(this);
+    vbox1=new QVBoxLayout(this);
+    vbox2=new QVBoxLayout(this);
+    lbl1=new QLabel("Gestion des filières de la formation "+f->getNom(),this);
+    lbl2=new QLabel("Ajouter une filière à la formation:",this);
+    lbl3=new QLabel("Filières déjà incluses dans la formation:\n",this);
+    ajt=new QComboBox(this);
+    suppr=new QComboBox(this);
+    retour=new QPushButton("Retour",this);
+    ajouter=new QPushButton("Ajouter",this);
+    supprimer=new QPushButton("Supprimer",this);
+
+    mainbox->addLayout(hbox1);
+    mainbox->addWidget(lbl1);
+    hbox1->addLayout(vbox1);
+    hbox1->addLayout(vbox2);
+    vbox1->addWidget(lbl2);
+    vbox1->addWidget(ajt);
+    vbox1->addWidget(ajouter);
+    vbox2->addWidget(lbl3);
+    vbox2->addWidget(suppr);
+    vbox2->addWidget(supprimer);
+    mainbox->addWidget(retour);
+
+    update();
+}
+
+void GestionFiliereFormation::ajouterUV()
+{
+    objet->ajouter_filiere(cman.trouverFil(ajt->currentText()));
+    QMessageBox::information(this,"Ajout d'une filière","La filière "+ajt->currentText()+" a été ajoutée à la formation "+objet->getNom());
+    this->update();
+}
+void GestionFiliereFormation::update()
+{
+    ajt->clear();
+    suppr->clear();
+    lbl3->clear();
+    QString txt="";
+    for(QMap<QString,filiere*>::iterator it=cman.getQmapIteratorFilBegin();it!=cman.getQmapIteratorFilEnd();it++)
+    {
+        if(it.key()==objet->trouver_filiere(it.key()).key())
+        {
+            suppr->addItem(it.key());
+            txt+=it.key()+"\n";
+        }
+        else
+        {
+            ajt->addItem(it.key());
+        }
+    }
+        lbl3->setText("Filières déjà incluses dans la formation:\n"+txt);
+}
+void GestionFiliereFormation::supprimerUV()
+{
+    if(QMessageBox::information(this,"Retrait d'une filière","Voulez-vous supprimer la filière "+suppr->currentText()+" de la formation "+objet->getNom()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
+    {
+        objet->supprimer_filiere(suppr->currentText());
+        QMessageBox::information(this,"Retrait d'une filière","Filière retirée !");
+        this->update();
+    }
+}
+
+
 
 // ///////////////////////////////////////////////////////////////////
 menuFiliere::menuFiliere()

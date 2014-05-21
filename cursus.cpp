@@ -34,6 +34,19 @@ void formation::supprimer_UV(const QString& code)
     }
 }
 
+void formation::ajouter_filiere(filiere *f)
+{
+    filieres_associees.insert(f->getNom(),f);
+}
+void formation::supprimer_filiere(const QString &nom)
+{
+    filieres_associees.remove(nom);
+}
+const QMap<QString,filiere*>::const_iterator formation::trouver_filiere(const QString& nom)
+{
+    return filieres_associees.constFind(nom);
+}
+
 // ///////////////////////////////////////////////////////////////////
 
 void filiere::supprimer_UV(const QString &code)

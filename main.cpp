@@ -25,8 +25,8 @@ cursusManager& m=cursusManager::getInstance();
 UVManager& u=UVManager::getInstance();
 DossierManager& d=DossierManager::getInstance();
 
-MenuDebut* fenetre=new MenuDebut();
-fenetre->show();
+//MenuDebut* fenetre=new MenuDebut();
+//fenetre->show();
 
 /*Debut fenetre;
 fenetre.show();*/
@@ -34,8 +34,8 @@ fenetre.show();*/
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
 //d.load(chemin);
 
-//menuFormation* fenetre =new menuFormation(&m,&u);
-//fenetre->show();
+menuFormation* fenetre =new menuFormation();
+fenetre->show();
 
 //menuFiliere* f=new menuFiliere();
 //f->show();

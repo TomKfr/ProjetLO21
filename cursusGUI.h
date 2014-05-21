@@ -17,6 +17,7 @@ class cursusManager;
 class UVManager;
 class UV;
 class filiere;
+class formation;
 template<class I> class iterateur;
 
 
@@ -33,20 +34,50 @@ class menuFormation : public QWidget
     QPushButton* visualiser;
     QPushButton* ajouter;
     QPushButton* modifier;
+    QPushButton* fil;
     QPushButton* supprimer;
     QPushButton* quit;
     QPushButton* sauver;
 
 public:
-    menuFormation(cursusManager* m, UVManager *u);
+    menuFormation();
 
 public slots:
     void voir();
     void ajout();
     void modif();
+    void filir();
     void suppr();
     void update();
     void save();
+};
+
+class GestionFiliereFormation : public QWidget
+{
+    Q_OBJECT
+    UVManager& uman;
+    cursusManager& cman;
+    formation* objet;
+    //menuFiliere* parent;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QVBoxLayout* vbox1;
+    QVBoxLayout* vbox2;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QComboBox* ajt;
+    QComboBox* suppr;
+    QPushButton* retour;
+    QPushButton* ajouter;
+    QPushButton* supprimer;
+
+public:
+    GestionFiliereFormation(formation* f);
+public slots:
+    void ajouterUV();
+    void update();
+    void supprimerUV();
 };
 
 class menuFiliere : public QWidget
@@ -165,38 +196,5 @@ public slots:
     void ajouterUV();
     void update();
 };
-
-/*class menuCursus : public QWidget
-{
-    Q_OBJECT
-    QPushButton* form;
-    QPushButton* fil;
-    QVBoxLayout* mainbox;
-
-public:
-   menuCursus()
-   {
-       mainbox=new QVBoxLayout(this);
-       form=new QPushButton("Formations",this);
-       fil=new QPushButton("Filières",this);
-       mainbox->addWidget(form);
-       QObject::connect(form,SIGNAL(clicked()),this,SLOT(menuformation()));
-       QObject::connect(fil,SIGNAL(clicked()),this,SLOT(menufiliere()));
-   }
-
-public slots:
-   void menuformation()
-   {
-       cursusManager& m=cursusManager::getInstance();
-       UVManager& u=UVManager::getInstance();
-       menuFormation* f1=new menuFormation(&m,&u);
-       f1->show();
-   }
-   void menufiliere()
-   {
-        menuFiliere* f2=new menuFiliere();
-        f2->show();
-   }
-};*/
 
 #endif // MENU_H
