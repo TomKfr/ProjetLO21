@@ -76,6 +76,8 @@ void menuFormation::filir()
 {
     GestionFiliereFormation* f=new GestionFiliereFormation(m->trouverForm(select->currentText()));
     f->show();
+    //menuFiliere* f=new menuFiliere();
+    //f->show();
 }
 
 void menuFormation::suppr()
@@ -303,7 +305,7 @@ void selectUVsFormation::update()
 }
 
 // ///////////////////////////////////////////////////////////////////
-GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::getInstance()), cman(cursusManager::getInstance())
+GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::getInstance()), cman(cursusManager::getInstance()), objet(f)
 {
     mainbox=new QVBoxLayout(this);
     hbox1=new QHBoxLayout(this);
@@ -330,12 +332,16 @@ GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::
     vbox2->addWidget(supprimer);
     mainbox->addWidget(retour);
 
+    QObject::connect(ajouter,SIGNAL(clicked()),this,SLOT(ajouterFiliere()));
+    QObject::connect(supprimer,SIGNAL(clicked()),this,SLOT(supprimerFiliere()));
+    QObject::connect(retour,SIGNAL(clicked()),this,SLOT(close()));
+
     update();
 }
 
-void GestionFiliereFormation::ajouterUV()
+void GestionFiliereFormation::ajouterFiliere()
 {
-    objet->ajouter_filiere(cman.trouverFil(ajt->currentText()));
+    cman.inscrFilForm(objet,ajt->currentText());
     QMessageBox::information(this,"Ajout d'une filière","La filière "+ajt->currentText()+" a été ajoutée à la formation "+objet->getNom());
     this->update();
 }
@@ -345,9 +351,11 @@ void GestionFiliereFormation::update()
     suppr->clear();
     lbl3->clear();
     QString txt="";
+    qDebug()<<"hello1";
     for(QMap<QString,filiere*>::iterator it=cman.getQmapIteratorFilBegin();it!=cman.getQmapIteratorFilEnd();it++)
     {
-        if(it.key()==objet->trouver_filiere(it.key()).key())// PROBLEME ICI !!!!! -> const iterator
+        qDebug()<<"hello2";
+        if(cman.trouverFilForm(objet,it.key()))
         {
             suppr->addItem(it.key());
             txt+=it.key()+"\n";
@@ -357,13 +365,14 @@ void GestionFiliereFormation::update()
             ajt->addItem(it.key());
         }
     }
-        lbl3->setText("Filières déjà incluses dans la formation:\n"+txt);
+    qDebug()<<"hello";
+    lbl3->setText("Filières déjà incluses dans la formation:\n"+txt);
 }
-void GestionFiliereFormation::supprimerUV()
+void GestionFiliereFormation::supprimerFiliere()
 {
     if(QMessageBox::information(this,"Retrait d'une filière","Voulez-vous supprimer la filière "+suppr->currentText()+" de la formation "+objet->getNom()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
-        objet->supprimer_filiere(suppr->currentText());
+        cman.supprFilForm(objet,suppr->currentText());
         QMessageBox::information(this,"Retrait d'une filière","Filière retirée !");
         this->update();
     }

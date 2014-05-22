@@ -176,9 +176,9 @@ class GestionFiliereFormation : public QWidget
 public:
     GestionFiliereFormation(formation* f);
 public slots:
-    void ajouterUV();
+    void ajouterFiliere();
     void update();
-    void supprimerUV();
+    void supprimerFiliere();
 };
 
 class menuFiliere : public QWidget
