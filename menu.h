@@ -1,7 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
 
-
 #include<iostream>
 #include<QWidget>
 #include<QObject>
@@ -20,8 +19,6 @@
 #include<QComboBox>
 #include<QSpinBox>
 #include<QMessageBox>
-#include"UTProfiler.h"
-#include"dossier.h"
 
 
 class MenuDebut : public QWidget{

@@ -1,9 +1,9 @@
 #ifndef VISITEUR_H
 #define VISITEUR_H
 
-#include "cursus.h"
-#include "UTProfiler.h"
-#include <QDebug>
+#include <QString>
+#include <QStringList>
+#include <QMap>
 
 class formation;
 class UV;

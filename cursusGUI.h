@@ -2,8 +2,6 @@
 #define MENU_H
 
 #include <iostream>
-#include "UTProfiler.h"
-#include "cursus.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -18,8 +16,6 @@ class UVManager;
 class UV;
 class filiere;
 class formation;
-template<class I> class iterateur;
-
 
 class menuFormation : public QWidget
 {

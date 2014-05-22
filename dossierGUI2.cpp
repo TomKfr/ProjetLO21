@@ -1,4 +1,5 @@
 #include"dossierGUI2.h"
+#include"cursus.h"
 #include"UTProfiler.h"
 #include"dossier.h"
 #include<QDebug>

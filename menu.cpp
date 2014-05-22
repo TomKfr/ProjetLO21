@@ -1,4 +1,7 @@
-#include"menu.h"
+#include "menu.h"
+#include "cursusGUI.h"
+#include "uvGUI.h"
+#include "dossierGUI2.h"
 #include<iostream>
 #include<QWidget>
 #include<QObject>
@@ -17,11 +20,7 @@
 #include<QComboBox>
 #include<QSpinBox>
 #include<QMessageBox>
-#include"UTProfiler.h"
-#include"dossier.h"
-#include"dossierGUI2.h"
-#include"uvGUI.h"
-#include"cursusGUI.h"
+#include<QDebug>
 
 MenuDebut::MenuDebut() {
 
@@ -73,7 +72,7 @@ MenuDebut::MenuDebut() {
 }
 
 void MenuDebut::lancer_UV() {
-qDebug()<<"lancer uv";
+    qDebug()<<"lancer uv";
     Debut * fenetre1 = new Debut;
     qDebug()<<"apres constructeur";
     fenetre1->show();
@@ -93,6 +92,7 @@ void MenuDebut::lancer_Formations() {
     //fenetre3->show();
 }
 void MenuDebut::lancer_Filieres(){
+
 }
 void MenuDebut::lancer_rien(){
     this->close();

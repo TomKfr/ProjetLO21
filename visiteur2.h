@@ -3,6 +3,7 @@
 
 #include "dossier.h"
 #include "UTProfiler.h"
+#include<QDebug>
 
 class Dossier;
 class UV;

@@ -4,9 +4,6 @@
 #include <QString>
 #include <QTextStream>
 
-#include"cursus.h"
-
-
 using namespace std;
 class formation;
 

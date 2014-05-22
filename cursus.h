@@ -2,8 +2,6 @@
 #define CURSUS_H
 
 #include <iostream>
-#include "UTProfiler.h"
-#include "visiteur.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -15,12 +13,10 @@
 #include <QDebug>
 #include <QStringList>
 #include <QMap>
-#include "cursusGUI.h"
 
 class UV;
-template<class I> class iterateur;
-class menuFormation;
 class UVManager;
+class visiteur;
 
 class abstract_cursus_item
 {

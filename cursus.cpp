@@ -1,4 +1,5 @@
 #include"cursus.h"
+#include"visiteur.h"
 #include"UTProfiler.h"
 #include<QDebug>
 #include <QMessageBox>
