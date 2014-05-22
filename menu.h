@@ -1,12 +1,9 @@
 #ifndef MENU_H
 #define MENU_H
 
-
-#include<iostream>
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
-#include<QApplication>
 #include<QWidget>
 #include<QLineEdit>
 #include<QTextEdit>
@@ -14,14 +11,12 @@
 #include<QString>
 #include<QFileDialog>
 #include<QLabel>
-#include<QCheckBox>
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QComboBox>
 #include<QSpinBox>
 #include<QMessageBox>
-#include"UTProfiler.h"
-#include"dossier.h"
+
 
 
 class MenuDebut : public QWidget{

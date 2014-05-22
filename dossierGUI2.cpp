@@ -400,8 +400,6 @@ void ModifierDossier::slot_finModifDossier() {
     if (oldkey!=newkey) dos->setNumero(newkey);
     if (oldname!=n) dos->setNom(n);
     if (oldfirstname!=p) dos->setPrenom(p);
-
-
     menu->update();
 
     this->close();

@@ -1,11 +1,8 @@
 #include"menu.h"
 #include"cursusGUI.h"
-#include<iostream>
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
-#include<QApplication>
-#include<QWidget>
 #include<QLineEdit>
 #include<QTextEdit>
 #include<QVBoxLayout>
@@ -16,9 +13,6 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QComboBox>
-#include<QSpinBox>
-#include<QMessageBox>
-
 #include"dossierGUI2.h"
 #include"uvGUI.h"
 
@@ -92,11 +86,11 @@ void MenuDebut::lancer_Dossiers() {
 }
 void MenuDebut::lancer_Formations() {
 
-  /* cursusManager& m=cursusManager::getInstance();
+  /*cursusManager& m=cursusManager::getInstance();
     UVManager& u=UVManager::getInstance();
 
     menuFormation* fenetre3 =new menuFormation(&m,&u);
-    fenetre3->show(); */
+    fenetre3->show();*/
 }
 void MenuDebut::lancer_Filieres(){//en attente
 }
