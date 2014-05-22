@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dossiers>
+    <dossier>
+        <numero>5421</numero>
+        <nom>fghjkl</nom>
+        <prenom>hjkl</prenom>
+        <formation>shtroumph</formation>
+        <uvs>
+            <uv>BL01</uv>
+            <result>A</result>
+            <uv>CM13</uv>
+            <result>A</result>
+            <uv>EL01</uv>
+            <result>A</result>
+        </uvs>
+    </dossier>
+    <dossier>
+        <numero>852</numero>
+        <nom>hjkl</nom>
+        <prenom>jkl</prenom>
+        <formation>thomastheboss</formation>
+        <uvs>
+            <uv>BL01</uv>
+            <result>A</result>
+        </uvs>
+    </dossier>
+    <dossier>
+        <numero>321</numero>
+        <nom>clara</nom>
+        <prenom>truc</prenom>
+        <formation>thomastheboss</formation>
+        <uvs>
+            <uv>BL01</uv>
+            <result>A</result>
+        </uvs>
+    </dossier>
+    <dossier>
+        <numero>1</numero>
+        <nom>Dupont</nom>
+        <prenom>Charles</prenom>
+        <formation>thomastheboss</formation>
+        <uvs>
+            <uv>BL01</uv>
+            <result>A</result>
+        </uvs>
+    </dossier>
+</dossiers>

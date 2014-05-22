@@ -405,6 +405,8 @@ void ModifFormation::update() {
 }
 
 void ModifierDossier::slot_finModifDossier() {
+
+
     this->close();
 }
 
