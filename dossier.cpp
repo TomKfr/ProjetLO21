@@ -103,6 +103,7 @@ void DossierManager::load(/*const QString& fichier*/)
     QFile f(file);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
     QXmlStreamReader xml(&f);
+    qDebug()<<"ici";
     while(!xml.atEnd() && !xml.hasError()) {
         QXmlStreamReader::TokenType token = xml.readNext();
         if(token == QXmlStreamReader::StartDocument) continue;

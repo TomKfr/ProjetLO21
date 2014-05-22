@@ -7,8 +7,6 @@
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
 
-try {
-
 MenuDebut* fenetre=new MenuDebut();
 fenetre->show();
 
@@ -26,9 +24,6 @@ fenetre.show();*/
 
 //MenuDossier fenetre;
 //fenetre.show();
-
-}
-catch(UTProfilerException& e){qDebug()<<e.getInfo(); exit(0);}
 
 
 return app.exec();

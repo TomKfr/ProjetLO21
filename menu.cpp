@@ -1,7 +1,5 @@
-#include "menu.h"
-#include "cursusGUI.h"
-#include "uvGUI.h"
-#include "dossierGUI2.h"
+#include"menu.h"
+#include"cursusGUI.h"
 #include<iostream>
 #include<QWidget>
 #include<QObject>
@@ -21,6 +19,10 @@
 #include<QSpinBox>
 #include<QMessageBox>
 #include<QDebug>
+
+#include"dossierGUI2.h"
+#include"uvGUI.h"
+
 
 MenuDebut::MenuDebut() {
 
