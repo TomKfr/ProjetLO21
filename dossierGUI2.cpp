@@ -61,7 +61,7 @@ void MenuDossier::modif() {
     unsigned int n2=n1.toInt(&ok);
 
     Dossier* dos=dman->trouverDossier(n2);
-    ModifierDossier * fenetre= new ModifierDossier(*dman,dos);
+    ModifierDossier * fenetre= new ModifierDossier(*dman,dos, this);
     fenetre->show();
 }
 
@@ -83,7 +83,6 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
         throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
     }else{
     dm.removeDossier(dos);
-    Dossier* dos=dm.trouverDossier(num);
     }
 
 }
@@ -254,27 +253,7 @@ void MenuDossier::sauvegarder()
     QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
 }
 
-/*visualiserDossier::visualiserDossier(Dossier *d)
-{
-    dos=d;
-    numdos=new QLabel(dos->getNom(),this);
-    listuv=new QLabel(this);
-    mainbox=new QHBoxLayout();
-    quit=new QPushButton("fermer",this);
-    mainbox->addWidget(numdos);
-    mainbox->addWidget(listuv);
-    mainbox->addWidget(quit);
-    setLayout(mainbox);
-    QString uvs="";
 
-     for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin();it!=dos->getQmapIteratorUVend(); it++)
-    {
-        uvs+=it.key()+"\n";
-    }
-    listuv->setText(uvs);
-
-    QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
-}*/
 
 void DossierAjout::update()
 {
@@ -301,7 +280,7 @@ void AjoutUV::end_listeUV() {
     this->close();
 }
 
-ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d) : M(dm), dos(d)
+ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * md) : M(dm), dos(d), menu(md)
 {
     this->setWindowTitle(QString("Modification d'un dossier"));
 
@@ -405,10 +384,29 @@ void ModifFormation::update() {
 }
 
 void ModifierDossier::slot_finModifDossier() {
+    bool ok;
 
+    QString n1=num->text();
+    unsigned int newkey=n1.toInt(&ok);
+
+    QString n=nom->text();
+    QString p=prenom->text();
+
+
+    unsigned int oldkey=dos->getNumero();
+    QString oldname=dos->getNom();
+    QString oldfirstname=dos->getPrenom();
+
+    if (oldkey!=newkey) dos->setNumero(newkey);
+    if (oldname!=n) dos->setNom(n);
+    if (oldfirstname!=p) dos->setPrenom(p);
+
+
+    menu->update();
 
     this->close();
 }
+
 
 ModifUV::ModifUV(Dossier* d) : dos(d)
 {

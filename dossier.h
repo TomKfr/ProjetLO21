@@ -27,11 +27,11 @@ class Dossier {
     //UV** listeUV;
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
-    unsigned int nbUV;
-    unsigned int nbMaxUV;
+    //unsigned int nbUV;
+    //unsigned int nbMaxUV;
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbUV(0), nbMaxUV(0), nbResultats(0), nbMaxResultats(0) {}
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbResultats(0), nbMaxResultats(0) {}
     friend class DossierManager;
 
 public :

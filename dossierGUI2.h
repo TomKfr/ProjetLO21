@@ -148,6 +148,7 @@ class ModifierDossier : public QWidget
 
     DossierManager& M;
     Dossier* dos;
+    MenuDossier * menu;
 
     QLineEdit* num;
     QLabel* numLabel;
@@ -168,7 +169,7 @@ class ModifierDossier : public QWidget
 
 
 public:
- ModifierDossier(DossierManager& uvm, Dossier * dos);
+ ModifierDossier(DossierManager& uvm, Dossier * dos, MenuDossier * md);
 
 public slots:
  void slot_modifFormation();
