@@ -20,8 +20,9 @@
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
 
-MenuDebut fenetre;
-fenetre.show();
+
+MenuDebut* fenetre=new MenuDebut();
+fenetre->show();
 
 
 

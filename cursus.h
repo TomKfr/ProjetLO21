@@ -38,7 +38,6 @@ public:
     virtual void supprimer_UV(const QString& code);
     QString getNom() const {return nom;}
     unsigned int getNbCred() const {return nbCredits;}
-    virtual void modif(const QString& n, unsigned int c, unsigned int s)=0;
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
@@ -55,20 +54,17 @@ class formation : public abstract_cursus_item
 public:
     void supprimer_UV(const QString &code);
     unsigned int getNbSem() const {return nbSemestres;}
-    virtual void modif(const QString& n, unsigned int c, unsigned int s);
 };
 
 class filiere : public abstract_cursus_item
 {
     friend class cursusManager;
 
-    formation* form; //formation à laquelle appartieint la filière
-    filiere(const QString& n, unsigned int c, formation* f=0): abstract_cursus_item(n,c), form(f) {}
-    ~filiere();
+    filiere(const QString& n, unsigned int c) : abstract_cursus_item(n,c) {}
+    ~filiere() {}
 
 public:
     void supprimer_UV(const QString &code);
-    virtual void modif(const QString& n, unsigned int c, formation* f);
 };
 
 class cursusManager // gestionnaire des cursus
@@ -88,16 +84,22 @@ public:
     };
     static Handler handler;
 
-    formation* trouverForm(const QString &n);
-    void ajouterFiliere(const QString& nom, formation* fo);
+    formation* trouverForm(const QString &n) {return formations.find(n).value();}
+    filiere* trouverFil(const QString& n) {return filieres.find(n).value();}
+    void ajouterFiliere(const QString& nom, unsigned int c);
     void chargerCursus();
     void ajouterFormation(const QString& nom, unsigned int c, unsigned int s);
     void supprimerFormation(const QString& nom);
+    void supprimerFiliere(const QString& nom);
+    void modifFiliere(const QString& oldkey, const QString& newname, unsigned int c);
+    void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s);
     void sauverCursus(QWidget* parent);
-    void accept(visiteur* v);
+    void accept(visiteur* v, QString type);
 
     QMap<QString,formation*>::iterator getQmapIteratorFormbegin() {return formations.begin();}
     QMap<QString,formation*>::iterator getQmapIteratorFormend() {return formations.end();}
+    QMap<QString,filiere*>::iterator getQmapIteratorFilBegin() {return filieres.begin();}
+    QMap<QString,filiere*>::iterator getQmapIteratorFilEnd() {return filieres.end();}
 
     static cursusManager& getInstance();
     static void libererInstance();
@@ -134,6 +136,7 @@ public slots:
 class modifFormation : public QWidget {
     Q_OBJECT
     cursusManager* man;
+    menuFormation* parent;
     formation* form;
     QVBoxLayout* mainbox;
     QHBoxLayout* hbox1;
@@ -149,7 +152,7 @@ class modifFormation : public QWidget {
 
 
 public :
-    modifFormation(cursusManager *m, formation* f);
+    modifFormation(cursusManager *m, menuFormation* p, formation* f);
 
 public slots:
     void modif();
