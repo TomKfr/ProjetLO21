@@ -18,7 +18,6 @@
 #include<QMessageBox>
 
 
-
 class MenuDebut : public QWidget{
     Q_OBJECT
 

@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include "UTProfiler.h"
-#include"visiteur2.h"
-#include "cursusGUI.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -15,8 +13,8 @@
 #include <QComboBox>
 #include <QDebug>
 
-//Ceci est la dernière version !
 class visiteur2;
+class UV;
 
 class Dossier {
 
@@ -24,7 +22,6 @@ class Dossier {
     QString nom;
     QString prenom;
     QString F;
-    //UV** listeUV;
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
     //unsigned int nbUV;

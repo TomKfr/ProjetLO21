@@ -2,8 +2,6 @@
 #define MENU_H
 
 #include <iostream>
-#include "UTProfiler.h"
-#include "cursus.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -17,8 +15,7 @@ class cursusManager;
 class UVManager;
 class UV;
 class filiere;
-template<class I> class iterateur;
-
+class formation;
 
 class menuFormation : public QWidget
 {
@@ -33,20 +30,155 @@ class menuFormation : public QWidget
     QPushButton* visualiser;
     QPushButton* ajouter;
     QPushButton* modifier;
+    QPushButton* fil;
     QPushButton* supprimer;
     QPushButton* quit;
     QPushButton* sauver;
 
 public:
-    menuFormation(cursusManager* m, UVManager *u);
+    menuFormation();
 
 public slots:
     void voir();
     void ajout();
     void modif();
+    void filir();
     void suppr();
     void update();
     void save();
+};
+
+class ajoutFormation : public QWidget {
+    Q_OBJECT
+    cursusManager* man;
+    menuFormation* parent;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QLineEdit* nom;
+    QSpinBox* credits;
+    QSpinBox* semstr;
+    QPushButton* valider;
+
+
+public :
+    ajoutFormation(cursusManager *m, menuFormation* p);
+
+public slots:
+    void ajout();
+};
+
+class modifFormation : public QWidget {
+    Q_OBJECT
+    cursusManager* man;
+    menuFormation* parent;
+    formation* form;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QLineEdit* nom;
+    QSpinBox* credits;
+    QSpinBox* semstr;
+    QPushButton* valider;
+
+
+public :
+    modifFormation(cursusManager *m, menuFormation* p, formation* f);
+
+public slots:
+    void modif();
+};
+
+class visualiserFormation : public QWidget
+{
+    Q_OBJECT
+    cursusManager* cman;
+    UVManager* uman;
+    formation* objet;
+    QHBoxLayout* mainbox;
+    QVBoxLayout* vbox1;
+    QVBoxLayout* vbox2;
+    QHBoxLayout* hbox1;
+    QHBoxLayout* hbox2;
+    QHBoxLayout* hbox3;
+    QLabel* form;
+    QLabel* cred;
+    QLabel* semstr;
+    QLabel* lbluvs;
+    QLabel* uvs;
+    QComboBox* supprUV;
+    QPushButton* retour;
+    QPushButton* modif;
+    QPushButton* suppr;
+
+public:
+    visualiserFormation(cursusManager* cmanager, UVManager* umanager, formation* f);
+public slots:
+    void moduvs();
+    void update();
+    void supprimer();
+
+};
+
+
+class selectUVsFormation : public QWidget
+{
+    Q_OBJECT
+    cursusManager* cman;
+    UVManager* uman;
+    formation* objet;
+    visualiserFormation* parent;
+    QVBoxLayout* mainbox;
+    QLabel* label1;
+    QComboBox* choix;
+    QPushButton* retour;
+    QPushButton* ajouter;
+
+public:
+    selectUVsFormation(cursusManager* cm, UVManager* um, formation* f, visualiserFormation* p);
+public slots:
+    void ajouterUV();
+    void update();
+
+};
+
+
+// ////////////////////// fin formations ////////////////////////
+
+class GestionFiliereFormation : public QWidget
+{
+    Q_OBJECT
+    UVManager& uman;
+    cursusManager& cman;
+    formation* objet;
+    //menuFiliere* parent;
+    QVBoxLayout* mainbox;
+    QHBoxLayout* hbox1;
+    QVBoxLayout* vbox1;
+    QVBoxLayout* vbox2;
+    QLabel* lbl1;
+    QLabel* lbl2;
+    QLabel* lbl3;
+    QComboBox* ajt;
+    QComboBox* suppr;
+    QPushButton* retour;
+    QPushButton* ajouter;
+    QPushButton* supprimer;
+
+public:
+    GestionFiliereFormation(formation* f);
+public slots:
+    void ajouterUV();
+    void update();
+    void supprimerUV();
 };
 
 class menuFiliere : public QWidget
@@ -165,38 +297,5 @@ public slots:
     void ajouterUV();
     void update();
 };
-
-/*class menuCursus : public QWidget
-{
-    Q_OBJECT
-    QPushButton* form;
-    QPushButton* fil;
-    QVBoxLayout* mainbox;
-
-public:
-   menuCursus()
-   {
-       mainbox=new QVBoxLayout(this);
-       form=new QPushButton("Formations",this);
-       fil=new QPushButton("Filières",this);
-       mainbox->addWidget(form);
-       QObject::connect(form,SIGNAL(clicked()),this,SLOT(menuformation()));
-       QObject::connect(fil,SIGNAL(clicked()),this,SLOT(menufiliere()));
-   }
-
-public slots:
-   void menuformation()
-   {
-       cursusManager& m=cursusManager::getInstance();
-       UVManager& u=UVManager::getInstance();
-       menuFormation* f1=new menuFormation(&m,&u);
-       f1->show();
-   }
-   void menufiliere()
-   {
-        menuFiliere* f2=new menuFiliere();
-        f2->show();
-   }
-};*/
 
 #endif // MENU_H

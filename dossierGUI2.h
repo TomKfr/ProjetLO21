@@ -108,7 +108,6 @@ public slots:
  void slot_ajoutDossier();
  void slot_selectUV();
  void update();
-
 };
 
 

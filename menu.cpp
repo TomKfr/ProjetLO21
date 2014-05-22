@@ -17,8 +17,6 @@
 #include"uvGUI.h"
 
 
-
-
 MenuDebut::MenuDebut() {
 
     this->setWindowTitle(QString("Projet LO21"));
@@ -69,7 +67,7 @@ MenuDebut::MenuDebut() {
 }
 
 void MenuDebut::lancer_UV() {
-qDebug()<<"lancer uv";
+    qDebug()<<"lancer uv";
     Debut * fenetre1 = new Debut;
     qDebug()<<"apres constructeur";
     fenetre1->show();
@@ -85,14 +83,11 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-
-  /*cursusManager& m=cursusManager::getInstance();
-    UVManager& u=UVManager::getInstance();
-
-    menuFormation* fenetre3 =new menuFormation(&m,&u);
-    fenetre3->show();*/
+    //menuFormation* fenetre3 =new menuFormation();
+    //fenetre3->show();
 }
-void MenuDebut::lancer_Filieres(){//en attente
+void MenuDebut::lancer_Filieres(){
+
 }
 void MenuDebut::lancer_rien(){
     this->close();
