@@ -103,7 +103,6 @@ void DossierManager::load(/*const QString& fichier*/)
     QFile f(file);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
     QXmlStreamReader xml(&f);
-    qDebug()<<"ici";
     while(!xml.atEnd() && !xml.hasError()) {
         QXmlStreamReader::TokenType token = xml.readNext();
         if(token == QXmlStreamReader::StartDocument) continue;
@@ -160,9 +159,11 @@ void DossierManager::load(/*const QString& fichier*/)
                 }
                 ajouterDossier(numero,nom, prenom, formation);//ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LES LISTES
+                qDebug()<<listUV;
+                qDebug()<<listResult;
                 if(!listUV.empty())
                 {
-                    visiteur2* v=new visiteur2(numero,listUV, listResult);
+                    visiteur2* v=new visiteur2(numero,listUV,listResult);
                     v->visitUVmanager();
                     this->accept(v);
                 }

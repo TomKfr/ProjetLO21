@@ -1,6 +1,6 @@
-#include"cursusGUI.h"
+//#include"cursusGUI.h"
 #include"menu.h"
-//#include "dossierGUI2.h"
+#include "dossierGUI2.h"
 #include"UTProfiler.h"
 #include<QApplication>
 #include<QDebug>
@@ -11,8 +11,8 @@ try{
 //MenuDebut* fenetre=new MenuDebut();
 //fenetre->show();
 
-    //MenuDossier* dos=new MenuDossier();
-    //dos->show();
+    MenuDossier* dos=new MenuDossier();
+    dos->show();
 
 /*Debut fenetre;
 fenetre.show();*/
@@ -20,8 +20,8 @@ fenetre.show();*/
 //QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
 //d.load(chemin);
 
-menuFormation* fenetre =new menuFormation();
-fenetre->show();
+//menuFormation* fenetre =new menuFormation();
+//fenetre->show();
 
 //menuFiliere* f=new menuFiliere();
 //f->show();
