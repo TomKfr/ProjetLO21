@@ -1,7 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include<iostream>
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
@@ -20,6 +19,8 @@
 #include<QSpinBox>
 #include<QMessageBox>
 
+class cursusManager;
+class UVManager;
 
 class MenuDebut : public QWidget{
     Q_OBJECT

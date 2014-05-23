@@ -1,6 +1,6 @@
 #include"menu.h"
 #include"cursusGUI.h"
-#include<iostream>
+
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
@@ -22,6 +22,7 @@
 
 #include"dossierGUI2.h"
 #include"uvGUI.h"
+#include "dossier.h"
 
 
 MenuDebut::MenuDebut() {
@@ -90,11 +91,10 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-    //menuFormation* fenetre3 =new menuFormation();
-    //fenetre3->show();
+    menuFormation* fenetre3 =new menuFormation();
+    fenetre3->show();
 }
 void MenuDebut::lancer_Filieres(){
-
 }
 void MenuDebut::lancer_rien(){
     this->close();

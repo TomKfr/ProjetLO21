@@ -1,6 +1,6 @@
 #include "UTProfiler.h"
-#include"dossier.h"
-#include"visiteur2.h"
+#include "dossier.h"
+#include "visiteur2.h"
 #include <sstream>
 #include <QFile>
 #include <QTextCodec>

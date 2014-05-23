@@ -1,8 +1,7 @@
 #ifndef DOSSIER_H
 #define DOSSIER_H
 
-#include <iostream>
-#include "UTProfiler.h"
+#include "iterateur.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>

@@ -103,6 +103,14 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
         newfil->uvs=*list;
         delete list;
     }
+    for(QMap<QString,formation*>::iterator it=getQmapIteratorFormbegin();it!=getQmapIteratorFormend();it++)
+    {
+        if(trouverFilForm(it.value(),oldkey))
+        {
+            it.value()->filieresAssoc.remove(oldkey);
+            it.value()->filieresAssoc.insert(newname);
+        }
+    }
 }
 void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s)
 {
