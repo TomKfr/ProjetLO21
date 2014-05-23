@@ -55,8 +55,7 @@ class formation : public abstract_cursus_item
     friend class cursusManager;
 
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
-    //QMap<QString,filiere*> filieres_associees; // liste des filières associées à cett formation.
-    QSet<QString> filieresAssoc;
+    QSet<QString> filieresAssoc;// liste des filières associées à cett formation.
     formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
     ~formation() {}
 

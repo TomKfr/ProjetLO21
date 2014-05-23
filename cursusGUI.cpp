@@ -17,6 +17,7 @@ menuFormation::menuFormation()
     ajouter=new QPushButton("Ajouter une formation",this);
     modifier=new QPushButton("Modifier",this);
     fil=new QPushButton("Gérer les filières",this);
+    ajfil=new QPushButton("Gérer les filières de cette formation",this);
     supprimer=new QPushButton("Supprimer",this);
     quit=new QPushButton("Quitter",this);
     sauver=new QPushButton("Sauver",this);
@@ -30,6 +31,7 @@ menuFormation::menuFormation()
     hbox2->addWidget(ajouter);
     hbox2->addWidget(modifier);
     hbox2->addWidget(fil);
+    hbox2->addWidget(ajfil);
     hbox2->addWidget(supprimer);
     hbox2->addWidget(sauver);
     hbox2->addWidget(quit);
@@ -38,6 +40,7 @@ menuFormation::menuFormation()
     QObject::connect(ajouter,SIGNAL(clicked()),this, SLOT(ajout()));
     QObject::connect(modifier,SIGNAL(clicked()),this, SLOT(modif()));
     QObject::connect(fil,SIGNAL(clicked()),this,SLOT(filir()));
+    QObject::connect(ajfil,SIGNAL(clicked()),this,SLOT(ajfilir()));
     QObject::connect(supprimer,SIGNAL(clicked()),this, SLOT(suppr()));
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
     QObject::connect(sauver, SIGNAL(clicked()),this,SLOT(save()));
@@ -74,10 +77,13 @@ void menuFormation::modif()
 
 void menuFormation::filir()
 {
+    menuFiliere* f=new menuFiliere();
+    f->show();
+}
+void menuFormation::ajfilir()
+{
     GestionFiliereFormation* f=new GestionFiliereFormation(m->trouverForm(select->currentText()));
     f->show();
-    //menuFiliere* f=new menuFiliere();
-    //f->show();
 }
 
 void menuFormation::suppr()
@@ -351,10 +357,8 @@ void GestionFiliereFormation::update()
     suppr->clear();
     lbl3->clear();
     QString txt="";
-    qDebug()<<"hello1";
     for(QMap<QString,filiere*>::iterator it=cman.getQmapIteratorFilBegin();it!=cman.getQmapIteratorFilEnd();it++)
     {
-        qDebug()<<"hello2";
         if(cman.trouverFilForm(objet,it.key()))
         {
             suppr->addItem(it.key());
@@ -365,7 +369,6 @@ void GestionFiliereFormation::update()
             ajt->addItem(it.key());
         }
     }
-    qDebug()<<"hello";
     lbl3->setText("Filières déjà incluses dans la formation:\n"+txt);
 }
 void GestionFiliereFormation::supprimerFiliere()

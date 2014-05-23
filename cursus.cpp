@@ -100,10 +100,7 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
         supprimerFiliere(oldkey);
         ajouterFiliere(newname,c);
         filiere* newfil=trouverFil(newname);
-        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
-        {
-            newfil->ajouter_UV(it.value());
-        }
+        newfil->uvs=*list;
         delete list;
     }
 }
@@ -113,14 +110,14 @@ void cursusManager::modifFormation(const QString &oldkey, const QString &newname
     else
     {
         QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
+        QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
         supprimerFormation(oldkey);
         ajouterFormation(newname,c,s);
         formation* newform=trouverForm(newname);
-        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
-        {
-            newform->ajouter_UV(it.value());
-        }
+        newform->uvs=*list;
         delete list;
+        newform->filieresAssoc=*list2;
+        delete list2;
     }
 }
 
@@ -332,6 +329,13 @@ void cursusManager::chargerCursus()
                     visiteur* v=new visiteur(nom,list);
                     v->visitUVmanager();
                     this->accept(v,"form");
+                }
+                formation* newform=trouverForm(nom);
+                int taille=list2.size();
+                for(int x=0;x<taille;x++)
+                {
+                    inscrFilForm(newform,list2.first());
+                    list2.removeFirst();
                 }
             }
         }
