@@ -71,7 +71,7 @@ public:
 class DossierAjout : public QWidget{
     Q_OBJECT
 
-
+Dossier * dos;
     unsigned int nbUV;
     unsigned int nbMaxUV;
     DossierManager& M;
@@ -91,6 +91,7 @@ class DossierAjout : public QWidget{
     QLabel* Label;
 
     QPushButton* SelectUV;
+    QPushButton* SelectEquivalences;
     QPushButton* sauver;
 
     QVBoxLayout * couche;
@@ -98,9 +99,10 @@ class DossierAjout : public QWidget{
     QHBoxLayout* coucheH2;
     QHBoxLayout* coucheH3;
     QHBoxLayout* coucheH4;
+    QHBoxLayout* coucheH5;
 
 public:
- DossierAjout(DossierManager& uvm, MenuDossier* p);
+ DossierAjout(DossierManager& uvm, MenuDossier* p, Dossier* d);
 
  void ajouter_UV(UV* nouv);
 
@@ -109,6 +111,7 @@ public slots:
  void slot_ajoutDossier();
  void slot_selectUV();
  void update();
+ void select_equivalences();
 };
 
 
@@ -162,6 +165,7 @@ class ModifierDossier : public QWidget
     QPushButton* modifUV;
     QPushButton* sauver;
     QPushButton* modifFormation;
+    //QPushButton* modifEquivalences
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
     QHBoxLayout* coucheH2;
@@ -239,5 +243,32 @@ public :
 public slots :
    void suppression_une_uv();
    void finSuppression();
+};
+
+class AjoutEquivalences : public QWidget
+{
+    Q_OBJECT
+
+    Dossier * dos;
+    QLabel * typeLabel;
+    QComboBox * type ;
+    QLabel * creditsLabel;
+    QLineEdit * credits ;
+    QLabel * descriptionLabel ;
+    QLineEdit * description ;
+    QPushButton * valider ;
+
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
+    QHBoxLayout* coucheH3;
+
+public :
+
+    AjoutEquivalences(Dossier * d) ;
+public slots :
+    void ajouter_equivalence();
+
+
 };
 #endif // DOSSIERGUI_H

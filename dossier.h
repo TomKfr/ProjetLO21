@@ -15,6 +15,16 @@
 class visiteur2;
 class UV;
 
+enum TypeEquivalence {Semestre_a_letranger, Cursus_Anterieur };
+class Equivalences {
+    TypeEquivalence type;
+    unsigned int nb_credits;
+    QString description;
+
+    public :
+    Equivalences(TypeEquivalence t, unsigned int n, QString d) : type(t), nb_credits(n), description(d) {}
+};
+
 class Dossier {
 
     unsigned int numero;
@@ -28,7 +38,9 @@ class Dossier {
     //unsigned int nbMaxUV;
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
+    Equivalences* equivalence1; //equivalence etranger
+    Equivalences* equivalence2; //equivalence cursus
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f), equivalence1(0), equivalence2(0) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
     friend class DossierManager;
 
 public :

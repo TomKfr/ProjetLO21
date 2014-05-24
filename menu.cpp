@@ -77,6 +77,7 @@ void MenuDebut::lancer_UV() {
 
 
 void MenuDebut::lancer_Dossiers() {
+    qDebug()<<"avant le constructeur";
     DossierManager& d=DossierManager::getInstance();
     d.load();
     MenuDossier * fenetre= new MenuDossier;
@@ -84,8 +85,8 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-    menuFormation* fenetre3 =new menuFormation();
-    fenetre3->show();
+    /*menuFormation* fenetre3 =new menuFormation();
+    fenetre3->show();*/
 }
 void MenuDebut::lancer_Filieres(){
 }
