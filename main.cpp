@@ -1,6 +1,6 @@
 //#include"cursusGUI.h"
 #include"menu.h"
-//#include "dossierGUI2.h"
+#include "dossierGUI2.h"
 #include"UTProfiler.h"
 #include<QApplication>
 #include<QDebug>
@@ -8,11 +8,11 @@
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
 try{
-MenuDebut* fenetre=new MenuDebut();
-fenetre->show();
+//MenuDebut* fenetre=new MenuDebut();
+//fenetre->show();
 
-//MenuDossier* dos=new MenuDossier();
-//dos->show();
+MenuDossier* dos=new MenuDossier();
+dos->show();
 
 /*Debut fenetre;
 fenetre.show();*/

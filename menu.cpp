@@ -91,8 +91,8 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-    menuFormation* fenetre3 =new menuFormation();
-    fenetre3->show();
+    //menuFormation* fenetre3 =new menuFormation();
+    //fenetre3->show();
 }
 void MenuDebut::lancer_Filieres(){
 }
