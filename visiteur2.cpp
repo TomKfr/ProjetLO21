@@ -26,12 +26,17 @@ void visiteur2::visitUVmanager()
 void visiteur2::visitDossierManager(DossierManager* man)
 {
     //retrouver le dossier qui vient d'être créée dans le dossier manager.
+    qDebug()<<"visitdossierManager";
     Dossier* dos=man->trouverDossier(num);
+    qDebug()<<"dossier trouvé1";
     for(int i=0;i<taille;i++)
     {
         dos->ajouterUV(tab[i]);
+         qDebug()<<"dossier trouvé3";
         dos->ajouterResultat(tabRes[i]);
+         qDebug()<<"dossier trouvé4";
     }
+     qDebug()<<"dossier trouvé2";
     qDebug()<<"UVs récupérées !";
 }
 

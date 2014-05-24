@@ -9,7 +9,7 @@
 #include <QFileDialog>
 
 
-void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form){
+void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form /*unsigned int ns*/){
     if (trouverDossier(n)) {
         throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+n+QString("d�ja existant"));
     }else{
@@ -23,7 +23,7 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
             delete[] old;
         }
 
-        tabDossiers[nbDos]=new Dossier(n, name, firstname, form);
+        tabDossiers[nbDos]=new Dossier(n, name, firstname, form /*ns*/);
         nbDos++;
     }
 
@@ -113,6 +113,7 @@ void DossierManager::load(/*const QString& fichier*/)
                 QString nom;
                 QString prenom;
                 QString formation;
+                //unsigned int numSemestre;
                 QStringList listUV;
                 QStringList listResult;
 
@@ -132,6 +133,11 @@ void DossierManager::load(/*const QString& fichier*/)
                         if(xml.name() == "formation") {
                             xml.readNext(); formation=xml.text().toString();
                         }
+                        /*if(xml.name() == "numSemestre") {
+
+                            xml.readNext(); numSemestre=xml.text().toString().toUInt();
+
+                        }*/
                         if(xml.name() == "uvs")
                         {
                             unsigned int nbUVs=0;
@@ -157,7 +163,10 @@ void DossierManager::load(/*const QString& fichier*/)
                     }
                     xml.readNext();
                 }
-                ajouterDossier(numero,nom, prenom, formation);//ON FAIT LES TYPES SIMPLES A CE NIVEAU
+                ajouterDossier(numero,nom, prenom, formation/* numSemestre*/);
+
+
+                //ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LES LISTES
                 qDebug()<<listUV;
                 qDebug()<<listResult;
@@ -165,7 +174,9 @@ void DossierManager::load(/*const QString& fichier*/)
                 {
                     visiteur2* v=new visiteur2(numero,listUV,listResult);
                     v->visitUVmanager();
+                    qDebug()<<"visit uv manager : done";
                     this->accept(v);
+                    qDebug()<<"accept : done";
                 }
             }
         }
@@ -192,10 +203,12 @@ void DossierManager::save(){
          /*stream.writeAttribute("automne", (uvs[i]->ouvertureAutomne())?"true":"false");
          stream.writeAttribute("printemps", (uvs[i]->ouverturePrintemps())?"true":"false");*/
          QString n; n.setNum(tabDossiers[i]->getNumero());
+         //QString n2; n2.setNum(tabDossiers[i]->getNumSemestre());
          stream.writeTextElement("numero",n);
          stream.writeTextElement("nom",tabDossiers[i]->getNom());
          stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
          stream.writeTextElement("formation",tabDossiers[i]->getFormation());
+         //stream.writeTextElement("numSemestre",n2);
          qDebug()<<"dans le save avant la liste";
 
          //ecriture des UV
@@ -267,6 +280,13 @@ iterateur<Dossier>& DossierManager::getIterateurDos()
 
 void Dossier::ajouterResultat(const QString & res){
 
+     qDebug()<<"ajouter resultat";
+     qDebug()<<nbResultats;
+     qDebug()<<nbMaxResultats;
+
+     //inversion quelque part
+
+
         if (nbResultats==nbMaxResultats){
             qDebug()<<"1";
             QString * newtab=new QString[nbMaxResultats+5];
@@ -281,6 +301,8 @@ void Dossier::ajouterResultat(const QString & res){
             //delete[] old;
              qDebug()<<"6";
         }
+
+         qDebug()<<"ici";
         listeResultats[nbResultats++]=res;
 
 }

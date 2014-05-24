@@ -4,7 +4,6 @@
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
-#include<QApplication>
 #include<QWidget>
 #include<QLineEdit>
 #include<QTextEdit>
@@ -12,7 +11,6 @@
 #include<QString>
 #include<QFileDialog>
 #include<QLabel>
-#include<QCheckBox>
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QComboBox>

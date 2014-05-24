@@ -15,19 +15,32 @@
 class visiteur2;
 class UV;
 
+enum TypeEquivalence {Semestre_a_letranger, Cursus_Anterieur };
+class Equivalences {
+    TypeEquivalence type;
+    unsigned int nb_credits;
+    QString description;
+
+    public :
+    Equivalences(TypeEquivalence t, unsigned int n, QString d) : type(t), nb_credits(n), description(d) {}
+};
+
 class Dossier {
 
     unsigned int numero;
     QString nom;
     QString prenom;
     QString F;
+    //unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
     //unsigned int nbUV;
     //unsigned int nbMaxUV;
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbResultats(0), nbMaxResultats(0) {}
+    Equivalences* equivalence1; //equivalence etranger
+    Equivalences* equivalence2; //equivalence cursus
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f), equivalence1(0), equivalence2(0) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
     friend class DossierManager;
 
 public :
@@ -35,6 +48,7 @@ public :
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
+    //unsigned int getNumSemestre() const {return nbSemestre;}
     //UV** getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
     void setNumero(unsigned int n) { numero=n; }
@@ -45,6 +59,7 @@ public :
     void setListeResultats(QString* l) { listeResultats=l; }
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
+
     void ajouterResultat(const QString & res);
 
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
@@ -83,7 +98,7 @@ public:
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
 
-    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f);
+    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f /*unsigned int ns*/);
     void removeDossier(Dossier * dos);
 
     void addItem(Dossier* dos);

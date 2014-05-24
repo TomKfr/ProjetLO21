@@ -8,6 +8,7 @@
 
 MenuDossier::MenuDossier() {
 
+    qDebug()<<"constructeur de menudossier";
     this->setWindowTitle(QString("Opération choisie sur les dossiers ?"));
     dman=&DossierManager::getInstance();
     dossiers=new QComboBox(this);
@@ -47,7 +48,13 @@ MenuDossier::MenuDossier() {
 }
 
 void MenuDossier::ajout() {
-    DossierAjout * fenetre= new DossierAjout(*dman,this);
+    bool ok;
+    QString n1=dossiers->currentText();
+    unsigned int n2=n1.toInt(&ok);
+
+    Dossier* dos=dman->trouverDossier(n2);
+
+    DossierAjout * fenetre= new DossierAjout(*dman,this, dos);
     fenetre->show();
 }
 
@@ -62,6 +69,7 @@ void MenuDossier::modif() {
 
     Dossier* dos=dman->trouverDossier(n2);
     ModifierDossier * fenetre= new ModifierDossier(*dman,dos, this);
+    qDebug()<<"juste avant l'ouverture";
     fenetre->show();
 }
 
@@ -97,7 +105,10 @@ void MenuDossier::update()
 }
 
 
-DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
+DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nbUV(0), nbMaxUV(0), M(dm),parent(p), dos(d) {
+    qDebug()<<"ici";
+
+
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
@@ -105,7 +116,9 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     nomLabel=new QLabel("nom de l'etudiant", this);
     prenomLabel=new QLabel("prenom de l'etudiant", this);
     formationLabel=new QLabel("formation suivie", this);
+    //semestreLabel=new QLabel("numero de semestre actuel", this);
     SelectUV= new QPushButton("2 - Remplir la liste des UVs");
+    SelectEquivalences=new QPushButton("3 - Saisir des equivalences");
     sauver=new QPushButton("1 - Sauver", this);
 
     num= new QLineEdit("", this);
@@ -113,6 +126,10 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     prenom= new QLineEdit("", this);
 
     f=new QComboBox(this);
+    /*semestre=new QSpinBox(this);
+    semestre->setRange(1,8);
+    semestre->setValue(1);*/
+
 
     //on cree plusieurs couches horizontales qu'on superpose ensuite en une couche veerticale
     coucheH1=new QHBoxLayout;
@@ -126,6 +143,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(formationLabel);
     coucheH2->addWidget(f);
+    /*coucheH2->addWidget(semestreLabel);
+    coucheH2->addWidget(semestre);*/
 
     coucheH3=new QHBoxLayout;
     coucheH3->addWidget(SelectUV);
@@ -133,35 +152,49 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     coucheH4=new QHBoxLayout;
     coucheH4->addWidget(sauver);
 
+    coucheH5=new QHBoxLayout;
+    coucheH5->addWidget(SelectEquivalences);
+
     couche=new QVBoxLayout;
 
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
     couche->addLayout(coucheH4);
     couche->addLayout(coucheH3);
+    couche->addLayout(coucheH5);
 
     setLayout(couche);
 
+    qDebug()<<"iciii dans dossier ajout avant cliquer";
+
     QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
-
+qDebug()<<"iciii dans dossier ajout avant cliquer2";
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
+   qDebug()<<"iciii dans dossier ajout avant cliquer3";
    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
+   qDebug()<<"iciii dans dossier ajout avant cliquer4";
+   QObject::connect(SelectEquivalences, SIGNAL(clicked()), this, SLOT(select_equivalences()));
 
 
-   update();
+   //update();
+   qDebug()<<"iciii dans dossier ajout avant cliquer5";
 
 }
 
 void DossierAjout::slot_ajoutDossier() {
 
     bool ok;
-
     unsigned int n=num->text().toInt(&ok);
+    qDebug()<<"avant ajout";
+    //unsigned int ns=semestre->value();
     const QString& name=nom->text();
     const QString& fn=prenom->text();
     const QString& F=f->currentText();
 
-    M.ajouterDossier(n, name , fn, F);
+
+    M.ajouterDossier(n, name , fn, F /*ns*/);
+
+    qDebug()<<"apres ajout";
 
 
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
@@ -218,11 +251,13 @@ AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
 
 void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
 {
+    qDebug()<<"uv ajoutee";
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
     dos->ajouterUV(nouvelleUV);
     dos->ajouterResultat(res);
+
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
 
 }
@@ -252,12 +287,15 @@ void MenuDossier::sauvegarder()
 
 void DossierAjout::update()
 {
+
     f->clear();
+    qDebug()<<"update1";
     cursusManager& m=cursusManager::getInstance();
     for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
-    {
+    {qDebug()<<"update2";
         f->addItem(it.value()->getNom());
     }
+    qDebug()<<"update3";
 }
 
 
@@ -395,8 +433,6 @@ void ModifierDossier::slot_finModifDossier() {
     if (oldkey!=newkey) dos->setNumero(newkey);
     if (oldname!=n) dos->setNom(n);
     if (oldfirstname!=p) dos->setPrenom(p);
-
-
     menu->update();
 
     this->close();
@@ -484,6 +520,52 @@ void SuppressionUV::update() {
     {
         liste->addItem(it.courant()->getCode());
     }
+}
+
+AjoutEquivalences::AjoutEquivalences(Dossier * d) : dos(d) {
+
+    typeLabel = new QLabel ("Type d'equivalence :", this);
+    QComboBox * type = new QComboBox(this) ;
+    QLabel * creditsLabel =new QLabel ("Credits valides :", this);
+    QLineEdit * credits =new QLineEdit("", this);
+    QLabel * descriptionLabel =new QLabel ("Description :", this);
+    QLineEdit * description = new QLineEdit("", this);
+    QPushButton * valider =new QPushButton("Valider", this);
+
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(typeLabel);
+    coucheH1->addWidget(type);
+    coucheH1->addWidget(creditsLabel);
+    coucheH1->addWidget(credits);
+
+    coucheH2=new QHBoxLayout;
+    coucheH1->addWidget(descriptionLabel);
+    coucheH1->addWidget(description);
+
+    coucheH3=new QHBoxLayout;
+     coucheH3->addWidget(valider);
+
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    setLayout(couche);
+
+     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(ajouter_equivalences()));
+
+}
+
+void DossierAjout::select_equivalences(){
+    AjoutEquivalences* fenetre = new AjoutEquivalences(dos);
+    fenetre->show();
+}
+
+void AjoutEquivalences::ajouter_equivalence() {
+
+
+    //completer
 }
 
 

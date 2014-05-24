@@ -1,11 +1,8 @@
 #include"menu.h"
 #include"cursusGUI.h"
-
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
-#include<QApplication>
-#include<QWidget>
 #include<QLineEdit>
 #include<QTextEdit>
 #include<QVBoxLayout>
@@ -16,10 +13,6 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QComboBox>
-#include<QSpinBox>
-#include<QMessageBox>
-#include<QDebug>
-
 #include"dossierGUI2.h"
 #include"uvGUI.h"
 #include "dossier.h"
@@ -84,6 +77,7 @@ void MenuDebut::lancer_UV() {
 
 
 void MenuDebut::lancer_Dossiers() {
+    qDebug()<<"avant le constructeur";
     DossierManager& d=DossierManager::getInstance();
     d.load();
     MenuDossier * fenetre= new MenuDossier;
