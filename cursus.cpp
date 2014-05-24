@@ -35,19 +35,6 @@ void formation::supprimer_UV(const QString& code)
     }
 }
 
-void formation::ajouter_filiere(filiere *f)
-{
-    filieres_associees.insert(f->getNom(),f);
-}
-void formation::supprimer_filiere(const QString &nom)
-{
-    filieres_associees.remove(nom);
-}
-const QMap<QString,filiere*>::const_iterator formation::trouver_filiere(const QString& nom) // PROBLEME avec const iterator !!!!
-{
-    return filieres_associees.constFind(nom);
-}
-
 // ///////////////////////////////////////////////////////////////////
 
 void filiere::supprimer_UV(const QString &code)
@@ -113,11 +100,16 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
         supprimerFiliere(oldkey);
         ajouterFiliere(newname,c);
         filiere* newfil=trouverFil(newname);
-        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
-        {
-            newfil->ajouter_UV(it.value());
-        }
+        newfil->uvs=*list;
         delete list;
+    }
+    for(QMap<QString,formation*>::iterator it=getQmapIteratorFormbegin();it!=getQmapIteratorFormend();it++)
+    {
+        if(trouverFilForm(it.value(),oldkey))
+        {
+            it.value()->filieresAssoc.remove(oldkey);
+            it.value()->filieresAssoc.insert(newname);
+        }
     }
 }
 void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s)
@@ -126,15 +118,28 @@ void cursusManager::modifFormation(const QString &oldkey, const QString &newname
     else
     {
         QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
+        QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
         supprimerFormation(oldkey);
         ajouterFormation(newname,c,s);
         formation* newform=trouverForm(newname);
-        for(QMap<QString,UV*>::iterator it=list->begin();it!=list->end();it++)
-        {
-            newform->ajouter_UV(it.value());
-        }
+        newform->uvs=*list;
         delete list;
+        newform->filieresAssoc=*list2;
+        delete list2;
     }
+}
+
+void cursusManager::inscrFilForm(formation *form, const QString &fil)
+{
+    form->filieresAssoc.insert(fil);
+}
+void cursusManager::supprFilForm(formation *form, const QString &fil)
+{
+    form->filieresAssoc.remove(fil);
+}
+bool cursusManager::trouverFilForm(formation *form, const QString &fil)
+{
+    return form->filieresAssoc.contains(fil);
 }
 
 void cursusManager::sauverCursus(QWidget *parent)
@@ -162,6 +167,12 @@ void cursusManager::sauverCursus(QWidget *parent)
             for(QMap<QString,UV*>::iterator it=form.value()->getQmapIteratorUVbegin();it!=form.value()->getQmapIteratorUVend(); it++)
             {
                 stream.writeTextElement("uv",it.key());
+            }
+            stream.writeEndElement();
+            stream.writeStartElement("filieres");
+            for(QSet<QString>::iterator it=form.value()->filieresAssoc.begin();it!=form.value()->filieresAssoc.end();it++)
+            {
+                stream.writeTextElement("filiere",*it);
             }
             stream.writeEndElement();
             stream.writeEndElement();
@@ -206,70 +217,12 @@ void cursusManager::sauverCursus(QWidget *parent)
 
 void cursusManager::chargerCursus()
 {
-    QString fileOut = QDir::currentPath()+ "/formations.xml";
+    // nécessaire de lire les filières d'abord pour pouvoir ajouter les formations !
+    QString fileOut = QDir::currentPath()+ "/filieres.xml";
     qDebug()<<"Ouverture du fichier "<<fileOut;
     QFile f(fileOut);
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
-    QXmlStreamReader xml(&f);
-    while(!xml.atEnd() && !xml.hasError()) {
-        QXmlStreamReader::TokenType token = xml.readNext();
-        if(token == QXmlStreamReader::StartDocument) continue;
-        if(token == QXmlStreamReader::StartElement) {
-            if(xml.name() == "formations") continue;
-            if(xml.name() == "formation") {
-                QString nom;
-                unsigned int nbCredits;
-                unsigned int nbSem;
-                QStringList list;
-
-                xml.readNext();
-                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "formation")) {
-                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
-                        if(xml.name() == "nom") {
-                            xml.readNext(); nom=xml.text().toString();
-                        }
-                        if(xml.name() == "nbcred") {
-                            xml.readNext(); nbCredits=xml.text().toUInt();
-                        }
-                        if(xml.name() == "nbsem") {
-                            xml.readNext(); nbSem=xml.text().toUInt();
-                        }
-                        if(xml.name() == "uvs")
-                        {
-                            xml.readNext();
-                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
-                            {
-                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
-                                {
-                                    xml.readNext();
-                                    list<<xml.text().toString();
-                                }
-                                xml.readNext();
-                            }
-                        }
-                    }
-                    xml.readNext();
-                }
-                ajouterFormation(nom,nbCredits,nbSem);
-                if(!list.empty())
-                {
-                    visiteur* v=new visiteur(nom,list);
-                    v->visitUVmanager();
-                    this->accept(v,"form");
-                }
-            }
-        }
-    }
-    if(xml.hasError()) {
-        throw UTProfilerException("Erreur lecteur fichier formations, parser xml");
-    }
-    xml.clear();
-    // /////////////////////// lectures des filières
-    fileOut = QDir::currentPath()+ "/filieres.xml";
-    qDebug()<<"Ouverture du fichier "<<fileOut;
-    f.setFileName(fileOut);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier filieres");}
-    xml.setDevice(&f);
+    QXmlStreamReader xml(&f);
     while(!xml.atEnd() && !xml.hasError()) {
         QXmlStreamReader::TokenType token = xml.readNext();
         if(token == QXmlStreamReader::StartDocument) continue;
@@ -317,6 +270,86 @@ void cursusManager::chargerCursus()
     }
     if(xml.hasError()) {
         throw UTProfilerException("Erreur lecteur fichier filieres, parser xml");
+    }
+    xml.clear();
+    // /////////////////////// lectures des formations
+    fileOut = QDir::currentPath()+ "/formations.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    f.setFileName(fileOut);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
+    xml.setDevice(&f);
+    while(!xml.atEnd() && !xml.hasError()) {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement) {
+            if(xml.name() == "formations") continue;
+            if(xml.name() == "formation") {
+                QString nom;
+                unsigned int nbCredits;
+                unsigned int nbSem;
+                QStringList list;
+                QStringList list2;
+
+                xml.readNext();
+                while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "formation")) {
+                    if(xml.tokenType() == QXmlStreamReader::StartElement) {
+                        if(xml.name() == "nom") {
+                            xml.readNext(); nom=xml.text().toString();
+                        }
+                        if(xml.name() == "nbcred") {
+                            xml.readNext(); nbCredits=xml.text().toUInt();
+                        }
+                        if(xml.name() == "nbsem") {
+                            xml.readNext(); nbSem=xml.text().toUInt();
+                        }
+                        if(xml.name() == "uvs")
+                        {
+                            xml.readNext();
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
+                            {
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
+                                {
+                                    xml.readNext();
+                                    list<<xml.text().toString();
+                                }
+                                xml.readNext();
+                            }
+                        }
+                        if(xml.name() == "filieres")
+                        {
+                            xml.readNext();
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="filieres"))
+                            {
+                                if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="filiere")
+                                {
+                                    xml.readNext();
+                                    list2<<xml.text().toString();
+                                }
+                                xml.readNext();
+                            }
+                        }
+                    }
+                    xml.readNext();
+                }
+                ajouterFormation(nom,nbCredits,nbSem);
+                if(!list.empty())
+                {
+                    visiteur* v=new visiteur(nom,list);
+                    v->visitUVmanager();
+                    this->accept(v,"form");
+                }
+                formation* newform=trouverForm(nom);
+                int taille=list2.size();
+                for(int x=0;x<taille;x++)
+                {
+                    inscrFilForm(newform,list2.first());
+                    list2.removeFirst();
+                }
+            }
+        }
+    }
+    if(xml.hasError()) {
+        throw UTProfilerException("Erreur lecteur fichier formations, parser xml");
     }
     xml.clear();
 }

@@ -55,16 +55,13 @@ class formation : public abstract_cursus_item
     friend class cursusManager;
 
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
-    QMap<QString,filiere*> filieres_associees; // liste des filières associées à cett formation.
+    QSet<QString> filieresAssoc;// liste des filières associées à cett formation.
     formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
     ~formation() {}
 
 public:
     void supprimer_UV(const QString &code);
     unsigned int getNbSem() const {return nbSemestres;}
-    void ajouter_filiere(filiere* f);
-    void supprimer_filiere(const QString& nom);
-    const QMap<QString,filiere*>::const_iterator trouver_filiere(const QString& nom);
 };
 
 class cursusManager // gestionnaire des cursus
@@ -95,6 +92,9 @@ public:
     void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s);
     void sauverCursus(QWidget* parent);
     void accept(visiteur* v, QString type);
+    void inscrFilForm(formation* form, const QString& fil);
+    void supprFilForm(formation* form, const QString& fil);
+    bool trouverFilForm(formation* form, const QString& fil);
 
     QMap<QString,formation*>::iterator getQmapIteratorFormbegin() {return formations.begin();}
     QMap<QString,formation*>::iterator getQmapIteratorFormend() {return formations.end();}

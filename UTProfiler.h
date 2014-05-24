@@ -1,47 +1,15 @@
 #ifndef UT_PROFILER_h
 #define UT_PROFILER_h
 
+#include "iterateur.h"
 #include <QString>
 #include <QTextStream>
 
 using namespace std;
 class formation;
+class UTProfilerException;
 
 class visiteur;
-
-class UTProfilerException{
-public:
-    UTProfilerException(const QString& message, const QString &f="na", unsigned int l=0):
-        info(message),file(f),line(l){}
-    QString getInfo() const { return info; }
-#ifndef NDEBUG
-    // retourne le fichier dans lequel cettte exception a �t� lev�e.
-    QString getFile() const { return file; }
-    // retourne la ligne du fichier � laquelle cette exception a �t� lev�e.
-    unsigned int getLine() const { return line; }
-#endif
-private:
-    QString info;
-    QString file;
-    unsigned int line;
-
-};
-
-template<class I> class iterateur
-{
-    I** tab;
-    unsigned int nbtot;
-    unsigned int current;
-public:
-    iterateur(I** t, unsigned int n) : tab(t), nbtot(n), current(0) {}
-    bool isDone() {return current==nbtot;}
-    void next()
-    {
-        if(isDone()) throw UTProfilerException("Next sur un itérateur terminé !!");
-        current++;
-    }
-    I* courant() {return tab[current];}
-};
 
 enum Categorie {
     /* Connaissances Scientifiques */ CS,  /* Techniques et M�thodes */ TM,

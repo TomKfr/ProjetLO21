@@ -1,8 +1,7 @@
 #ifndef DOSSIER_H
 #define DOSSIER_H
 
-#include <iostream>
-#include "UTProfiler.h"
+#include "iterateur.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -67,7 +66,7 @@ class DossierManager {
     unsigned int nbDos;
     unsigned int nbMaxDos;
     QString file;
-    DossierManager():tabDossiers(0), nbDos(0), nbMaxDos(0) {}
+    DossierManager():tabDossiers(0), nbDos(0), nbMaxDos(0) {this->load();}
     ~DossierManager();
     void operator=(const DossierManager&);
     DossierManager(const DossierManager&);

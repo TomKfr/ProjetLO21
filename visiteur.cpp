@@ -33,5 +33,6 @@ void visiteur::visitCursusManager(cursusManager* cman, QString c)
             fil->ajouter_UV(it.value());
         }
     }
+    // ajouter les filières et vérifier qu'elles existent !
 }
 

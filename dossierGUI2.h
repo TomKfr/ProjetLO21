@@ -1,7 +1,6 @@
 #ifndef DOSSIERGUI_H
 #define DOSSIERGUI_H
 
-#include<iostream>
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
@@ -19,10 +18,10 @@
 #include<QComboBox>
 #include<QSpinBox>
 #include<QMessageBox>
-#include"UTProfiler.h"
-#include"dossier.h"
 
-
+class DossierManager;
+class UV;
+class Dossier;
 
 class MenuDossier : public QWidget {
     Q_OBJECT

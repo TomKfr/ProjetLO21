@@ -1,6 +1,6 @@
 #include "UTProfiler.h"
-#include"dossier.h"
-#include"visiteur2.h"
+#include "dossier.h"
+#include "visiteur2.h"
 #include <sstream>
 #include <QFile>
 #include <QTextCodec>
@@ -103,7 +103,6 @@ void DossierManager::load(/*const QString& fichier*/)
     QFile f(file);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier cursus");}
     QXmlStreamReader xml(&f);
-    qDebug()<<"ici";
     while(!xml.atEnd() && !xml.hasError()) {
         QXmlStreamReader::TokenType token = xml.readNext();
         if(token == QXmlStreamReader::StartDocument) continue;
@@ -169,9 +168,11 @@ void DossierManager::load(/*const QString& fichier*/)
 
                 //ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LES LISTES
+                qDebug()<<listUV;
+                qDebug()<<listResult;
                 if(!listUV.empty())
                 {
-                    visiteur2* v=new visiteur2(numero,listUV, listResult);
+                    visiteur2* v=new visiteur2(numero,listUV,listResult);
                     v->visitUVmanager();
                     qDebug()<<"visit uv manager : done";
                     this->accept(v);

@@ -1,8 +1,6 @@
 #ifndef VISITEUR2_H
 #define VISITEUR2_H
 
-#include "dossier.h"
-#include "UTProfiler.h"
 #include<QDebug>
 
 class Dossier;

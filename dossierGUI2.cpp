@@ -35,7 +35,6 @@ MenuDossier::MenuDossier() {
     coucheV->addWidget(dossiers);
     coucheV->addLayout(coucheH);
     setLayout(coucheV);
-
     update();
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
@@ -89,6 +88,14 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
 
 }
 
+void MenuDossier::update()
+{
+    dossiers->clear();
+    for(iterateur<Dossier>& it=dman->getIterateurDos();!it.isDone();it.next())
+    {
+        dossiers->addItem(QString::number(it.courant()->getNumero()));
+    }
+}
 
 
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
@@ -238,19 +245,6 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
 
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
 
-}
-
-
-
-
-
-void MenuDossier::update()
-{
-    dossiers->clear();
-    for(iterateur<Dossier>& it=dman->getIterateurDos();!it.isDone();it.next())
-    {
-        dossiers->addItem(QString::number(it.courant()->getNumero()));
-    }
 }
 
 

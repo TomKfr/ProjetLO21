@@ -14,6 +14,7 @@ class visiteur
 {
     QString nom;
     QStringList list;
+    QStringList listfil;
     QMap<QString,UV*> listuvs;
     int taille;
 

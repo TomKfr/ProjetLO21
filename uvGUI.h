@@ -1,7 +1,6 @@
 #ifndef UVEDITEUR_H
 #define UVEDITEUR_H
 
-#include<iostream>
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
@@ -19,7 +18,9 @@
 #include<QComboBox>
 #include<QSpinBox>
 #include<QMessageBox>
-#include"UTProfiler.h"
+
+class UVManager;
+class UV;
 
 
 class Debut : public QWidget {

@@ -13,7 +13,9 @@ HEADERS += \
     dossier.h \
     dossierGUI2.h \
     visiteur2.h \
-    menu.h
+    menu.h \
+    iterateur.h \
+    exception.h
 
 SOURCES += \
     UTProfiler.cpp \
