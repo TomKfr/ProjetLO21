@@ -85,6 +85,8 @@ class DossierAjout : public QWidget{
     QLabel* prenomLabel;
     QComboBox* f;
     QLabel* formationLabel;
+    /*QLabel * semestreLabel;
+    QSpinBox * semestre;*/
 
     QLabel* listeUVLabel;
     QLabel* Label;

@@ -63,6 +63,7 @@ void MenuDossier::modif() {
 
     Dossier* dos=dman->trouverDossier(n2);
     ModifierDossier * fenetre= new ModifierDossier(*dman,dos, this);
+    qDebug()<<"juste avant l'ouverture";
     fenetre->show();
 }
 
@@ -91,6 +92,7 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
 
 
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMaxUV(0), M(dm),parent(p) {
+    qDebug()<<"ici";
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
@@ -98,6 +100,7 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     nomLabel=new QLabel("nom de l'etudiant", this);
     prenomLabel=new QLabel("prenom de l'etudiant", this);
     formationLabel=new QLabel("formation suivie", this);
+    //semestreLabel=new QLabel("numero de semestre actuel", this);
     SelectUV= new QPushButton("2 - Remplir la liste des UVs");
     sauver=new QPushButton("1 - Sauver", this);
 
@@ -106,6 +109,10 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     prenom= new QLineEdit("", this);
 
     f=new QComboBox(this);
+    /*semestre=new QSpinBox(this);
+    semestre->setRange(1,8);
+    semestre->setValue(1);*/
+
 
     //on cree plusieurs couches horizontales qu'on superpose ensuite en une couche veerticale
     coucheH1=new QHBoxLayout;
@@ -119,6 +126,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(formationLabel);
     coucheH2->addWidget(f);
+    /*coucheH2->addWidget(semestreLabel);
+    coucheH2->addWidget(semestre);*/
 
     coucheH3=new QHBoxLayout;
     coucheH3->addWidget(SelectUV);
@@ -135,26 +144,35 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p) :  nbUV(0), nbMax
 
     setLayout(couche);
 
-    QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
+    qDebug()<<"iciii dans dossier ajout avant cliquer";
 
+    QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
+qDebug()<<"iciii dans dossier ajout avant cliquer2";
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
+   qDebug()<<"iciii dans dossier ajout avant cliquer3";
    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
+   qDebug()<<"iciii dans dossier ajout avant cliquer4";
 
 
    update();
+   qDebug()<<"iciii dans dossier ajout avant cliquer5";
 
 }
 
 void DossierAjout::slot_ajoutDossier() {
 
     bool ok;
-
     unsigned int n=num->text().toInt(&ok);
+    qDebug()<<"avant ajout";
+    //unsigned int ns=semestre->value();
     const QString& name=nom->text();
     const QString& fn=prenom->text();
     const QString& F=f->currentText();
 
-    M.ajouterDossier(n, name , fn, F);
+
+    M.ajouterDossier(n, name , fn, F /*ns*/);
+
+    qDebug()<<"apres ajout";
 
 
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
@@ -211,11 +229,13 @@ AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
 
 void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
 {
+    qDebug()<<"uv ajoutee";
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
     dos->ajouterUV(nouvelleUV);
     dos->ajouterResultat(res);
+
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
 
 }
@@ -258,12 +278,15 @@ void MenuDossier::sauvegarder()
 
 void DossierAjout::update()
 {
+
     f->clear();
+    qDebug()<<"update1";
     cursusManager& m=cursusManager::getInstance();
     for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
-    {
+    {qDebug()<<"update2";
         f->addItem(it.value()->getNom());
     }
+    qDebug()<<"update3";
 }
 
 
