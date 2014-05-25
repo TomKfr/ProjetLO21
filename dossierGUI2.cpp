@@ -525,12 +525,14 @@ void SuppressionUV::update() {
 AjoutEquivalences::AjoutEquivalences(Dossier * d) : dos(d) {
 
     typeLabel = new QLabel ("Type d'equivalence :", this);
-    QComboBox * type = new QComboBox(this) ;
-    QLabel * creditsLabel =new QLabel ("Credits valides :", this);
-    QLineEdit * credits =new QLineEdit("", this);
-    QLabel * descriptionLabel =new QLabel ("Description :", this);
-    QLineEdit * description = new QLineEdit("", this);
-    QPushButton * valider =new QPushButton("Valider", this);
+    type = new QComboBox(this) ;
+    type->addItem("Semestre a l'etranger");
+    type->addItem("Cursus Anterieur");
+    creditsLabel =new QLabel ("Credits valides :", this);
+    credits =new QLineEdit("", this);
+    descriptionLabel =new QLabel ("Description :", this);
+    description = new QLineEdit("", this);
+    valider =new QPushButton("Valider", this);
 
 
     coucheH1=new QHBoxLayout;
@@ -553,7 +555,7 @@ AjoutEquivalences::AjoutEquivalences(Dossier * d) : dos(d) {
     couche->addLayout(coucheH3);
     setLayout(couche);
 
-     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(ajouter_equivalences()));
+     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(ajouter_equivalence()));
 
 }
 
@@ -563,9 +565,23 @@ void DossierAjout::select_equivalences(){
 }
 
 void AjoutEquivalences::ajouter_equivalence() {
+    //on cree une equivalence
 
+    bool ok;
+    const QString& n1=credits->text();
+    const QString& truc = type->currentText();
+    const QString& desc = description->text();
+    unsigned int n2=n1.toInt(&ok);
 
-    //completer
+    Equivalences ** tab=dos->getEquivalences();
+    unsigned int nb = dos->getNbEquivalences();
+
+    if (tab==0) tab=new Equivalences*[5];
+    tab[nb]= new Equivalences(truc, n2, desc);
+    dos->setNbEquivalences(nb++);
+
+    qDebug()<<"equivalence ajoutée!";
+    this->close();
 }
 
 

@@ -15,14 +15,13 @@
 class visiteur2;
 class UV;
 
-enum TypeEquivalence {Semestre_a_letranger, Cursus_Anterieur };
 class Equivalences {
-    TypeEquivalence type;
+    QString type;
     unsigned int nb_credits;
     QString description;
 
     public :
-    Equivalences(TypeEquivalence t, unsigned int n, QString d) : type(t), nb_credits(n), description(d) {}
+    Equivalences(QString t, unsigned int n, QString d) : type(t), nb_credits(n), description(d) {}
 };
 
 class Dossier {
@@ -34,13 +33,13 @@ class Dossier {
     //unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
-    //unsigned int nbUV;
-    //unsigned int nbMaxUV;
+
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
-    Equivalences* equivalence1; //equivalence etranger
-    Equivalences* equivalence2; //equivalence cursus
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f), equivalence1(0), equivalence2(0) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
+    Equivalences** equivalence;
+    unsigned int nbEquivalences;
+
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f), equivalence(0), nbEquivalences(0) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
     friend class DossierManager;
 
 public :
@@ -51,6 +50,12 @@ public :
     //unsigned int getNumSemestre() const {return nbSemestre;}
     //UV** getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
+    Equivalences ** getEquivalences() const {return equivalence;}
+
+    unsigned int getNbEquivalences() const {return nbEquivalences;}
+
+    void setNbEquivalences(unsigned int nb) {nbEquivalences=nb;}
+
     void setNumero(unsigned int n) { numero=n; }
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
