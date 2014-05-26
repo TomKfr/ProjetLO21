@@ -22,6 +22,7 @@
 class DossierManager;
 class UV;
 class Dossier;
+class Equivalences;
 
 class MenuDossier : public QWidget {
     Q_OBJECT
@@ -165,7 +166,7 @@ class ModifierDossier : public QWidget
     QPushButton* modifUV;
     QPushButton* sauver;
     QPushButton* modifFormation;
-    //QPushButton* modifEquivalences
+    QPushButton* modifEquivalences;
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
     QHBoxLayout* coucheH2;
@@ -179,7 +180,7 @@ public slots:
  void slot_modifFormation();
  void slot_modifUV();
  void slot_finModifDossier();
-
+ void slot_modifEquivalences();
 
 };
 
@@ -245,11 +246,41 @@ public slots :
    void finSuppression();
 };
 
+
+class ModifEquivalences : public QWidget {
+    Q_OBJECT
+
+    Dossier * dossier;
+
+    QComboBox* choix;
+    QPushButton * valider ;
+    QPushButton* ajouter;
+    QPushButton* supprimer;
+    QPushButton* quitter;
+
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
+    QHBoxLayout* coucheH3;
+    QHBoxLayout* coucheH4;
+public :
+    ModifEquivalences(Dossier * dos);
+
+public slots :
+    void slot_valider();
+    void slot_quitter();
+    void update();
+    void slot_ajouter();
+    void slot_supprimer();
+
+};
+
 class AjoutEquivalences : public QWidget
 {
     Q_OBJECT
 
     Dossier * dos;
+    ModifEquivalences * me;
     QLabel * typeLabel;
     QComboBox * type ;
     QLabel * creditsLabel;
@@ -265,10 +296,37 @@ class AjoutEquivalences : public QWidget
 
 public :
 
-    AjoutEquivalences(Dossier * d) ;
+    AjoutEquivalences(Dossier * d, ModifEquivalences * me=0) ;
 public slots :
     void ajouter_equivalence();
+};
 
+
+class EquivalenceEditeur : public QWidget {
+
+     Q_OBJECT
+
+    Dossier * dos;
+    Equivalences * eq;
+    ModifEquivalences * me;
+
+    QLabel * typeLabel;
+    QComboBox * type ;
+    QLabel * creditsLabel;
+    QLineEdit * credits ;
+    QLabel * descriptionLabel ;
+    QLineEdit * description ;
+    QPushButton * valider ;
+
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
+    QHBoxLayout* coucheH3;
+
+public :
+    EquivalenceEditeur(Dossier * d, Equivalences * e, ModifEquivalences* m);
+public slots :
+    void modifier_equivalence();
 
 };
 #endif // DOSSIERGUI_H

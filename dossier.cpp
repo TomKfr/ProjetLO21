@@ -113,9 +113,17 @@ void DossierManager::load(/*const QString& fichier*/)
                 QString nom;
                 QString prenom;
                 QString formation;
-                //unsigned int numSemestre;
                 QStringList listUV;
                 QStringList listResult;
+
+                //pour les equivalences :
+
+                unsigned int credits= 6;
+                QString description="lala";//valeur pour test du update : fonctionne
+                QString type="Semestre" ;
+                unsigned int nb=0;
+                Equivalences ** tab=new Equivalences*[5];
+                for (unsigned int j=0; j<5; j++) tab[j]=0;
 
 
                 xml.readNext();
@@ -133,11 +141,7 @@ void DossierManager::load(/*const QString& fichier*/)
                         if(xml.name() == "formation") {
                             xml.readNext(); formation=xml.text().toString();
                         }
-                        /*if(xml.name() == "numSemestre") {
 
-                            xml.readNext(); numSemestre=xml.text().toString().toUInt();
-
-                        }*/
                         if(xml.name() == "uvs")
                         {
                             unsigned int nbUVs=0;
@@ -159,11 +163,62 @@ void DossierManager::load(/*const QString& fichier*/)
 
                                 xml.readNext();
                             }
-                        }
+                        }//fin if pour uv
+
+
+    /*                    if(xml.name() == "equivalences") {
+                            qDebug()<<"j'ai repere une equivalence mec";
+                            xml.readNext();
+
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="equivalences"))
+                               { //xml.readNext();
+                                qDebug()<<xml.name();//OK affiche bien une seule fois
+
+                                 if(xml.name() == "equivalence") {
+                                     xml.readNext();
+
+                                while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="equivalence"))
+                                   {
+                                     qDebug()<<"une equivalence";
+                                     //xml.readNext();
+                                     //qDebug()<<xml.name();
+                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="type")
+                                     {
+                                        xml.readNext(); type=xml.text().toString();
+                                        qDebug()<<xml.name();
+                                     }
+
+                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="credits")
+                                     {
+                                        xml.readNext(); credits=xml.text().toString().toInt();
+                                        qDebug()<<xml.name();
+                                     }
+
+                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="description")
+                                     {
+                                        xml.readNext(); description=xml.text().toString();
+                                        qDebug()<<xml.name();
+                                     }
+
+
+                                    tab[nb]=new Equivalences(type, credits, description);
+                                    nb++;
+                                    qDebug()<<"remplissage du tablo  :type : "<<type;
+
+                            }}
+
+                        }}*/
+
                     }
                     xml.readNext();
                 }
                 ajouterDossier(numero,nom, prenom, formation/* numSemestre*/);
+                Dossier* d=trouverDossier(numero);
+                qDebug()<<"dans le load : nb equi"<<nb;
+                /*d->setNbEquivalences(nb);
+                d->setEquivalences(tab);
+                tab=d->getEquivalences();
+                qDebug()<<tab[0]->getDescription();*/
 
 
                 //ON FAIT LES TYPES SIMPLES A CE NIVEAU
@@ -209,7 +264,7 @@ void DossierManager::save(){
          stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
          stream.writeTextElement("formation",tabDossiers[i]->getFormation());
          //stream.writeTextElement("numSemestre",n2);
-         qDebug()<<"dans le save avant la liste";
+
 
          //ecriture des UV
 
@@ -226,6 +281,9 @@ void DossierManager::save(){
              stream.writeTextElement("result",listeRes[j]);
              j++;
          }
+
+         stream.writeEndElement();
+
          /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
          {
              qDebug()<<"ecriture de l'uv: "<<it.courant()->getCode(); //CHAINE VIDE
@@ -235,8 +293,37 @@ void DossierManager::save(){
              j++;
 
          }*/
+
+         //ecriture des equivalences
+qDebug()<<"dans le save avant les equivalences";
+         i=0;
+         Equivalences** tab=tabDossiers[i]->getEquivalences();
+
+         qDebug()<<"1";
+
+         stream.writeStartElement("equivalences");
+
+         qDebug()<<"avant while";
+         qDebug()<<tab[i];
+
+         while (tab[i]!=0) {
+         stream.writeStartElement("equivalence");
+         stream.writeTextElement("type", tab[i]->getType());
+          qDebug()<<"2";
+         QString n; n.setNum(tab[i]->getNbCredits());
+         stream.writeTextElement("credits", n);
+         stream.writeTextElement("description", tab[i]->getDescription());
+          qDebug()<<"2";
+
          stream.writeEndElement();
          stream.writeEndElement();
+         i++;
+
+         }
+
+          qDebug()<<"3";
+
+          qDebug()<<"4";
      }
      stream.writeEndElement();
      stream.writeEndDocument();
@@ -281,6 +368,7 @@ iterateur<Dossier>& DossierManager::getIterateurDos()
 void Dossier::ajouterResultat(const QString & res){
 
      qDebug()<<"ajouter resultat";
+
      qDebug()<<nbResultats;
      qDebug()<<nbMaxResultats;
 
