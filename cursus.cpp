@@ -24,7 +24,18 @@ void abstract_cursus_item::supprimer_UV(const QString &code)
         uvs.remove(code);
     }
 }
-const QMap<QString,UV*>::const_iterator abstract_cursus_item::trouverUV(const QString &code){return uvs.constFind(code);}
+UV* abstract_cursus_item::trouverUV(const QString &code)
+{
+    if(uvs.contains(code))
+    {
+        return uvs.find(code).value();
+    }
+    return 0;
+}
+/*const QMap<QString,UV*>::const_iterator abstract_cursus_item::trouverUV(const QString &code)
+{
+    return uvs.constFind(code);
+}*/
 // ///////////////////////////////////////////////////////////////////
 
 void formation::supprimer_UV(const QString& code)

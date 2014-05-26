@@ -34,7 +34,7 @@ public:
     virtual void supprimer_UV(const QString& code);
     QString getNom() const {return nom;}
     unsigned int getNbCred() const {return nbCredits;}
-    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
+    UV *trouverUV(const QString& code);
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return uvs.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return uvs.end();}
 };

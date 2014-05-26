@@ -8,17 +8,14 @@
 int main(int argc,char*argv[]) {
 QApplication app(argc, argv);
 try{
-//MenuDebut* fenetre=new MenuDebut();
-//fenetre->show();
+MenuDebut* fenetre=new MenuDebut();
+fenetre->show();
 
-MenuDossier* dos=new MenuDossier();
-dos->show();
+//MenuDossier* dos=new MenuDossier();
+//dos->show();
 
 /*Debut fenetre;
 fenetre.show();*/
-
-//QString chemin=QFileDialog::getOpenFileName(0,"Ouvrir un fichier de dossiers");
-//d.load(chemin);
 
 //menuFormation* fenetre =new menuFormation();
 //fenetre->show();

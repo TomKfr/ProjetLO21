@@ -1,5 +1,6 @@
-#include"uvGUI.h"
-#include"UTProfiler.h"
+#include "uvGUI.h"
+#include "UTProfiler.h"
+#include "cursus.h"
 #include<QDebug>
 
 Debut::Debut() {
@@ -75,27 +76,41 @@ UVModif::UVModif(UVManager& uvm) : M(uvm) {
     setLayout(coucheV);
 
     QObject::connect(submit, SIGNAL(clicked()), this, SLOT(modifUV()));
-
 }
 
 
-void UVModif::modifUV(){
-
+void UVModif::modifUV()
+{
+    bool found=false;
     UVManager& m=UVManager::getInstance();
-    /*QString chemin = QFileDialog::getOpenFileName();
-    try {
-        m.load(chemin);
-    }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}*/
-    try{
-    //const QString& c=code->text();
-    //UV& uv1=m.getUV(c);
-    }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
+    cursusManager& cman=cursusManager::getInstance();
 
-    UVEditeur * fenetre= new UVEditeur(m.getUV(code->text()), m);
-    fenetre->show();
-
+    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
+    {
+        if(it.value()->trouverUV(code->text())!=0)
+        {
+            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la modifier.");
+            found=true;
+        }
+        if(found) break;
+    }
+    if(!found)
+    {
+        for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
+        {
+            if(it2.value()->trouverUV(code->text())!=0)
+            {
+                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la modifier.");
+                found=true;
+            }
+            if(found) break;
+        }
+    }
+    if(!found)
+    {
+        UVEditeur * fenetre= new UVEditeur(m.getUV(code->text()), m);
+        fenetre->show();
+    }
 }
 
 
@@ -173,19 +188,13 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
 
     setLayout(couche);
 
-    //bouton desactive par defaut
-    //sauver->setEnabled(false);
-
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(sauverUV()));
-
-   //pour que ça sactive que si modif :
-  // QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
-
-
+   QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
 }
 
 
-void UVEditeur::sauverUV() {
+void UVEditeur::sauverUV()
+{
     uv.setCode(code->text());  //modification du texte avec ce qu'à rentré l'utilisateur dans la QlineEdit
     uv.setTitre(titre->toPlainText());
     uv.setNbCredits(credits->value());//on utilise des methodes accesseurs des classes QXXXX pour mettre les bonnes valeurs dans uv via les methodes set de uv

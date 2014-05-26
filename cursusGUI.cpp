@@ -306,7 +306,7 @@ void selectUVsFormation::update()
     choix->clear();
     for(iterateur<UV>& it=uman->getIterateurForm();!it.isDone();it.next())
     {
-        if(objet->trouverUV(it.courant()->getCode())==objet->getQmapIteratorUVend()) choix->addItem(it.courant()->getCode());
+        if(objet->trouverUV(it.courant()->getCode())==0) choix->addItem(it.courant()->getCode());
     }
 }
 
@@ -650,6 +650,6 @@ void selectUVsFiliere::update()
     choix->clear();
     for(iterateur<UV>& it=uman.getIterateurForm();!it.isDone();it.next())
     {
-        if(objet->trouverUV(it.courant()->getCode())==objet->getQmapIteratorUVend()) choix->addItem(it.courant()->getCode());
+        if(objet->trouverUV(it.courant()->getCode())==0) choix->addItem(it.courant()->getCode());
     }
 }

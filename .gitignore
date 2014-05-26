@@ -20,5 +20,6 @@
 *.out
 *.app
 
-LO21.pro.user
 *.autosave
+LO21.pro.user
+main.cpp
