@@ -22,6 +22,13 @@ class Equivalences {
 
     public :
     Equivalences(QString t, unsigned int n, QString d) : type(t), nb_credits(n), description(d) {}
+    QString getType() {return type;}
+    QString getDescription() {return description;}
+    unsigned int getNbCredits() {return nb_credits;}
+
+    void setNbCredits(unsigned int n) {nb_credits=n;}
+    void setDescription(QString s) {description=s;}
+    void setType(QString s) {type=s;}
 };
 
 class Dossier {
@@ -39,7 +46,10 @@ class Dossier {
     Equivalences** equivalence;
     unsigned int nbEquivalences;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) /*unsigned int ns*/ : numero(num), nom(n), prenom(p), F(f), equivalence(0), nbEquivalences(0) /*nbSemestre(ns)*/, listeResultats(0), nbMaxResultats(0) {}
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbEquivalences(0), listeResultats(0), nbResultats(0), nbMaxResultats(0) {
+        equivalence=new Equivalences*[5];
+        for (unsigned int i=0; i<5; i++) equivalence[i]=0;
+    }
     friend class DossierManager;
 
 public :
@@ -62,6 +72,7 @@ public :
     void setFormation(const QString& f) { F=f; }
     //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
+    void setEquivalences(Equivalences** l) { equivalence=l; }
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
 

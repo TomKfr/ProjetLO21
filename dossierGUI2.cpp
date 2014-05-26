@@ -193,6 +193,8 @@ void DossierAjout::slot_ajoutDossier() {
 
 
     M.ajouterDossier(n, name , fn, F /*ns*/);
+    Dossier* d=M.trouverDossier(n);
+    dos=d;
 
     qDebug()<<"apres ajout";
 
@@ -257,7 +259,6 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     QString res=Result->currentText();
     dos->ajouterUV(nouvelleUV);
     dos->ajouterResultat(res);
-
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
 
 }
@@ -337,6 +338,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     modifUV=new QPushButton("modifier les UVs de ce dossier", this);
     modifFormation=new QPushButton("modifier la formation de l'etudiant", this);
     sauver=new QPushButton("Modification terminee", this);
+    modifEquivalences= new QPushButton("Modifier les equivalences", this);
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(numLabel);
@@ -353,6 +355,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     coucheH3->addWidget(modifUV);
     coucheH3->addWidget(modifFormation);
     coucheH3->addWidget(sauver);
+    coucheH3->addWidget(modifEquivalences);
 
     couche=new QVBoxLayout;
     couche->addLayout(coucheH1);
@@ -363,6 +366,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_finModifDossier()));
     QObject::connect(modifUV, SIGNAL(clicked()), this, SLOT(slot_modifUV()));
     QObject::connect(modifFormation, SIGNAL(clicked()), this, SLOT(slot_modifFormation()));
+    QObject::connect(modifEquivalences, SIGNAL(clicked()), this, SLOT(slot_modifEquivalences()));
 
 
 };
@@ -522,7 +526,7 @@ void SuppressionUV::update() {
     }
 }
 
-AjoutEquivalences::AjoutEquivalences(Dossier * d) : dos(d) {
+AjoutEquivalences::AjoutEquivalences(Dossier * d, ModifEquivalences * m) : dos(d), me(m) {
 
     typeLabel = new QLabel ("Type d'equivalence :", this);
     type = new QComboBox(this) ;
@@ -561,6 +565,7 @@ AjoutEquivalences::AjoutEquivalences(Dossier * d) : dos(d) {
 
 void DossierAjout::select_equivalences(){
     AjoutEquivalences* fenetre = new AjoutEquivalences(dos);
+    qDebug()<<"dos dans dossier ajout"<<dos;
     fenetre->show();
 }
 
@@ -573,15 +578,190 @@ void AjoutEquivalences::ajouter_equivalence() {
     const QString& desc = description->text();
     unsigned int n2=n1.toInt(&ok);
 
-    Equivalences ** tab=dos->getEquivalences();
-    unsigned int nb = dos->getNbEquivalences();
+    qDebug()<<"dans ajouter aquivalence";
+    qDebug()<<dos;
 
-    if (tab==0) tab=new Equivalences*[5];
+    Equivalences ** tab=dos->getEquivalences();
+    qDebug()<<tab;
+    unsigned int nb = dos->getNbEquivalences();
+    qDebug()<<"dans ajouter aquivalence2";
+
     tab[nb]= new Equivalences(truc, n2, desc);
-    dos->setNbEquivalences(nb++);
+    qDebug()<<"ici la";
+    nb++;
+    dos->setNbEquivalences(nb);
 
     qDebug()<<"equivalence ajoutée!";
+    QMessageBox::information(this, "sauvegarde", "Equivalence ajoutee");
+
+   if (me!=0) me->update();
     this->close();
+}
+
+ModifEquivalences::ModifEquivalences(Dossier * dos) : dossier(dos) {
+
+    valider=new QPushButton("Modifier cette equivalence", this);
+    ajouter=new QPushButton("Ajouter une equivalence", this);
+    supprimer=new QPushButton("Supprimer cette equivalence", this);
+    quitter=new QPushButton("Modification des equivalences terminee", this);
+
+    choix=new QComboBox(this);
+    update();
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(choix);
+    coucheH1->addWidget(valider);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(ajouter);
+
+    coucheH3=new QHBoxLayout;
+    coucheH3->addWidget(supprimer);
+
+    coucheH4=new QHBoxLayout;
+    coucheH4->addWidget(quitter);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    couche->addLayout(coucheH4);
+
+    setLayout(couche);
+
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(slot_valider()));
+    QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(slot_ajouter()));
+    QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(slot_supprimer()));
+    QObject::connect(quitter, SIGNAL(clicked()), this, SLOT(ajouter_quitter()));
+
+}
+
+void ModifEquivalences::update() { // FONCTIONNE
+
+    Equivalences** tab=dossier->getEquivalences();
+    unsigned int i=0;
+
+    choix->clear();
+    qDebug()<<"update";
+    qDebug()<<dossier->getNbEquivalences();
+    qDebug()<<tab[i];
+    if (dossier->getNbEquivalences()!=0)
+   {  while (tab[i]!=0) {
+        qDebug()<<tab[i]->getDescription();
+        choix->addItem(tab[i]->getDescription());
+        i++;}
+    }
+}
+
+void ModifierDossier::slot_modifEquivalences() {
+
+    ModifEquivalences* fenetre= new ModifEquivalences(dos);
+    fenetre->show();
+
+}
+
+void ModifEquivalences::slot_ajouter() {
+
+    AjoutEquivalences* fenetre = new AjoutEquivalences(dossier, this);
+    fenetre->show();
+
+}
+
+EquivalenceEditeur::EquivalenceEditeur(Dossier * d, Equivalences* e, ModifEquivalences * m) : dos(d), eq(e), me(m) {
+
+    typeLabel = new QLabel ("Type d'equivalence :", this);
+    type = new QComboBox(this) ;
+    type->addItem("Semestre a l'etranger");
+    type->addItem("Cursus Anterieur");
+    //type->setCurrentIndex(int(e->getDescription());
+
+    creditsLabel =new QLabel ("Credits valides :", this);
+    QString truc = QString::number(e->getNbCredits());
+    credits =new QLineEdit(truc, this);
+    descriptionLabel =new QLabel ("Description :", this);
+    description = new QLineEdit(e->getDescription(), this);
+    valider =new QPushButton("Valider", this);
+
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(typeLabel);
+    coucheH1->addWidget(type);
+    coucheH1->addWidget(creditsLabel);
+    coucheH1->addWidget(credits);
+
+    coucheH2=new QHBoxLayout;
+    coucheH1->addWidget(descriptionLabel);
+    coucheH1->addWidget(description);
+
+    coucheH3=new QHBoxLayout;
+     coucheH3->addWidget(valider);
+
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    setLayout(couche);
+
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(modifier_equivalence()));
+}
+
+void EquivalenceEditeur::modifier_equivalence() {//MARCHE
+
+    eq->setDescription(description->text());
+    eq->setType(type->currentText());
+
+    bool ok;
+    const QString& n1=credits->text();
+    unsigned int n2=n1.toInt(&ok);
+    eq->setNbCredits(n2);
+
+    this->close();
+
+}
+
+void ModifEquivalences::slot_valider() {
+
+    Equivalences** tab=dossier->getEquivalences();
+    unsigned int nb=dossier->getNbEquivalences();
+    unsigned int i=0;
+
+    while (tab[i]->getDescription()!=choix->currentText()) {i++;}
+
+    EquivalenceEditeur * fenetre= new EquivalenceEditeur(dossier, tab[i], this);
+    fenetre->show();
+}
+
+void ModifEquivalences::slot_quitter() {this->close();}
+
+void  ModifEquivalences::slot_supprimer() {
+
+    Equivalences** tab=dossier->getEquivalences();
+    int nb=dossier->getNbEquivalences();
+    unsigned int i=0;
+
+    qDebug()<<"dans suppr";
+
+    while (tab[i]->getDescription()!=choix->currentText()) {i++;}
+    qDebug()<<"nombre deq : "<<nb;//OK
+    qDebug()<<tab[i]->getDescription();//OK
+    qDebug()<<i;//OK
+
+    Equivalences* tmp;
+
+    for (int j=i; j<nb-2; j++) {tmp=tab[i]; tab[j]=tab[j+1], tab[j+1]=tmp;}
+    qDebug()<<"apres le for";
+
+    delete tab[nb-1];
+    qDebug()<<"apres le delete";
+    nb--;
+    dossier->setNbEquivalences(nb);
+    qDebug()<<"a la fin de la suppression";
+
+    update();
+
+    QMessageBox::information(this, "sauvegarde", "Equivalence supprimee");
+
 }
 
 
