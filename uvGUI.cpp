@@ -2,94 +2,130 @@
 #include "UTProfiler.h"
 #include "cursus.h"
 #include<QDebug>
+#include<QString>
 
 Debut::Debut() {
     qDebug()<<"coucou1";
 
     this->setWindowTitle(QString("Operation choisie sur les UVs ?"));
-
+    liste=new QComboBox;
+    update();
     ajouter=new QPushButton("Ajouter une UV", this);
-    modifier=new QPushButton("Afficher/Modifier des informations sur une UV", this);
-    sup=new QPushButton("Supprimer une UV", this);
+    consulter=new QPushButton("Consulter les informations sur cette UV", this);
+    modifier=new QPushButton("Modifier des informations sur cette UV", this);
+    sup=new QPushButton("Supprimer cette UV", this);
     terminer=new QPushButton("Opérations sur les UVs terminées", this);
 
-    coucheH=new QHBoxLayout;
-    coucheH->addWidget(sup);
-    coucheH->addWidget(ajouter);
-    coucheH->addWidget(modifier);
-    coucheH->addWidget(terminer);
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(liste);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(consulter);
+    coucheH2->addWidget(sup);
+    coucheH2->addWidget(ajouter);
+    coucheH2->addWidget(modifier);
+    coucheH2->addWidget(terminer);
 
     coucheV=new QVBoxLayout;
-    coucheV->addLayout(coucheH);
+    coucheV->addLayout(coucheH1);
+    coucheV->addLayout(coucheH2);
     setLayout(coucheV);
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
     QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
+    QObject::connect(consulter, SIGNAL(clicked()), this, SLOT(afficher()));
     QObject::connect(terminer, SIGNAL(clicked()), this, SLOT(fin()));
 
     qDebug()<<"coucou";
 
 }
 
+void Debut::update() {
+
+    liste->clear();
+    UVManager& m=UVManager::getInstance();
+    for(iterateur<UV>& it=m.getIterateurForm();!it.isDone();it.next())
+    {
+        liste->addItem(it.courant()->getCode());
+    }
+}
+
+void Debut::afficher() {
+    UVManager& uvm=UVManager::getInstance();
+    UV* up=uvm.trouverUV(liste->currentText());
+    UvAfficheur* fenetre= new UvAfficheur(*up, uvm);
+    fenetre-> show();
+}
+
+
+UvAfficheur::UvAfficheur(UV& u, UVManager & uvm) : uv(u), M(uvm) {
+
+
+       codeLabel = new QLabel("Code : "+uv.getCode(), this);
+       titreLabel= new QLabel("Intitule : "+uv.getTitre(), this);
+       unsigned int n=uv.getNbCredits();
+       QString c=QString::number(n);
+       creditsLabel= new QLabel("Nombre de credits : "+c, this);
+       categorieLabel = new QLabel("Categorie : "+CategorieToString(uv.getCategorie()), this);
+
+       QString automne ;
+       QString printemps;
+
+       if (uv.ouvertureAutomne()==0) automne="non";
+       else automne="oui";
+
+       if (uv.ouverturePrintemps()==0) printemps="non";
+       else printemps="oui";
+
+       ouverturePLabel = new QLabel("Ouverture Printemps : "+printemps, this);
+       ouvertureALabel = new QLabel("Ouverture Automne : "+automne, this);
+       fin=new QPushButton("Consultation terminee", this);
+
+       coucheH1=new QHBoxLayout;
+       coucheH1->addWidget(codeLabel);
+
+       coucheH2=new QHBoxLayout;
+       coucheH2->addWidget(titreLabel);
+
+       coucheH3=new QHBoxLayout;
+       coucheH3->addWidget(creditsLabel);
+
+
+       coucheH4=new QHBoxLayout;
+       coucheH4->addWidget(categorieLabel);
+
+       coucheH5=new QHBoxLayout;
+       coucheH5->addWidget(ouvertureALabel);
+       coucheH5->addWidget(ouverturePLabel);
+
+       coucheH6 = new QHBoxLayout;
+       coucheH6->addWidget(fin);
+
+       couche=new QVBoxLayout;
+       couche->addLayout(coucheH1);
+       couche->addLayout(coucheH2);
+       couche->addLayout(coucheH3);
+       couche->addLayout(coucheH4);
+       couche->addLayout(coucheH5);
+       couche->addLayout(coucheH6);
+       setLayout(couche);
+
+       QObject::connect(fin, SIGNAL(clicked()), this, SLOT(termine()));
+
+};
+
+void UvAfficheur::termine() {this->close();}
+
 void Debut::suppression() { //lancement de la fenetre de suppression pour rentrer le code
-
-    UVManager& m=UVManager::getInstance();
-    try {
-        m.load();
-    }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
-
-    UVSuppression * fenetre = new UVSuppression(m);
-    fenetre->show();
-}
-void Debut::fin() {
-    this->close();
-}
-
-void Debut::modif() {
-
-    UVManager& m=UVManager::getInstance();
-    try {
-        m.load();
-    }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
-
-    UVModif * fenetre = new UVModif(m);
-    fenetre->show();
-
-}
-
-UVModif::UVModif(UVManager& uvm) : M(uvm) {
-
-    codeLabel=new QLabel("code", this);
-    code= new QLineEdit("", this);
-    submit=new QPushButton("Modifier cette UV", this);
-
-    coucheH=new QHBoxLayout;
-    coucheH->addWidget(codeLabel);
-    coucheH->addWidget(code);
-    coucheH->addWidget(submit);
-
-    coucheV=new QVBoxLayout;
-    coucheV->addLayout(coucheH);
-    setLayout(coucheV);
-
-    QObject::connect(submit, SIGNAL(clicked()), this, SLOT(modifUV()));
-}
-
-
-void UVModif::modifUV()
-{
-    bool found=false;
-    UVManager& m=UVManager::getInstance();
+    bool found;
+    UVManager& uvm=UVManager::getInstance();
     cursusManager& cman=cursusManager::getInstance();
-
     for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
     {
-        if(it.value()->trouverUV(code->text())!=0)
+        if(it.value()->trouverUV(liste->currentText())!=0)
         {
-            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la modifier.");
+            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la supprimer.");
             found=true;
         }
         if(found) break;
@@ -98,9 +134,9 @@ void UVModif::modifUV()
     {
         for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
         {
-            if(it2.value()->trouverUV(code->text())!=0)
+            if(it2.value()->trouverUV(liste->currentText())!=0)
             {
-                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la modifier.");
+                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la supprimer.");
                 found=true;
             }
             if(found) break;
@@ -108,11 +144,59 @@ void UVModif::modifUV()
     }
     if(!found)
     {
-        UVEditeur * fenetre= new UVEditeur(m.getUV(code->text()), m);
-        fenetre->show();
+        try {
+        uvm.supprimerUV(liste->currentText()); } //il faut indiquer de quel UVManager il s'agit
+        catch (UTProfilerException e) {qDebug()<<liste->currentText()<<e.getInfo();}
+        update();
+        QMessageBox::information(this, "sauvegarde", "UV supprimee");
     }
 }
 
+void Debut::fin() {
+    this->close();
+}
+
+void Debut::modif() {
+
+    bool found=false;
+    UVManager& m=UVManager::getInstance();
+    cursusManager& cman=cursusManager::getInstance();
+
+    qDebug()<<"dans la modif1";
+
+    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
+    {
+        if(it.value()->trouverUV(liste->currentText())!=0)
+        {
+            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la modifier.");
+            found=true;
+        }
+        if(found) break;
+    }
+
+     qDebug()<<"dans la modif2";
+    if(!found)
+    {
+        for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
+        {
+            if(it2.value()->trouverUV(liste->currentText())!=0)
+            {
+                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la modifier.");
+                found=true;
+            }
+            if(found) break;
+        }
+    }
+
+     qDebug()<<"dans la modif3";
+    if(!found)
+    {
+        UVEditeur * fenetre= new UVEditeur(m.getUV(liste->currentText()), m);
+         qDebug()<<"dans la modif4";
+        fenetre->show();
+    }
+
+}
 
 void Debut::ajout() {
 
@@ -189,7 +273,7 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
     setLayout(couche);
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(sauverUV()));
-   QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
+
 }
 
 
@@ -202,68 +286,13 @@ void UVEditeur::sauverUV()
     uv.setOuverturePrintemps(printemps->isChecked());
     uv.setOuvertureAutomne(automne->isChecked());
     QMessageBox::information(this, "sauvegarde", "UV sauvegardee");
+    this->close();
 }
 
 
 /*void UVEditeur::activerSauver(QString s){
     sauver->setEnabled(true); //une modification entraine une activation du bouton sauver
 }*/
-
-UVSuppression::UVSuppression(UVManager& uvm) : M(uvm) {
-
-    codeLabel=new QLabel("code", this);
-    code2= new QLineEdit("", this);
-    submit=new QPushButton("Supprimer cette UV", this);
-
-    coucheH=new QHBoxLayout;
-    coucheH->addWidget(codeLabel);
-    coucheH->addWidget(code2);
-    coucheH->addWidget(submit);
-
-    coucheV=new QVBoxLayout;
-    coucheV->addLayout(coucheH);
-    setLayout(coucheV);
-
-    QObject::connect(submit, SIGNAL(clicked()), this, SLOT(supprUV()));
-
-}
-
-void UVSuppression::supprUV()
-{
-    bool found;
-    cursusManager& cman=cursusManager::getInstance();
-    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
-    {
-        if(it.value()->trouverUV(code2->text())!=0)
-        {
-            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la supprimer.");
-            found=true;
-        }
-        if(found) break;
-    }
-    if(!found)
-    {
-        for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
-        {
-            if(it2.value()->trouverUV(code2->text())!=0)
-            {
-                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la supprimer.");
-                found=true;
-            }
-            if(found) break;
-        }
-    }
-    if(!found)
-    {
-        QMessageBox::information(this, "sauvegarde", "exec de suppression");
-        try {
-            M.supprimerUV(code2->text()); } //il faut indiquer de quel UVManager il s'agit
-        catch (UTProfilerException e) {qDebug()<<code2->text()<<e.getInfo();}
-        QMessageBox::information(this, "sauvegarde", "UV supprimee");
-    }
-}
-
-
 
 UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
 

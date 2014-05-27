@@ -27,5 +27,6 @@ SOURCES += \
     dossierGUI2.cpp \
     visiteur2.cpp \
     main.cpp \
-    menu.cpp
+    menu.cpp \
+
 

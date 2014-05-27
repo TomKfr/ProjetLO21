@@ -25,11 +25,14 @@ class UV;
 
 class Debut : public QWidget {
     Q_OBJECT
+    QComboBox * liste;
     QPushButton* modifier;
     QPushButton* sup;
     QPushButton* ajouter;
+    QPushButton * consulter;
     QPushButton * terminer;
-    QHBoxLayout* coucheH;
+    QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
     QVBoxLayout* coucheV;
 
 
@@ -39,24 +42,13 @@ public :
 public slots:
     void ajout();
     void suppression();
+    void afficher();
     void modif();
     void fin();
+    void update();
 };
 
-class UVSuppression : public QWidget {
-    Q_OBJECT
-    UVManager& M;
-    QLabel* codeLabel;
-    QLineEdit* code2;
-    QPushButton* submit;
-    QHBoxLayout* coucheH;
-    QVBoxLayout* coucheV;
-
-public : UVSuppression(UVManager & uvm);
-
-public slots :
-    void supprUV();
-};
+/*
 
 
 class UVModif : public QWidget {
@@ -72,7 +64,7 @@ public : UVModif(UVManager & uvm);
 
 public slots :
     void modifUV();
-};
+};*/
 
 class UVAjout : public QWidget{
     Q_OBJECT
@@ -137,8 +129,36 @@ public:
     UVEditeur(UV& u, UVManager & uvm, QWidget* parent=0);
 public slots:
     void sauverUV();
-    //void activerSauver(QString str="");
 
+};
+
+
+
+class UvAfficheur : public QWidget {
+    Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
+    UV& uv;
+    UVManager& M;
+
+       QLabel* codeLabel;
+       QLabel* titreLabel;
+       QLabel* creditsLabel;
+       QLabel* categorieLabel;
+       QLabel* ouverturePLabel;
+       QLabel* ouvertureALabel;
+       QPushButton* fin;
+
+       QVBoxLayout * couche;
+       QHBoxLayout* coucheH1;
+       QHBoxLayout* coucheH2;
+       QHBoxLayout* coucheH3;
+       QHBoxLayout* coucheH4;
+       QHBoxLayout* coucheH5;
+       QHBoxLayout* coucheH6;
+
+public:
+    UvAfficheur(UV& u, UVManager & uvm);
+public slots:
+    void termine();
 };
 
 #endif // UVEDITEUR_H
