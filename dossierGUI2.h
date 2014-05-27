@@ -72,7 +72,7 @@ public:
 class DossierAjout : public QWidget{
     Q_OBJECT
 
-Dossier * dos;
+    Dossier * dos;
     unsigned int nbUV;
     unsigned int nbMaxUV;
     DossierManager& M;
@@ -85,8 +85,8 @@ Dossier * dos;
     QLabel* prenomLabel;
     QComboBox* f;
     QLabel* formationLabel;
-    /*QLabel * semestreLabel;
-    QSpinBox * semestre;*/
+    QLabel * semestreLabel;
+    QSpinBox * semestre;
 
     QLabel* listeUVLabel;
     QLabel* Label;
@@ -160,13 +160,13 @@ class ModifierDossier : public QWidget
     QLabel* nomLabel;
     QLineEdit* prenom;
     QLabel* prenomLabel;
-
     QLabel* formationLabel;
-
+    QLabel* semestreLabel;
     QPushButton* modifUV;
     QPushButton* sauver;
     QPushButton* modifFormation;
     QPushButton* modifEquivalences;
+    QSpinBox* numsem;
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
     QHBoxLayout* coucheH2;
