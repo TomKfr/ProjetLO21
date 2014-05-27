@@ -228,17 +228,39 @@ UVSuppression::UVSuppression(UVManager& uvm) : M(uvm) {
 
 }
 
-void UVSuppression::supprUV() {
-
-    QMessageBox::information(this, "sauvegarde", "exec de suppression");
-
-    try {
-
-    M.supprimerUV(code2->text()); } //il faut indiquer de quel UVManager il s'agit
-
-    catch (UTProfilerException e) {qDebug()<<code2->text()<<e.getInfo();}
-
-    QMessageBox::information(this, "sauvegarde", "UV supprimee");
+void UVSuppression::supprUV()
+{
+    bool found;
+    cursusManager& cman=cursusManager::getInstance();
+    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
+    {
+        if(it.value()->trouverUV(code2->text())!=0)
+        {
+            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la supprimer.");
+            found=true;
+        }
+        if(found) break;
+    }
+    if(!found)
+    {
+        for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
+        {
+            if(it2.value()->trouverUV(code2->text())!=0)
+            {
+                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la supprimer.");
+                found=true;
+            }
+            if(found) break;
+        }
+    }
+    if(!found)
+    {
+        QMessageBox::information(this, "sauvegarde", "exec de suppression");
+        try {
+            M.supprimerUV(code2->text()); } //il faut indiquer de quel UVManager il s'agit
+        catch (UTProfilerException e) {qDebug()<<code2->text()<<e.getInfo();}
+        QMessageBox::information(this, "sauvegarde", "UV supprimee");
+    }
 }
 
 
