@@ -54,6 +54,7 @@ class Dossier {
 
 public :
     unsigned int getNumero() const {return numero;}
+    unsigned int getNbResultats() const {return nbResultats;}
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}

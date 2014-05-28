@@ -28,5 +28,6 @@ SOURCES += \
     visiteur2.cpp \
     main.cpp \
     menu.cpp \
+    load_save_dossiers.cpp
 
 

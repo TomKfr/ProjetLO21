@@ -211,8 +211,13 @@ class ModifUV : public QWidget
 
     QPushButton* ajouter;
     QPushButton* supprimer;
+    QPushButton* modifResultat;
     QPushButton* fin;
+    QComboBox * uvs;
+    QLabel * explication;
+    QComboBox * resultats;
     QVBoxLayout * couche;
+    QHBoxLayout* coucheH0;
     QHBoxLayout* coucheH1;
     Dossier* dos;
 
@@ -224,6 +229,29 @@ public slots :
    void ajouterUV();
    void supprimerUV();
    void finUV();
+   void update();
+   void modifierResult();
+};
+
+class ModifResult : public QWidget
+{
+    Q_OBJECT
+    QLabel * explication;
+    QComboBox * uvs;
+    QComboBox * resultats;
+    QPushButton* valider;
+    QVBoxLayout * couche;
+    QHBoxLayout* coucheH0;
+    QHBoxLayout* coucheH1;
+    Dossier* dos;
+
+public : ModifResult(Dossier* d) ;
+
+public slots :
+    void update(); //avec que les uvs et les resultats du dossier
+    void enregistrer();
+
+
 };
 
 class SuppressionUV : public QWidget

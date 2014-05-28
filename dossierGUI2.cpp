@@ -335,7 +335,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
 
     formationLabel=new QLabel("formation suivie : "+forma, this);
     semestreLabel=new QLabel("Numéro de semestre actuel :",this);
-    modifUV=new QPushButton("modifier les UVs de ce dossier", this);
+    modifUV=new QPushButton("voir / modifier les UVs de ce dossier et les resultats", this);
     modifFormation=new QPushButton("modifier la formation de l'etudiant", this);
     sauver=new QPushButton("Modification terminee", this);
     modifEquivalences= new QPushButton("Modifier les equivalences", this);
@@ -454,22 +454,92 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
     this->setWindowTitle(QString("Que souhaitez-vous faire ?"));
     ajouter=new QPushButton("Ajouter une UV", this);
     supprimer=new QPushButton("Supprimer une UV", this);
+    modifResultat=new QPushButton("Modifier un resultat", this);
     fin=new QPushButton("Fin", this);
     coucheH1=new QHBoxLayout;
+    coucheH0= new QHBoxLayout;
 
+    explication=new QLabel("UVs actuelles du dossier et resultat associe :", this);
+
+    uvs=new QComboBox(this);
+    resultats=new QComboBox(this);
+    //update();
+
+    coucheH0->addWidget(explication);
+    coucheH0->addWidget(uvs);
+    coucheH0->addWidget(resultats);
     coucheH1->addWidget(ajouter);
     coucheH1->addWidget(supprimer);
+    coucheH1->addWidget(modifResultat);
     coucheH1->addWidget(fin);
 
     couche=new QVBoxLayout;
+    couche->addLayout(coucheH0);
     couche->addLayout(coucheH1);
     setLayout(couche);
 
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajouterUV()));
     QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(supprimerUV()));
     QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finUV()));
+    QObject::connect(modifResultat, SIGNAL(clicked()), this, SLOT(modifierResult()));
 
 };
+
+void ModifUV::update() {//mauvais
+}
+
+void ModifUV::modifierResult() {
+
+    ModifResult* fenetre= new ModifResult(dos);
+    fenetre->show();
+}
+
+ModifResult::ModifResult(Dossier * d) : dos(d) {
+    explication=new QLabel("UVs actuelles du dossier et resultat associe :", this);
+
+    uvs=new QComboBox(this);
+    resultats=new QComboBox(this);
+    valider=new QPushButton("Valider", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH0= new QHBoxLayout;
+
+    update();
+
+    coucheH0->addWidget(explication);
+    coucheH0->addWidget(uvs);
+    coucheH0->addWidget(resultats);
+    coucheH1->addWidget(valider);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH0);
+    couche->addLayout(coucheH1);
+    setLayout(couche);
+
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer()));
+
+}
+
+void ModifResult::enregistrer() {}
+void ModifResult::update() {
+
+    qDebug()<<"dans modifresult";
+    uvs->clear();
+    resultats->clear();
+    unsigned int i=0;
+    QString * res=dos->getlisteResultats();
+
+
+    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
+    {
+       // uvs->addItem(*it->getCode());
+        resultats->addItem(res[i]);
+        i++;
+    }
+
+
+
+}
 
 void ModifierDossier::slot_modifUV(){
     ModifUV * fenetre= new ModifUV(dos);
