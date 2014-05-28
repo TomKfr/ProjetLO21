@@ -118,17 +118,38 @@ UvAfficheur::UvAfficheur(UV& u, UVManager & uvm) : uv(u), M(uvm) {
 void UvAfficheur::termine() {this->close();}
 
 void Debut::suppression() { //lancement de la fenetre de suppression pour rentrer le code
-
+    bool found;
     UVManager& uvm=UVManager::getInstance();
-    try {
-
-    uvm.supprimerUV(liste->currentText()); } //il faut indiquer de quel UVManager il s'agit
-
-    catch (UTProfilerException e) {qDebug()<<liste->currentText()<<e.getInfo();}
-
-    update();
-
-    QMessageBox::information(this, "sauvegarde", "UV supprimee");
+    cursusManager& cman=cursusManager::getInstance();
+    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
+    {
+        if(it.value()->trouverUV(liste->currentText())!=0)
+        {
+            QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la formation "+it.value()->getNom()+".\nRetirez la avant de la supprimer.");
+            found=true;
+        }
+        if(found) break;
+    }
+    if(!found)
+    {
+        for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
+        {
+            if(it2.value()->trouverUV(liste->currentText())!=0)
+            {
+                QMessageBox::warning(this,"Erreur","L'UV que vous souhaitez modifier est inscrite dans la filiere "+it2.value()->getNom()+".\nRetirez la avant de la supprimer.");
+                found=true;
+            }
+            if(found) break;
+        }
+    }
+    if(!found)
+    {
+        try {
+        uvm.supprimerUV(liste->currentText()); } //il faut indiquer de quel UVManager il s'agit
+        catch (UTProfilerException e) {qDebug()<<liste->currentText()<<e.getInfo();}
+        update();
+        QMessageBox::information(this, "sauvegarde", "UV supprimee");
+    }
 }
 
 void Debut::fin() {
@@ -170,8 +191,6 @@ void Debut::modif() {
     }
 
 }
-
-
 
 void Debut::ajout() {
 
@@ -265,7 +284,9 @@ void UVEditeur::sauverUV()
 }
 
 
-
+/*void UVEditeur::activerSauver(QString s){
+    sauver->setEnabled(true); //une modification entraine une activation du bouton sauver
+}*/
 
 UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
 

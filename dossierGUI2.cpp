@@ -108,15 +108,13 @@ void MenuDossier::update()
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nbUV(0), nbMaxUV(0), M(dm),parent(p), dos(d) {
     qDebug()<<"ici";
 
-
-
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
     numLabel=new QLabel("numero de dossier", this);
     nomLabel=new QLabel("nom de l'etudiant", this);
     prenomLabel=new QLabel("prenom de l'etudiant", this);
     formationLabel=new QLabel("formation suivie", this);
-    //semestreLabel=new QLabel("numero de semestre actuel", this);
+    semestreLabel=new QLabel("numero de semestre actuel", this);
     SelectUV= new QPushButton("2 - Remplir la liste des UVs");
     SelectEquivalences=new QPushButton("3 - Saisir des equivalences");
     sauver=new QPushButton("1 - Sauver", this);
@@ -126,9 +124,14 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nb
     prenom= new QLineEdit("", this);
 
     f=new QComboBox(this);
-    /*semestre=new QSpinBox(this);
+    cursusManager& cman=cursusManager::getInstance();
+    for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
+    {
+        f->addItem(it.key());
+    }
+    semestre=new QSpinBox(this);
     semestre->setRange(1,8);
-    semestre->setValue(1);*/
+    semestre->setValue(1);
 
 
     //on cree plusieurs couches horizontales qu'on superpose ensuite en une couche veerticale
@@ -143,8 +146,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nb
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(formationLabel);
     coucheH2->addWidget(f);
-    /*coucheH2->addWidget(semestreLabel);
-    coucheH2->addWidget(semestre);*/
+    coucheH2->addWidget(semestreLabel);
+    coucheH2->addWidget(semestre);
 
     coucheH3=new QHBoxLayout;
     coucheH3->addWidget(SelectUV);
@@ -167,17 +170,15 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nb
 
     qDebug()<<"iciii dans dossier ajout avant cliquer";
 
-    QMessageBox::warning(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
-qDebug()<<"iciii dans dossier ajout avant cliquer2";
-   QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
-   qDebug()<<"iciii dans dossier ajout avant cliquer3";
-   QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
-   qDebug()<<"iciii dans dossier ajout avant cliquer4";
-   QObject::connect(SelectEquivalences, SIGNAL(clicked()), this, SLOT(select_equivalences()));
-
-
-   //update();
-   qDebug()<<"iciii dans dossier ajout avant cliquer5";
+    QMessageBox::information(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
+    qDebug()<<"iciii dans dossier ajout avant cliquer2";
+    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
+    qDebug()<<"iciii dans dossier ajout avant cliquer3";
+    QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
+    qDebug()<<"iciii dans dossier ajout avant cliquer4";
+    QObject::connect(SelectEquivalences, SIGNAL(clicked()), this, SLOT(select_equivalences()));
+    //update();
+    qDebug()<<"iciii dans dossier ajout avant cliquer5";
 
 }
 
@@ -186,18 +187,17 @@ void DossierAjout::slot_ajoutDossier() {
     bool ok;
     unsigned int n=num->text().toInt(&ok);
     qDebug()<<"avant ajout";
-    //unsigned int ns=semestre->value();
+    unsigned int ns=semestre->value();
     const QString& name=nom->text();
     const QString& fn=prenom->text();
     const QString& F=f->currentText();
 
 
-    M.ajouterDossier(n, name , fn, F /*ns*/);
+    M.ajouterDossier(n, name , fn, F, ns);
     Dossier* d=M.trouverDossier(n);
     dos=d;
 
     qDebug()<<"apres ajout";
-
 
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
     parent->update();
@@ -334,11 +334,15 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     prenomLabel= new QLabel("prenom de l'etudiant : ", this);;
 
     formationLabel=new QLabel("formation suivie : "+forma, this);
-
+    semestreLabel=new QLabel("Numéro de semestre actuel :",this);
     modifUV=new QPushButton("modifier les UVs de ce dossier", this);
     modifFormation=new QPushButton("modifier la formation de l'etudiant", this);
     sauver=new QPushButton("Modification terminee", this);
     modifEquivalences= new QPushButton("Modifier les equivalences", this);
+
+    numsem=new QSpinBox(this);
+    numsem->setRange(1,6);
+    numsem->setValue(1);
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(numLabel);
@@ -350,6 +354,8 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
 
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(formationLabel);
+    coucheH2->addWidget(semestreLabel);
+    coucheH2->addWidget(numsem);
 
     coucheH3=new QHBoxLayout;
     coucheH3->addWidget(modifUV);
@@ -433,7 +439,7 @@ void ModifierDossier::slot_finModifDossier() {
     unsigned int oldkey=dos->getNumero();
     QString oldname=dos->getNom();
     QString oldfirstname=dos->getPrenom();
-
+    dos->setSemestre(numsem->value());
     if (oldkey!=newkey) dos->setNumero(newkey);
     if (oldname!=n) dos->setNom(n);
     if (oldfirstname!=p) dos->setPrenom(p);

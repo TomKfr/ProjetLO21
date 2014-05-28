@@ -68,11 +68,8 @@ MenuDebut::MenuDebut() {
 }
 
 void MenuDebut::lancer_UV() {
-    qDebug()<<"lancer uv";
     Debut * fenetre1 = new Debut;
-    qDebug()<<"apres constructeur";
     fenetre1->show();
-
 }
 
 
@@ -85,10 +82,12 @@ void MenuDebut::lancer_Dossiers() {
 
 }
 void MenuDebut::lancer_Formations() {
-    //menuFormation* fenetre3 =new menuFormation();
-    //fenetre3->show();
+    menuFormation* fenetre3 =new menuFormation();
+    fenetre3->show();
 }
 void MenuDebut::lancer_Filieres(){
+    menuFiliere* fenetre4=new menuFiliere();
+    fenetre4->show();
 }
 void MenuDebut::lancer_rien(){
     this->close();

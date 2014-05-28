@@ -9,7 +9,7 @@
 #include <QFileDialog>
 
 
-void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form /*unsigned int ns*/){
+void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form, unsigned int nb){
     if (trouverDossier(n)) {
         throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+n+QString("d�ja existant"));
     }else{
@@ -23,7 +23,7 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
             delete[] old;
         }
 
-        tabDossiers[nbDos]=new Dossier(n, name, firstname, form /*ns*/);
+        tabDossiers[nbDos]=new Dossier(n, name, firstname, form ,nb);
         nbDos++;
     }
 
@@ -51,7 +51,6 @@ void Dossier::ajouterUV(UV* uv) {
     }
     listeUV[nbUV++]=uv;*/
     listeUV.insert(uv->getCode(),uv);
-
 }
 
 void Dossier::supprimerUV(UV* uv) {
@@ -84,17 +83,11 @@ const QMap<QString,UV*>::const_iterator Dossier::trouverUV(const QString &code)
     return listeUV.find(code);
 }
 
-
-
-
 Dossier* DossierManager::trouverDossier(unsigned int n)const{
     for(unsigned int i=0; i<nbDos; i++)
         if (n==tabDossiers[i]->getNumero()) return tabDossiers[i];
     return 0;
 }
-
-
-
 
 void DossierManager::load(/*const QString& fichier*/)
 {
@@ -113,6 +106,7 @@ void DossierManager::load(/*const QString& fichier*/)
                 QString nom;
                 QString prenom;
                 QString formation;
+                unsigned int numSemestre;
                 QStringList listUV;
                 QStringList listResult;
 
@@ -140,6 +134,9 @@ void DossierManager::load(/*const QString& fichier*/)
                         }
                         if(xml.name() == "formation") {
                             xml.readNext(); formation=xml.text().toString();
+                        }
+                        if(xml.name() == "semestre") {
+                            xml.readNext(); numSemestre=xml.text().toUInt();
                         }
 
                         if(xml.name() == "uvs")
@@ -212,7 +209,7 @@ void DossierManager::load(/*const QString& fichier*/)
                     }
                     xml.readNext();
                 }
-                ajouterDossier(numero,nom, prenom, formation/* numSemestre*/);
+                ajouterDossier(numero,nom, prenom, formation, numSemestre);
                 Dossier* d=trouverDossier(numero);
                 qDebug()<<"dans le load : nb equi"<<nb;
                 /*d->setNbEquivalences(nb);
@@ -246,25 +243,29 @@ void DossierManager::load(/*const QString& fichier*/)
 void DossierManager::save(){
 
     qDebug() << "Save Dossier";
-
+    file=QDir::currentPath()+"/dossiers.xml";
     QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
+    qDebug()<<"point1";
      QXmlStreamWriter stream(&newfile);
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
      stream.writeStartElement("dossiers");
+     qDebug()<<"point2";
      for(unsigned int i=0; i<nbDos; i++){
          stream.writeStartElement("dossier");
          /*stream.writeAttribute("automne", (uvs[i]->ouvertureAutomne())?"true":"false");
          stream.writeAttribute("printemps", (uvs[i]->ouverturePrintemps())?"true":"false");*/
          QString n; n.setNum(tabDossiers[i]->getNumero());
+         qDebug()<<"point3";
          //QString n2; n2.setNum(tabDossiers[i]->getNumSemestre());
          stream.writeTextElement("numero",n);
          stream.writeTextElement("nom",tabDossiers[i]->getNom());
          stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
          stream.writeTextElement("formation",tabDossiers[i]->getFormation());
-         //stream.writeTextElement("numSemestre",n2);
-
+         qDebug()<<"point4";
+         stream.writeTextElement("semestre",QString::number(tabDossiers[i]->getNumSemestre()));
+         qDebug()<<"point5";
 
          //ecriture des UV
 
@@ -273,7 +274,7 @@ void DossierManager::save(){
          qDebug()<<listeRes[0];
 
          stream.writeStartElement("uvs");
-
+        qDebug()<<"point6";
          for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
          {
              stream.writeTextElement("uv",it.key());
@@ -281,7 +282,7 @@ void DossierManager::save(){
              stream.writeTextElement("result",listeRes[j]);
              j++;
          }
-
+         qDebug()<<"point7";
          stream.writeEndElement();
 
          /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
@@ -295,7 +296,8 @@ void DossierManager::save(){
          }*/
 
          //ecriture des equivalences
-qDebug()<<"dans le save avant les equivalences";
+         /*
+         qDebug()<<"dans le save avant les equivalences";
          i=0;
          Equivalences** tab=tabDossiers[i]->getEquivalences();
 
@@ -323,7 +325,7 @@ qDebug()<<"dans le save avant les equivalences";
 
           qDebug()<<"3";
 
-          qDebug()<<"4";
+          qDebug()<<"4";*/
      }
      stream.writeEndElement();
      stream.writeEndDocument();

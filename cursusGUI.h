@@ -1,5 +1,5 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef CURSUSGUI_H
+#define CURSUSGUI_H
 
 #include <iostream>
 #include <QString>
@@ -300,4 +300,4 @@ public slots:
     void update();
 };
 
-#endif // MENU_H
+#endif // CURSUSGUI_H

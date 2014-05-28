@@ -37,7 +37,7 @@ class Dossier {
     QString nom;
     QString prenom;
     QString F;
-    //unsigned int nbSemestre; //GI 01/02/03
+    unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
 
@@ -46,7 +46,7 @@ class Dossier {
     Equivalences** equivalence;
     unsigned int nbEquivalences;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f) : numero(num), nom(n), prenom(p), F(f), nbEquivalences(0), listeResultats(0), nbResultats(0), nbMaxResultats(0) {
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0), nbMaxResultats(0) {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
@@ -57,7 +57,7 @@ public :
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
-    //unsigned int getNumSemestre() const {return nbSemestre;}
+    unsigned int getNumSemestre() const {return nbSemestre;}
     //UV** getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
     Equivalences ** getEquivalences() const {return equivalence;}
@@ -70,6 +70,7 @@ public :
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
+    void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
     //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
     void setEquivalences(Equivalences** l) { equivalence=l; }
@@ -85,7 +86,6 @@ public :
 
     /*class iterateur<UV>;
     iterateur<UV>& getIterateurUV();*/
-
 };
 
 
@@ -114,7 +114,7 @@ public:
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
 
-    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f /*unsigned int ns*/);
+    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb);
     void removeDossier(Dossier * dos);
 
     void addItem(Dossier* dos);
