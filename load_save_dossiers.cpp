@@ -198,11 +198,11 @@ void DossierManager::save(){
          //ecriture des UV
 
          QString * listeRes=tabDossiers[i]->getlisteResultats();
+         qDebug()<<"point6";
          unsigned int j=0;
-         qDebug()<<listeRes[0];
-
+         //qDebug()<<listeRes[0];
+         qDebug()<<"point7";
          stream.writeStartElement("uvs");
-        qDebug()<<"point6";
          for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
          {
              stream.writeTextElement("uv",it.key());
@@ -210,7 +210,7 @@ void DossierManager::save(){
              stream.writeTextElement("result",listeRes[j]);
              j++;
          }
-         qDebug()<<"point7";
+
          stream.writeEndElement();
 
          /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
