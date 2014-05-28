@@ -532,7 +532,7 @@ void ModifResult::update() {
 
     for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
     {
-       // uvs->addItem(*it->getCode());
+        uvs->addItem(it.value()->getCode());
         resultats->addItem(res[i]);
         i++;
     }
