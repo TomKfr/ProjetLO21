@@ -141,8 +141,6 @@ void Debut::modif() {
     UVManager& m=UVManager::getInstance();
     cursusManager& cman=cursusManager::getInstance();
 
-    qDebug()<<"dans la modif1";
-
     for(QMap<QString,formation*>::iterator it=cman.getQmapIteratorFormbegin();it!=cman.getQmapIteratorFormend();it++)
     {
         if(it.value()->trouverUV(liste->currentText())!=0)
@@ -152,8 +150,6 @@ void Debut::modif() {
         }
         if(found) break;
     }
-
-     qDebug()<<"dans la modif2";
     if(!found)
     {
         for(QMap<QString,filiere*>::iterator it2=cman.getQmapIteratorFilBegin();it2!=cman.getQmapIteratorFilEnd();it2++)
@@ -167,11 +163,9 @@ void Debut::modif() {
         }
     }
 
-     qDebug()<<"dans la modif3";
     if(!found)
     {
         UVEditeur * fenetre= new UVEditeur(m.getUV(liste->currentText()), m);
-         qDebug()<<"dans la modif4";
         fenetre->show();
     }
 
