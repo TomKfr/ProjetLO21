@@ -41,7 +41,6 @@ MenuDossier::MenuDossier() {
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(ajout()));
     QObject::connect(sup, SIGNAL(clicked()), this, SLOT(suppression()));
     QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
-    //QObject::connect(visu,SIGNAL(clicked()),this,SLOT(visualiser()));
     QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
     QObject::connect(terminer, SIGNAL(clicked()),this, SLOT(fin()));
 
@@ -264,23 +263,11 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
 }
 
 
-/*void MenuDossier::visualiser()
-{
-    if(!dman->listempty())
-    {
-        Dossier* d=dman->trouverDossier(dossiers->currentText().toUInt());
-        if(d!=0)
-        {
-            visualiserDossier* fen=new visualiserDossier(d);
-            fen->show();
-        }
-    }
-    else QMessageBox::information(this,"erreur","Pas de dossier !",QMessageBox::Ok);
-}*/
 
 void MenuDossier::sauvegarder()
 {
     dman->save();
+    qDebug()<<"sortie du save";
     QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
 }
 
@@ -313,6 +300,7 @@ void AjoutUV::update()
 void AjoutUV::end_listeUV() {
     this->close();
 }
+//MODIF
 
 ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * md) : M(dm), dos(d), menu(md)
 {
@@ -463,7 +451,7 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
 
     uvs=new QComboBox(this);
     resultats=new QComboBox(this);
-    //update();
+    update();
 
     coucheH0->addWidget(explication);
     coucheH0->addWidget(uvs);
@@ -485,44 +473,7 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
 
 };
 
-void ModifUV::update() {//mauvais
-}
-
-void ModifUV::modifierResult() {
-
-    ModifResult* fenetre= new ModifResult(dos);
-    fenetre->show();
-}
-
-ModifResult::ModifResult(Dossier * d) : dos(d) {
-    explication=new QLabel("UVs actuelles du dossier et resultat associe :", this);
-
-    uvs=new QComboBox(this);
-    resultats=new QComboBox(this);
-    valider=new QPushButton("Valider", this);
-
-    coucheH1=new QHBoxLayout;
-    coucheH0= new QHBoxLayout;
-
-    update();
-
-    coucheH0->addWidget(explication);
-    coucheH0->addWidget(uvs);
-    coucheH0->addWidget(resultats);
-    coucheH1->addWidget(valider);
-
-    couche=new QVBoxLayout;
-    couche->addLayout(coucheH0);
-    couche->addLayout(coucheH1);
-    setLayout(couche);
-
-    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer()));
-
-}
-
-void ModifResult::enregistrer() {}
-void ModifResult::update() {
-
+void ModifUV::update() {
     qDebug()<<"dans modifresult";
     uvs->clear();
     resultats->clear();
@@ -534,6 +485,78 @@ void ModifResult::update() {
     {
         uvs->addItem(it.value()->getCode());
         resultats->addItem(res[i]);
+        i++;
+    }
+}
+
+void ModifUV::modifierResult() {
+
+    ModifResult* fenetre= new ModifResult(dos, this);
+    fenetre->show();
+}
+
+ModifResult::ModifResult(Dossier * d, ModifUV* mu) : dos(d), modifuv(mu) {
+    explication=new QLabel("UVs actuelles du dossier et resultat associe :", this);
+
+    uvs=new QComboBox(this);
+    resultats=new QComboBox(this);
+    valider=new QPushButton("Valider", this);
+    retour=new QPushButton("Retour", this);
+
+    coucheH1=new QHBoxLayout;
+    coucheH0= new QHBoxLayout;
+    coucheH2= new QHBoxLayout;
+
+    update();
+
+    coucheH0->addWidget(explication);
+    coucheH0->addWidget(uvs);
+    coucheH0->addWidget(resultats);
+    coucheH1->addWidget(valider);
+    coucheH2->addWidget(retour);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH0);
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    setLayout(couche);
+
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer()));
+    QObject::connect(retour, SIGNAL(clicked()), this, SLOT(fin2()));
+
+}
+
+void ModifResult::fin2() {this->close();}
+
+void ModifResult::enregistrer() {
+
+    //recup le i du combobox et modifie à l'indice correspondant dans le tableau associe
+    unsigned int i=uvs->currentIndex();
+    dos->setResultat(i, resultats->currentText());
+    modifuv->update();
+    QMessageBox::information(this, "sauvegarde", " Resultat enregistre");
+
+}
+void ModifResult::update() {
+
+    qDebug()<<"dans modifresult";
+    uvs->clear();
+    resultats->clear();
+    resultats->addItem("A");
+    resultats->addItem("B");
+    resultats->addItem("C");
+    resultats->addItem("D");
+    resultats->addItem("E");
+    resultats->addItem("F");
+    resultats->addItem("FX");
+    resultats->addItem("En cours");
+    unsigned int i=0;
+    QString * res=dos->getlisteResultats();
+
+
+    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
+    {
+        uvs->addItem(it.value()->getCode());
         i++;
     }
 
@@ -561,7 +584,7 @@ SuppressionUV::SuppressionUV(Dossier* d) : dos(d)
 {
     liste=new QComboBox;
     update();
-    supprimer=new QPushButton("Supprimer cette UV", this);
+    supprimer=new QPushButton("Supprimer cette UV de mon dossier", this);
     fin=new QPushButton("Suppressions terminees", this);
 
     coucheH1=new QHBoxLayout;
@@ -594,12 +617,16 @@ void SuppressionUV::suppression_une_uv(){
 }
 
 void SuppressionUV::update() {
+
+    qDebug()<<"dans suppr update";
     liste->clear();
-    UVManager& m=UVManager::getInstance();
-    for(iterateur<UV>& it=m.getIterateurForm();!it.isDone();it.next())
+
+    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
     {
-        liste->addItem(it.courant()->getCode());
+        liste->addItem(it.value()->getCode());
+
     }
+
 }
 
 AjoutEquivalences::AjoutEquivalences(Dossier * d, ModifEquivalences * m) : dos(d), me(m) {

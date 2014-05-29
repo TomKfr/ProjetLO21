@@ -240,16 +240,20 @@ class ModifResult : public QWidget
     QComboBox * uvs;
     QComboBox * resultats;
     QPushButton* valider;
+    QPushButton* retour;
     QVBoxLayout * couche;
     QHBoxLayout* coucheH0;
     QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
     Dossier* dos;
+    ModifUV* modifuv;
 
-public : ModifResult(Dossier* d) ;
+public : ModifResult(Dossier* d, ModifUV* mu) ;
 
 public slots :
     void update(); //avec que les uvs et les resultats du dossier
     void enregistrer();
+    void fin2();
 
 
 };

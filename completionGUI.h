@@ -1,0 +1,4 @@
+#ifndef COMPLETIONGUI_H
+#define COMPLETIONGUI_H
+
+#endif // COMPLETIONGUI_H

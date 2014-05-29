@@ -74,6 +74,7 @@ public :
     void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
     //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
+    void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
     void setEquivalences(Equivalences** l) { equivalence=l; }
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);

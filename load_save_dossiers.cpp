@@ -163,7 +163,7 @@ void DossierManager::save(){
      stream.writeStartDocument();
      stream.writeStartElement("dossiers");
      qDebug()<<"Nombre de dossiers à sauvegarder : "<<nbDos<<"***************************";
-     for(unsigned int i=0; i<2; i++){
+     for(unsigned int i=0; i<nbDos; i++){
          qDebug()<<"ecriture du dossier "<<i;
          stream.writeStartElement("dossier");
 
