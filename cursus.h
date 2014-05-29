@@ -1,6 +1,7 @@
 #ifndef CURSUS_H
 #define CURSUS_H
 
+#include "UTProfiler.h"
 #include <iostream>
 #include <QString>
 #include <QWidget>
@@ -14,9 +15,10 @@
 #include <QStringList>
 #include <QMap>
 
-class UV;
-class UVManager;
+//class UV;
+//class UVManager;
 class visiteur;
+//enum Categorie;
 
 class abstract_cursus_item
 {
@@ -56,12 +58,21 @@ class formation : public abstract_cursus_item
 
     unsigned int nbSemestres; //Le nombre de semestres (théoriques) de la formation
     QSet<QString> filieresAssoc;// liste des filières associées à cett formation.
+    QMap<Categorie,unsigned int> credits_requis;
+    QSet<QString> UVs_obligatoires;
     formation(const QString& n, unsigned int c, unsigned int s): abstract_cursus_item(n,c), nbSemestres(s) {}
     ~formation() {}
 
 public:
     void supprimer_UV(const QString &code);
     unsigned int getNbSem() const {return nbSemestres;}
+    unsigned int getCrRequis(Categorie cat) const;
+    void setNbCrRequis(Categorie cat, unsigned int nb);
+    QMap<Categorie,unsigned int>::iterator getCrRequisBegin() {return credits_requis.begin();}
+    QMap<Categorie,unsigned int>::iterator getCrRequisEnd() {return credits_requis.end();}
+    void ajt_UV_obligatoire(const QString& code);
+    void suppr_UV_obligatoire(const QString& code);
+    bool estObligatoire(const QString& code);
 };
 
 class cursusManager // gestionnaire des cursus
@@ -85,11 +96,11 @@ public:
     filiere* trouverFil(const QString& n) {return filieres.find(n).value();}
     void ajouterFiliere(const QString& nom, unsigned int c);
     void chargerCursus();
-    void ajouterFormation(const QString& nom, unsigned int c, unsigned int s);
+    void ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
     void supprimerFormation(const QString& nom);
     void supprimerFiliere(const QString& nom);
     void modifFiliere(const QString& oldkey, const QString& newname, unsigned int c);
-    void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s);
+    void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
     void sauverCursus(QWidget* parent);
     void accept(visiteur* v, QString type);
     void inscrFilForm(formation* form, const QString& fil);

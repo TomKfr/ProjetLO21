@@ -45,6 +45,26 @@ void formation::supprimer_UV(const QString& code)
         uvs.remove(code);
     }
 }
+unsigned int formation::getCrRequis(Categorie cat) const
+{
+    return credits_requis.find(cat).value();
+}
+void formation::setNbCrRequis(Categorie cat, unsigned int nb)
+{
+    credits_requis.insert(cat,nb);
+}
+void formation::ajt_UV_obligatoire(const QString &code)
+{
+    UVs_obligatoires.insert(code);
+}
+void formation::suppr_UV_obligatoire(const QString &code)
+{
+    UVs_obligatoires.remove(code);
+}
+bool formation::estObligatoire(const QString &code)
+{
+    return UVs_obligatoires.contains(code);
+}
 
 // ///////////////////////////////////////////////////////////////////
 
@@ -69,7 +89,7 @@ void cursusManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s)
+void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
     if (formations.find(nom)!=formations.end())
     {
@@ -77,7 +97,11 @@ void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigne
     }
     else
     {
-        formations.insert(nom,new formation(nom,c,s));
+        formation* newform=new formation(nom,c,s);
+        newform->setNbCrRequis(CS,ccs);
+        newform->setNbCrRequis(TM,ctm);
+        newform->setNbCrRequis(TSH,ctsh);
+        formations.insert(nom,newform);
     }
 }
 
@@ -123,20 +147,23 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
         }
     }
 }
-void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s)
+void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
     if (formations.find(newname)!=formations.end()) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
     else
     {
         QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
         QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
+        QSet<QString>* list3=new QSet<QString>(trouverForm(oldkey)->UVs_obligatoires);
         supprimerFormation(oldkey);
-        ajouterFormation(newname,c,s);
+        ajouterFormation(newname,c,s,ccs,ctm,ctsh);
         formation* newform=trouverForm(newname);
         newform->uvs=*list;
         delete list;
         newform->filieresAssoc=*list2;
         delete list2;
+        newform->UVs_obligatoires=*list3;
+        delete list3;
     }
 }
 
@@ -178,6 +205,7 @@ void cursusManager::sauverCursus(QWidget *parent)
             for(QMap<QString,UV*>::iterator it=form.value()->getQmapIteratorUVbegin();it!=form.value()->getQmapIteratorUVend(); it++)
             {
                 stream.writeTextElement("uv",it.key());
+                stream.writeTextElement("obligatoire",form.value()->estObligatoire(it.key())?"true":"false");
             }
             stream.writeEndElement();
             stream.writeStartElement("filieres");
@@ -186,6 +214,13 @@ void cursusManager::sauverCursus(QWidget *parent)
                 stream.writeTextElement("filiere",*it);
             }
             stream.writeEndElement();
+            stream.writeStartElement("creditsrequis");
+            for(QMap<Categorie,unsigned int>::iterator it=form.value()->getCrRequisBegin();it!=form.value()->getCrRequisEnd();it++)
+            {
+                stream.writeTextElement(CategorieToString(it.key()),QString::number(it.value()));
+            }
+            stream.writeEndElement();
+
             stream.writeEndElement();
         }
         stream.writeEndElement();
@@ -242,7 +277,7 @@ void cursusManager::chargerCursus()
             if(xml.name() == "filiere") {
                 QString nom;
                 unsigned int nbCredits;
-                QStringList list;
+                QMap<QString,bool> list;
 
                 xml.readNext();
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "filiere")) {
@@ -261,7 +296,7 @@ void cursusManager::chargerCursus()
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
                                     xml.readNext();
-                                    list<<xml.text().toString();
+                                    list.insert(xml.text().toString(),false);
                                 }
                                 xml.readNext();
                             }
@@ -298,8 +333,13 @@ void cursusManager::chargerCursus()
                 QString nom;
                 unsigned int nbCredits;
                 unsigned int nbSem;
-                QStringList list;
                 QStringList list2;
+                QString code;
+                bool required;
+                QMap<QString,bool> listUVs;
+                QString cat;
+                int nb;
+                QMap<QString,int> creditsrequis;
 
                 xml.readNext();
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "formation")) {
@@ -321,7 +361,15 @@ void cursusManager::chargerCursus()
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
                                     xml.readNext();
-                                    list<<xml.text().toString();
+                                    code=xml.text().toString();
+                                    xml.readNext();
+                                    xml.readNext();
+                                    xml.readNext();
+                                    xml.readNext();
+                                    if(xml.text()=="true") required=true;
+                                    else required=false;
+
+                                    listUVs.insert(code,required);
                                 }
                                 xml.readNext();
                             }
@@ -339,13 +387,37 @@ void cursusManager::chargerCursus()
                                 xml.readNext();
                             }
                         }
+                        if(xml.name() == "creditsrequis") {
+                            xml.readNext();
+                            xml.readNext();
+                            cat=xml.name().toString();
+                            xml.readNext();
+                            nb=xml.text().toInt();
+                            creditsrequis.insert(cat,nb);
+                            xml.readNext();
+                            xml.readNext();
+                            xml.readNext();
+                            cat=xml.name().toString();
+                            xml.readNext();
+                            nb=xml.text().toInt();
+                            creditsrequis.insert(cat,nb);
+                            xml.readNext();
+                            xml.readNext();
+                            xml.readNext();
+                            cat=xml.name().toString();
+                            xml.readNext();
+                            nb=xml.text().toInt();
+                            creditsrequis.insert(cat,nb);
+                            xml.readNext();
+                            xml.readNext();
+                        }
                     }
                     xml.readNext();
                 }
-                ajouterFormation(nom,nbCredits,nbSem);
-                if(!list.empty())
+                ajouterFormation(nom,nbCredits,nbSem,0,0,0);
+                if(!listUVs.empty())
                 {
-                    visiteur* v=new visiteur(nom,list);
+                    visiteur* v=new visiteur(nom,listUVs);
                     v->visitUVmanager();
                     this->accept(v,"form");
                 }
@@ -355,6 +427,10 @@ void cursusManager::chargerCursus()
                 {
                     inscrFilForm(newform,list2.first());
                     list2.removeFirst();
+                }
+                for(QMap<QString,int>::iterator it=creditsrequis.begin();it!=creditsrequis.end();it++)
+                {
+                    newform->credits_requis.insert(StringToCategorie(it.key()),it.value());
                 }
             }
         }

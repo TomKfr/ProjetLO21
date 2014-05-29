@@ -10,10 +10,9 @@ class formation;
 class UTProfilerException;
 
 class visiteur;
-
 enum Categorie {
-    /* Connaissances Scientifiques */ CS,  /* Techniques et M�thodes */ TM,
-    /* Technologies et Sciences de l'Homme */ TSH, /* Stage et Projet */ SP
+ CS, TM,
+   TSH, SP
 };
 
 QTextStream& operator<<(QTextStream& f, const Categorie& s);

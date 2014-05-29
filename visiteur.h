@@ -13,13 +13,13 @@ class cursusManager;
 class visiteur
 {
     QString nom;
-    QStringList list;
+    QMap<QString,bool> list;
     QStringList listfil;
     QMap<QString,UV*> listuvs;
     int taille;
 
 public:
-    visiteur(const QString& n, const QStringList& l): nom(n), list(l), taille(list.length()) {}
+    visiteur(const QString& n, const QMap<QString,bool>& l): nom(n), list(l), taille(list.count()) {}
     void visitUVmanager();
     void visitCursusManager(cursusManager* cman, QString c);
 };

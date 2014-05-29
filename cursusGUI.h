@@ -1,7 +1,6 @@
 #ifndef CURSUSGUI_H
 #define CURSUSGUI_H
 
-#include <iostream>
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -10,6 +9,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QComboBox>
+#include <QCheckBox>
 
 class cursusManager;
 class UVManager;
@@ -58,11 +58,18 @@ class ajoutFormation : public QWidget {
     QHBoxLayout* hbox1;
     QHBoxLayout* hbox2;
     QHBoxLayout* hbox3;
+    QHBoxLayout* hbox4;
     QLabel* lbl1;
     QLabel* lbl2;
     QLabel* lbl3;
+    QLabel* lblcs;
+    QLabel* lbltm;
+    QLabel* lbltsh;
     QLineEdit* nom;
     QSpinBox* credits;
+    QSpinBox* creditscs;
+    QSpinBox* creditstm;
+    QSpinBox* creditstsh;
     QSpinBox* semstr;
     QPushButton* valider;
 
@@ -83,11 +90,18 @@ class modifFormation : public QWidget {
     QHBoxLayout* hbox1;
     QHBoxLayout* hbox2;
     QHBoxLayout* hbox3;
+    QHBoxLayout* hbox4;
     QLabel* lbl1;
     QLabel* lbl2;
     QLabel* lbl3;
+    QLabel* lblcs;
+    QLabel* lbltm;
+    QLabel* lbltsh;
     QLineEdit* nom;
     QSpinBox* credits;
+    QSpinBox* creditscs;
+    QSpinBox* creditstm;
+    QSpinBox* creditstsh;
     QSpinBox* semstr;
     QPushButton* valider;
 
@@ -143,6 +157,7 @@ class selectUVsFormation : public QWidget
     QComboBox* choix;
     QPushButton* retour;
     QPushButton* ajouter;
+    QCheckBox* required;
 
 public:
     selectUVsFormation(cursusManager* cm, UVManager* um, formation* f, visualiserFormation* p);

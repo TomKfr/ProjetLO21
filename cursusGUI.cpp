@@ -2,6 +2,7 @@
 #include "cursusGUI.h"
 #include "UTProfiler.h"
 #include <QMessageBox>
+#include <QCheckBox>
 
 menuFormation::menuFormation()
 {
@@ -111,15 +112,25 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     hbox1=new QHBoxLayout(this);
     hbox2=new QHBoxLayout(this);
     hbox3=new QHBoxLayout(this);
+    hbox4=new QHBoxLayout(this);
     lbl1=new QLabel("Nom de la formation :",this);
     lbl2=new QLabel("Nombre de semestres :",this);
     lbl3=new QLabel("Nombre de crédits :",this);
+    lblcs=new QLabel("Nombre de crédits CS requis: ",this);
+    lbltm=new QLabel("Nombre de crédits TM requis: ",this);
+    lbltsh=new QLabel("Nombre de crédits TSH requis: ",this);
     nom=new QLineEdit(this);
     valider=new QPushButton("Valider",this);
     valider->setDefault(true);
     credits=new QSpinBox(this);
     credits->setRange(100,400);
     credits->setSingleStep(10);
+    creditscs=new QSpinBox(this);
+    creditscs->setRange(0,200);
+    creditstm=new QSpinBox(this);
+    creditstm->setRange(0,200);
+    creditstsh=new QSpinBox(this);
+    creditstsh->setRange(0,200);
     semstr=new QSpinBox(this);
     semstr->setRange(4,6);
 
@@ -129,10 +140,17 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     hbox2->addWidget(semstr);
     hbox2->addWidget(lbl3);
     hbox2->addWidget(credits);
-    hbox3->addWidget(valider);
+    hbox3->addWidget(lblcs);
+    hbox3->addWidget(creditscs);
+    hbox3->addWidget(lbltm);
+    hbox3->addWidget(creditstm);
+    hbox3->addWidget(lbltsh);
+    hbox3->addWidget(creditstsh);
+    hbox4->addWidget(valider);
     mainbox->addLayout(hbox1);
     mainbox->addLayout(hbox2);
     mainbox->addLayout(hbox3);
+    mainbox->addLayout(hbox4);
     this->setLayout(mainbox);
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(ajout()));
@@ -140,7 +158,7 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
 
 void ajoutFormation::ajout()
 {
-    man->ajouterFormation(nom->text(),credits->value(), semstr->value());
+    man->ajouterFormation(nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
     QMessageBox::information(this,"Ajout d'une formation", "Formation ajoutée !",QMessageBox::Ok);
     parent->update();
     this->close();
@@ -149,7 +167,6 @@ void ajoutFormation::ajout()
 modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
 {
     this->setWindowTitle(QString("Ajout d'une formation"));
-    this->setFixedWidth(200);
     man=m;
     parent=p;
     form=f;
@@ -160,6 +177,10 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     lbl1=new QLabel("Nom de la formation :",this);
     lbl2=new QLabel("Nombre de semestres :",this);
     lbl3=new QLabel("Nombre de crédits :",this);
+    lblcs=new QLabel("Nombre de crédits CS requis: ",this);
+    lbltm=new QLabel("Nombre de crédits TM requis: ",this);
+    lbltsh=new QLabel("Nombre de crédits TSH requis: ",this);
+    hbox4=new QHBoxLayout(this);
     nom=new QLineEdit(this);
     nom->setText(f->getNom());
     valider=new QPushButton("Valider",this);
@@ -168,6 +189,15 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     credits->setRange(100,400);
     credits->setSingleStep(10);
     credits->setValue(f->getNbCred());
+    creditscs=new QSpinBox(this);
+    creditscs->setRange(0,200);
+    creditscs->setValue(f->getCrRequis(CS));
+    creditstm=new QSpinBox(this);
+    creditstm->setRange(0,200);
+    creditstm->setValue(f->getCrRequis(TM));
+    creditstsh=new QSpinBox(this);
+    creditstsh->setRange(0,200);
+    creditstsh->setValue(f->getCrRequis(TSH));
     semstr=new QSpinBox(this);
     semstr->setRange(4,6);
     semstr->setValue(f->getNbSem());
@@ -178,10 +208,17 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     hbox2->addWidget(semstr);
     hbox2->addWidget(lbl3);
     hbox2->addWidget(credits);
-    hbox3->addWidget(valider);
+    hbox3->addWidget(lblcs);
+    hbox3->addWidget(creditscs);
+    hbox3->addWidget(lbltm);
+    hbox3->addWidget(creditstm);
+    hbox3->addWidget(lbltsh);
+    hbox3->addWidget(creditstsh);
+    hbox4->addWidget(valider);
     mainbox->addLayout(hbox1);
     mainbox->addLayout(hbox2);
     mainbox->addLayout(hbox3);
+    mainbox->addLayout(hbox4);
     this->setLayout(mainbox);
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(modif()));
@@ -189,7 +226,7 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
 
 void modifFormation::modif()
 {
-    man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value());
+    man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
     QMessageBox::information(this,"Modification","Modification effectuée",QMessageBox::Ok);
     parent->update();
     this->close();
@@ -198,7 +235,6 @@ void modifFormation::modif()
 visualiserFormation::visualiserFormation(cursusManager* cmanager, UVManager* umanager, formation* f)
 {
     this->setWindowTitle(f->getNom());
-    this->setFixedWidth(400);
     cman=cmanager;
     uman=umanager;
     objet=f;
@@ -255,8 +291,16 @@ void visualiserFormation::update()
     QString txt="";
     for(QMap<QString,UV*>::iterator it=objet->getQmapIteratorUVbegin();it!=objet->getQmapIteratorUVend(); it++)
     {
-        supprUV->addItem(it.key());
-        txt+=it.key()+"\n";
+        if(objet->estObligatoire(it.key()))
+        {
+            txt+=it.key()+"*\n";
+            supprUV->addItem(it.key()+"*");
+        }
+        else
+        {
+            txt+=it.key()+"\n";
+            supprUV->addItem(it.key());
+        }
     }
     uvs->setText(txt);
 }
@@ -278,24 +322,27 @@ selectUVsFormation::selectUVsFormation(cursusManager* cm, UVManager* um, formati
     mainbox=new QVBoxLayout(this);
     label1=new QLabel("Sélectionnez une UV pour l'ajouter à la formation "+f->getNom(),this);
     choix=new QComboBox(this);
-
-    update();
+    required=new QCheckBox("Rendre cette UV obligatoire",this);
 
     retour=new QPushButton("Retour",this);
     ajouter=new QPushButton("Ajouter",this);
     mainbox->addWidget(label1);
     mainbox->addWidget(choix);
+    mainbox->addWidget(required);
     mainbox->addWidget(ajouter);
     mainbox->addWidget(retour);
     this->setLayout(mainbox);
 
     QObject::connect(retour,SIGNAL(clicked()),this,SLOT(close()));
     QObject::connect(ajouter,SIGNAL(clicked()),this,SLOT(ajouterUV()));
+
+    update();
 }
 
 void selectUVsFormation::ajouterUV()
 {
-    objet->ajouter_UV(&uman->getUV(choix->currentText())); // MODIF ICI %%%§§§%
+    objet->ajouter_UV(&uman->getUV(choix->currentText()));
+    if(required->isChecked()) objet->ajt_UV_obligatoire(choix->currentText());
     QMessageBox::information(this,"Ajout d'une UV","UV "+choix->currentText()+" ajoutée à la formation "+objet->getNom(),QMessageBox::Ok);
     parent->update();
     this->update();
@@ -304,6 +351,7 @@ void selectUVsFormation::ajouterUV()
 void selectUVsFormation::update()
 {
     choix->clear();
+    required->setChecked(false);
     for(iterateur<UV>& it=uman->getIterateurForm();!it.isDone();it.next())
     {
         if(objet->trouverUV(it.courant()->getCode())==0) choix->addItem(it.courant()->getCode());

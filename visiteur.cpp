@@ -6,11 +6,10 @@ void visiteur::visitUVmanager()
 {
     //aller dans l'uv manager pour récupérer un tableau de pointeurs d'uvs correspondant à l'attribut stringlist
     UVManager& uman=UVManager::getInstance();
-    for(int i=0;i<taille;i++)
+    for(QMap<QString,bool>::iterator it=list.begin();it!=list.end();it++)
     {
-        UV& newuv=uman.getUV(list.first());
+        UV& newuv=uman.getUV(it.key());
         listuvs.insert(newuv.getCode(),&newuv);
-        list.removeFirst();
     }
 }
 
@@ -23,6 +22,7 @@ void visiteur::visitCursusManager(cursusManager* cman, QString c)
         for(QMap<QString,UV*>::iterator it=listuvs.begin();it!=listuvs.end();it++)
         {
             form->ajouter_UV(it.value());
+            if(list.find(it.key()).value()) form->ajt_UV_obligatoire(it.key());
         }
     }
     else
@@ -33,6 +33,5 @@ void visiteur::visitCursusManager(cursusManager* cman, QString c)
             fil->ajouter_UV(it.value());
         }
     }
-    // ajouter les filières et vérifier qu'elles existent !
 }
 
