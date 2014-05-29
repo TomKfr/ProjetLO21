@@ -15,7 +15,9 @@ HEADERS += \
     visiteur2.h \
     menu.h \
     iterateur.h \
-    exception.h
+    exception.h \
+    completion.h \
+    completionGUI.h
 
 SOURCES += \
     UTProfiler.cpp \
@@ -28,6 +30,9 @@ SOURCES += \
     visiteur2.cpp \
     main.cpp \
     menu.cpp \
-    load_save_dossiers.cpp
+    load_save_dossiers.cpp \
+    completion.cpp \
+    completionGUI.cpp \
+    menuDossier.cpp
 
 

@@ -35,6 +35,7 @@ class MenuDossier : public QWidget {
     QPushButton* sauver;
     QPushButton* terminer;
     QPushButton* ajouter;
+    QPushButton* completion;
     QHBoxLayout* coucheH;
     QHBoxLayout* coucheH0;
     QVBoxLayout* coucheV;
@@ -50,24 +51,9 @@ public slots:
     void supDossier(unsigned int num, DossierManager& dm);
     void modif();
     void fin();
-    //void visualiser();
+    void calcul_completion();
     void sauvegarder();
 };
-
-
-/*class visualiserDossier : public QWidget
-{
-    Q_OBJECT
-
-    Dossier* dos;
-    QLabel* numdos;
-    QLabel* listuv;
-    QHBoxLayout* mainbox;
-    QPushButton* quit;
-
-public:
-    visualiserDossier(Dossier* d);
-};*/
 
 class DossierAjout : public QWidget{
     Q_OBJECT
@@ -240,16 +226,20 @@ class ModifResult : public QWidget
     QComboBox * uvs;
     QComboBox * resultats;
     QPushButton* valider;
+    QPushButton* retour;
     QVBoxLayout * couche;
     QHBoxLayout* coucheH0;
     QHBoxLayout* coucheH1;
+    QHBoxLayout* coucheH2;
     Dossier* dos;
+    ModifUV* modifuv;
 
-public : ModifResult(Dossier* d) ;
+public : ModifResult(Dossier* d, ModifUV* mu) ;
 
 public slots :
     void update(); //avec que les uvs et les resultats du dossier
     void enregistrer();
+    void fin2();
 
 
 };
