@@ -86,78 +86,61 @@ void DossierManager::load(/*const QString& fichier*/)
                             ajouterDossier(numero,nom, prenom, formation, numSemestre);
                         }//fin if pour uv
 
-
-
-                        qDebug()<<listUV;
-                        qDebug()<<listResult;
-                        if(!listUV.empty())
+                        if(xml.name() == "equivalences")
                         {
-                            visiteur2* v=new visiteur2(numero,listUV,listResult);
-                            v->visitUVmanager();
-                            qDebug()<<"visit uv manager : done";
-                            this->accept(v);
-                            qDebug()<<"accept : done";
-                        }
-
-
-    /*                    if(xml.name() == "equivalences") {
-                            qDebug()<<"j'ai repere une equivalence mec";
-                            xml.readNext();
-
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="equivalences"))
-                               { //xml.readNext();
-                                qDebug()<<xml.name();//OK affiche bien une seule fois
+                            {
+                                if(xml.name() == "equivalence") {
+                                    xml.readNext();
+                                    while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="equivalence"))
+                                    {
+                                        if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="type")
+                                        {
+                                            xml.readNext();
+                                            type=xml.text().toString();
+                                        }
 
-                                 if(xml.name() == "equivalence") {
-                                     xml.readNext();
+                                        if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="credits")
+                                        {
+                                            xml.readNext();
+                                            credits=xml.text().toUInt();
+                                        }
 
-                                while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="equivalence"))
-                                   {
-                                     qDebug()<<"une equivalence";
-                                     //xml.readNext();
-                                     //qDebug()<<xml.name();
-                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="type")
-                                     {
-                                        xml.readNext(); type=xml.text().toString();
-                                        qDebug()<<xml.name();
-                                     }
-
-                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="credits")
-                                     {
-                                        xml.readNext(); credits=xml.text().toString().toInt();
-                                        qDebug()<<xml.name();
-                                     }
-
-                                     if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="description")
-                                     {
-                                        xml.readNext(); description=xml.text().toString();
-                                        qDebug()<<xml.name();
-                                     }
-
-
+                                        if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="description")
+                                        {
+                                            xml.readNext();
+                                            description=xml.text().toString();
+                                        }
+                                        xml.readNext();
+                                    }
                                     tab[nb]=new Equivalences(type, credits, description);
                                     nb++;
-                                    qDebug()<<"remplissage du tablo  :type : "<<type;
-
-                            }}
-
-                        }}*/
+                                }
+                                xml.readNext();
+                            }
+                        }
 
                     }
                     xml.readNext();
                 }
 
                 Dossier* d=trouverDossier(numero);
-                qDebug()<<"dans le load : nb equi"<<nb;
-                /*d->setNbEquivalences(nb);
+                qDebug()<<listUV;
+                qDebug()<<listResult;
+                if(!listUV.empty())
+                {
+                    visiteur2* v=new visiteur2(numero,listUV,listResult);
+                    v->visitUVmanager();
+                    qDebug()<<"visit uv manager : done";
+                    this->accept(v);
+                    qDebug()<<"accept : done";
+                }
+                d->setNbEquivalences(nb);
                 d->setEquivalences(tab);
                 tab=d->getEquivalences();
-                qDebug()<<tab[0]->getDescription();*/
-
 
                 //ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LES LISTES
-
             }
         }
     }
@@ -179,11 +162,11 @@ void DossierManager::save(){
      stream.setAutoFormatting(true);
      stream.writeStartDocument();
      stream.writeStartElement("dossiers");
-     qDebug()<<"point2";
-     for(unsigned int i=0; i<nbDos; i++){
+     qDebug()<<"Nombre de dossiers à sauvegarder : "<<nbDos<<"***************************";
+     for(unsigned int i=0; i<2; i++){
+         qDebug()<<"ecriture du dossier "<<i;
          stream.writeStartElement("dossier");
-         /*stream.writeAttribute("automne", (uvs[i]->ouvertureAutomne())?"true":"false");
-         stream.writeAttribute("printemps", (uvs[i]->ouverturePrintemps())?"true":"false");*/
+
          QString n; n.setNum(tabDossiers[i]->getNumero());
          qDebug()<<"point3";
          //QString n2; n2.setNum(tabDossiers[i]->getNumSemestre());
@@ -224,9 +207,9 @@ void DossierManager::save(){
          }*/
 
          //ecriture des equivalences
-         /*
+
          qDebug()<<"dans le save avant les equivalences";
-         i=0;
+         unsigned int k=0; //ATTENTION pas de "i" ici sinon la boucle ne s'arrête jamais !!!
          Equivalences** tab=tabDossiers[i]->getEquivalences();
 
          qDebug()<<"1";
@@ -234,26 +217,22 @@ void DossierManager::save(){
          stream.writeStartElement("equivalences");
 
          qDebug()<<"avant while";
-         qDebug()<<tab[i];
+         qDebug()<<tab[k];
 
-         while (tab[i]!=0) {
+         while (tab[k]!=0) {
          stream.writeStartElement("equivalence");
-         stream.writeTextElement("type", tab[i]->getType());
-          qDebug()<<"2";
-         QString n; n.setNum(tab[i]->getNbCredits());
+         stream.writeTextElement("type", tab[k]->getType());
+         QString n; n.setNum(tab[k]->getNbCredits());
          stream.writeTextElement("credits", n);
-         stream.writeTextElement("description", tab[i]->getDescription());
-          qDebug()<<"2";
+         stream.writeTextElement("description", tab[k]->getDescription());
 
          stream.writeEndElement();
-         stream.writeEndElement();
-         i++;
-
+         k++;
          }
-
           qDebug()<<"3";
-
-          qDebug()<<"4";*/
+          stream.writeEndElement();
+          stream.writeEndElement();
+          qDebug()<<"4";
      }
      stream.writeEndElement();
      stream.writeEndDocument();

@@ -708,7 +708,7 @@ ModifEquivalences::ModifEquivalences(Dossier * dos) : dossier(dos) {
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(slot_valider()));
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(slot_ajouter()));
     QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(slot_supprimer()));
-    QObject::connect(quitter, SIGNAL(clicked()), this, SLOT(ajouter_quitter()));
+    QObject::connect(quitter, SIGNAL(clicked()), this, SLOT(slot_quitter()));
 
 }
 
