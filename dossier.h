@@ -59,7 +59,7 @@ public :
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
     unsigned int getNumSemestre() const {return nbSemestre;}
-    //UV** getlisteUV() const {return listeUV;}
+    QMap<QString,UV*> getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
     Equivalences ** getEquivalences() const {return equivalence;}
 
