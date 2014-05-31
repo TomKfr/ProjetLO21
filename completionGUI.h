@@ -25,6 +25,7 @@ class MenuCompletion : public QWidget{
 
 class MenuSouhaits : public QWidget
 {
+    Q_OBJECT
     souhaits *objet;
     Dossier* dos;
 

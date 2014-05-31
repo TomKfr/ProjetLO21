@@ -2,6 +2,8 @@
 #include "UTProfiler.h"
 #include "completion.h"
 
+#include <QMessageBox>
+
 MenuSouhaits::MenuSouhaits(souhaits *sht)
 {
     this->setWindowTitle("Gérer les souhaits");
@@ -75,11 +77,11 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
 
     this->setLayout(mainbox);
 
-    /*QObject::connect(valider1,SIGNAL(clicked()),this,SLOT(ajUV()));
+    QObject::connect(valider1,SIGNAL(clicked()),this,SLOT(ajUV()));
     QObject::connect(supprexigee,SIGNAL(clicked()),this,SLOT(suprexigee()));
     QObject::connect(supprpreferee,SIGNAL(clicked()),this,SLOT(suprpref()));
     QObject::connect(supprrejetee,SIGNAL(clicked()),this,SLOT(suprrejet()));
-    QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(save()));*/
+    QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(save()));
     QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(close()));
 
     update();
@@ -88,6 +90,10 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
 void MenuSouhaits::update()
 {
     UVManager& uman=UVManager::getInstance();
+    choix1->clear();
+    choix2->clear();
+    choix3->clear();
+    choix4->clear();
     QString list1;
     QString list2;
     QString list3;
@@ -124,3 +130,53 @@ void MenuSouhaits::update()
         listrejetees->setText(list3);
     }
 }
+
+void MenuSouhaits::ajUV()
+{
+    if(exigeebutton->isChecked()) objet->Ajt_exigence(choix1->currentText());
+    if(prefereebutton->isChecked()) objet->Ajt_preference(choix1->currentText());
+    if(rejeteebutton->isChecked()) objet->Ajt_rejet(choix1->currentText());
+    update();
+}
+void MenuSouhaits::suprexigee()
+{
+    objet->Suppr_exigence(choix2->currentText());
+    update();
+}
+void MenuSouhaits::suprpref()
+{
+    objet->Suppr_prefernce(choix3->currentText());
+    update();
+}
+void MenuSouhaits::suprrejet()
+{
+     objet->Suppr_rejet(choix4->currentText());
+     update();
+}
+void MenuSouhaits::save()
+{
+    objet->save();
+    QMessageBox::information(this,"Sauvegarde","Les souhaits ont été sauvegardés !");
+}
+
+/*void MenuSouhaits::load()
+{
+    QString fileOut = QDir::currentPath()+ "/souhaits.xml";
+    qDebug()<<"Ouverture du fichier "<<fileOut;
+    QFile f(fileOut);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier filieres");}
+    QXmlStreamReader xml(&f);
+    while(!xml.atEnd() && !xml.hasError())
+    {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement)
+        {
+            if(xml.name() == "filieres") continue;
+            if(xml.name() == "filiere")
+            {
+
+            }
+        }
+    }
+}*/

@@ -4,6 +4,7 @@
 
 #include <QSet>
 
+class Dossier;
 enum Reponse {Valide, Refuse,Avance, Retarde};
 
 class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
@@ -32,6 +33,7 @@ public :
 
 class souhaits
 {
+    Dossier *dos;
     QSet<QString> exigences;
     QSet<QString> preferences;
     QSet<QString> rejets;
