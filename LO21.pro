@@ -33,6 +33,7 @@ SOURCES += \
     load_save_dossiers.cpp \
     completion.cpp \
     completionGUI.cpp \
-    menuDossier.cpp
+    menuDossier.cpp \
+    load_save_completion.cpp
 
 

@@ -5,7 +5,7 @@
 #include <QSet>
 
 class Dossier;
-enum Reponse {Valide, Refuse,Avance, Retarde};
+enum Reponse {Valider, Refuser,Avancer, Retarder};
 
 class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
 
@@ -13,21 +13,41 @@ class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
     Semestre semestre_concerne;
     unsigned int nbCredits ; //nb de credits accumules avec ce semestre : pas plus de 35
     unsigned int nbUV ; //pas plus de 7
-    Reponse rep; //reponse donnee par l'etudiant
+
+    Dossier* dos; //dossier concerne
 
 public :
-    ChoixAppliSemestre ( unsigned int annee, Saison s, unsigned int cr=0 ,unsigned int nbuv=0) : semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv) {}
-    //ajout d'une uv dans la proposition, ...
+    ChoixAppliSemestre (unsigned int annee=0, Saison s=Automne, Dossier*d=0,  unsigned int cr=0 ,unsigned int nbuv=0) : semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), dos(d) {}
+
+    QMap<QString,UV*> getPropositionUV() const {return propositionUV;}
+    Semestre getSemestre() const {return semestre_concerne;}
+    unsigned int getNbCredits() const {return nbCredits;}
+    unsigned int getNbUV() const {return nbUV;}
+
+    void ajoutUV(UV* uv);
+    void supprimerUV(UV* uv);
+
+    void calculerProposition();//A DEFINIR
+
 };
 
 class ChoixAppli { //regroupe tous les semestres proposes jusqu'à la fin des etudes
 
-    ChoixAppliSemestre** tab_propositions; //tableau des propositions
-    unsigned int nbPropositions;
+
+    ChoixAppliSemestre** listePropositions;
+    unsigned int nbSemestre;
+    unsigned int nbMaxSemestre ;
+    Dossier * dossier;
+    Reponse rep; //reponse donnee par l'etudiant
 
 public :
-        ChoixAppli();
-        void ajouter_proposition();
+        ChoixAppli(Dossier* d) : dossier(d), listePropositions(0), nbSemestre(0), nbMaxSemestre(0) {}
+        Reponse getReponse() const {return rep;}
+        ChoixAppliSemestre** getListePropositions() const {return listePropositions;}
+        void setReponse(Reponse r) {rep=r;}
+        ChoixAppliSemestre* trouverChoix(Semestre S) ;
+
+        void ajouter_proposition(ChoixAppliSemestre * prop); //une methode de suppression est-elle nécessaire ? je ne pense pas ..
 
 };
 
@@ -39,7 +59,7 @@ class souhaits
     QSet<QString> rejets;
 
 public:
-    souhaits() {}
+    souhaits() {} //tu ne remplis pas dos ?
     void Ajt_exigence(const QString& code);
     void Ajt_preference(const QString& code);
     void Ajt_rejet(const QString& code);

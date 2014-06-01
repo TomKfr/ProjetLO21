@@ -1,6 +1,7 @@
 #ifndef COMPLETIONGUI_H
 #define COMPLETIONGUI_H
 
+#include"dossier.h"
 #include <iostream>
 #include <QString>
 #include <QWidget>
@@ -15,13 +16,92 @@
 class souhaits;
 class Dossier;
 
-class MenuCompletion : public QWidget{
+class MenuCompletion : public QWidget{ //dans ce menu on peut consulter l'historique des propositions, remplir ses souhaits,
+    //et ses previsions pour les semestres à venir
+
+     Q_OBJECT
+
+    QPushButton* historique ;
+    QPushButton* souhaits ;
+    QPushButton* previsions ;
+    QPushButton* terminer;
+    QPushButton* calcul;
+
+    Dossier* dos;
+    QHBoxLayout *coucheH1;
+    QHBoxLayout *coucheH2;
+    QHBoxLayout *coucheH3;
+    QHBoxLayout *coucheH4;
+
+    QVBoxLayout *couche;
+
+
+public : MenuCompletion(Dossier* dos);
+public slots :
+    void consulter_historique();
+    void lancer_completion();
+    void saisir_souhaits();
+    void saisir_previsions();
+    void fin();
+
+};
+
+class Proposition : public QWidget {
+Q_OBJECT
+    //affiche toutes les propositions et demande la réponse
+
+    Dossier * d;
+    ChoixAppli * c;
+    QLabel * semestreLabel;
+    QComboBox * saison_concernee ;
+    QComboBox * annee_concernee ;
+    QPushButton * afficher; //affiche pour un semestre
+    QLabel * reponseLabel;
+    QComboBox * reponse;
+
+    QPushButton * terminer;
 
 
 
+    QVBoxLayout *couche;
+    QHBoxLayout *coucheH1;
+    QHBoxLayout *coucheH2;
+    QHBoxLayout *coucheH3;
+
+public : Proposition(Dossier * dos) ;
+public slots :
+    void afficher_proposition();
+    void enregistrer_reponse();
+
+};
+
+class AfficherProposition : public QWidget {
+    Q_OBJECT
+
+
+    QLabel * blabla ;
+    QLabel * credits ;
+    QLabel * uvs ;
+    QPushButton * terminer;
+    ChoixAppliSemestre * c;
+
+
+   QVBoxLayout *couche;
+   QHBoxLayout *coucheH1;
+   QHBoxLayout *coucheH2;
+   QHBoxLayout *coucheH3;
+   QHBoxLayout *coucheH4;
+
+public :
+   AfficherProposition(ChoixAppliSemestre * choix);
+
+public slots :
+   void fin() ;
 
 
 };
+
+
 
 class MenuSouhaits : public QWidget
 {
@@ -75,6 +155,15 @@ public slots:
     void suprpref();
     void suprrejet();
     void save();
+    void load();
+
+};
+
+class Historique : public QWidget {
+
+Q_OBJECT
+
+public : Historique();
 
 };
 

@@ -66,3 +66,27 @@ void souhaits::save()
         stream.writeEndDocument();
     }
 }
+
+void ChoixAppliSemestre::ajoutUV(UV* uv) {propositionUV.insert(uv->getCode(),uv);}
+void ChoixAppliSemestre::supprimerUV(UV* uv) {propositionUV.erase(propositionUV.find(uv->getCode()));}
+void ChoixAppli::ajouter_proposition(ChoixAppliSemestre* prop) {
+
+if (nbSemestre==nbMaxSemestre) {
+    nbMaxSemestre+=5;
+    ChoixAppliSemestre** tab=new ChoixAppliSemestre*[nbMaxSemestre];
+    for (unsigned int i=0; i<nbSemestre; i++) tab[i]=listePropositions[i];
+    ChoixAppliSemestre** old = listePropositions;
+    listePropositions=tab;
+    delete[] old;
+}
+
+listePropositions[nbSemestre++]=prop;
+
+}
+
+ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
+    qDebug()<<nbSemestre;
+
+    for (unsigned int i=0; i<nbSemestre; i++) {if (listePropositions[i]->getSemestre()==S) return listePropositions[i]; }
+    return 0;
+}

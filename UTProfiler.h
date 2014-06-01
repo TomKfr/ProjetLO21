@@ -22,15 +22,21 @@ QTextStream& operator>>(QTextStream& f, Categorie& cat);
 
 enum Note { A, B, C, D, E, F, FX, RES, ABS, /* en cours */ EC  };
 enum Saison { Automne, Printemps };
+Saison StringToSaison(const QString& s);
 inline QTextStream& operator<<(QTextStream& f, const Saison& s) { if (s==Automne) f<<"A"; else f<<"P"; return f;}
 
 class Semestre {
     Saison saison;
     unsigned int annee;
 public:
-    Semestre(Saison s, unsigned int a):saison(s),annee(a){ if (annee<1972||annee>2099) throw UTProfilerException("annee non valide"); }
+    Semestre(Saison s=Automne, unsigned int a=0):saison(s),annee(a){ if (annee<1972||annee>2099) throw UTProfilerException("annee non valide"); }
     Saison getSaison() const { return saison; }
     unsigned int getAnnee() const { return annee; }
+    void setSaison(Saison s) { saison=s; }
+    void setAnnee(unsigned int a) { annee=a; }
+    bool operator<(const Semestre& b) const;
+    bool operator==(const Semestre& b) const;
+
 };
 
 inline QTextStream& operator<<(QTextStream& f, const Semestre& s) { return f<<s.getSaison()<<s.getAnnee()%100; }

@@ -9,9 +9,35 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+/* format souhaité :
+ dossier :
+<?xml version="1.0" encoding="UTF-8"?>
+<dossiers>
+    <dossier>
+        <numero>52</numero>
+        <nom>ghjk</nom>
+        <prenom>ghj</prenom>
+        <formation>boumbadaboum</formation>
+        <semestre>1</semestre>
+        <uvs>
+            <uv>BL01</uv>
+            <result>E</result>
+        </uvs>
+        <equivalences>
+            <equivalence>
+                <type>Semestre a l'etranger</type>
+                <credits>52</credits>
+                <description>fghjk</description>
+            </equivalence>
+        </equivalences>
+    </dossier>
+</dossiers>
+
+*/
 
 
-void DossierManager::load(/*const QString& fichier*/)
+
+void DossierManager::load()
 {
     file=QDir::currentPath()+"/dossiers.xml";
     qDebug()<<"Chargement Dossiers!";

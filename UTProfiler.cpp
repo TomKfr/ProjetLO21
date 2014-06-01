@@ -7,7 +7,32 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+bool Semestre::operator<(const Semestre& b) const {
 
+    if (annee<b.annee) return 0;
+
+    else if (annee>b.annee) return 1;
+
+    else {
+
+        if (saison==Printemps && b.saison==Automne) return 0;
+        else if (saison==Automne && b.saison==Printemps) return 1;
+        else /*egalite*/ return 1;
+    }
+}
+
+bool Semestre::operator==(const Semestre& b) const {
+
+    if (annee<b.annee) return 0;
+
+    else if (annee>b.annee) return 0;
+
+    else {
+
+        if (saison==b.saison) return 1;
+        else  return 0;
+    }
+}
 
 QTextStream& operator<<(QTextStream& f, const UV& uv){
     return f<<uv.getCode()<<", "<<uv.getCategorie()<<", "<<uv.getNbCredits()<<" credits, "<<uv.getTitre();
@@ -39,6 +64,15 @@ Categorie StringToCategorie(const QString& str){
     if (str=="TSH") return TSH;
     else {
         throw UTProfilerException(QString("erreur, StringToCategorie, categorie ")+str+" inexistante");
+    }
+}
+
+
+Saison StringToSaison(const QString& str){
+    if (str=="Automne") {qDebug()<<"coucou1"; return Automne; }
+    else if (str=="Printemps") { qDebug()<<"coucou2"; return Printemps; }
+    else {
+        throw UTProfilerException(QString("erreur, StringToSaison, saison ")+str+" inexistante");
     }
 }
 
