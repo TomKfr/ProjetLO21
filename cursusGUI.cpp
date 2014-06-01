@@ -98,7 +98,7 @@ void menuFormation::suppr()
 }
 void menuFormation::save()
 {
-    m->sauverCursus(this);
+    m->sauverCursus();
 }
 
 // ///////////////////////////////////////////////////////////////////
@@ -510,7 +510,7 @@ void menuFiliere::suppr()
 }
 void menuFiliere::save()
 {
-    m->sauverCursus(this);
+    m->sauverCursus();
 }
 
 ajoutFiliere::ajoutFiliere(menuFiliere *p)

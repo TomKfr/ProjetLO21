@@ -32,6 +32,7 @@ class MenuDossier : public QWidget {
     //QPushButton* visu;
     QPushButton* modifier;
     QPushButton* sup;
+    QPushButton* souhaits;
     QPushButton* sauver;
     QPushButton* terminer;
     QPushButton* ajouter;
@@ -52,6 +53,7 @@ public slots:
     void modif();
     void fin();
     void calcul_completion();
+    void menusouhaits();
     void sauvegarder();
 };
 

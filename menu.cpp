@@ -76,7 +76,7 @@ void MenuDebut::lancer_UV() {
 void MenuDebut::lancer_Dossiers() {
     qDebug()<<"avant le constructeur";
     DossierManager& d=DossierManager::getInstance();
-    d.load();
+    //d.load();
     MenuDossier * fenetre= new MenuDossier;
     fenetre->show();
 

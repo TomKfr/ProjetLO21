@@ -14,6 +14,7 @@
 
 class visiteur2;
 class UV;
+class souhaits;
 
 class Equivalences {
     QString type;
@@ -46,7 +47,9 @@ class Dossier {
     Equivalences** equivalence;
     unsigned int nbEquivalences;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0), nbMaxResultats(0) {
+    souhaits* souhait;
+
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), souhait(0) {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
@@ -80,6 +83,9 @@ public :
     void supprimerUV(UV* uv);
 
     void ajouterResultat(const QString & res);
+
+    void ajouterSouhait(souhaits* s) {souhait=s;}
+    const souhaits* getSouhait() const {return souhait;}
 
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
 

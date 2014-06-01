@@ -2,6 +2,7 @@
 #include"cursus.h"
 #include"UTProfiler.h"
 #include"dossier.h"
+#include "completion.h"
 #include<QDebug>
 #include<sstream>
 
@@ -17,6 +18,7 @@ MenuDossier::MenuDossier() {
     completion=new QPushButton("Completion automatique", this);
     numero=new QLabel("Dossier n° :", this);
     sup=new QPushButton("Supprimer", this);
+    souhaits=new QPushButton("Enregistrer des souhaits",this);
     sauver=new QPushButton("Sauver les modifications",this);
     terminer=new QPushButton("Operation sur les dossiers terminee", this);
 
@@ -28,6 +30,7 @@ MenuDossier::MenuDossier() {
     coucheH->addWidget(ajouter);
     coucheH->addWidget(modifier);
     coucheH->addWidget(completion);
+    coucheH->addWidget(souhaits);
     coucheH->addWidget(sauver);
     coucheH->addWidget(terminer);
 
@@ -44,6 +47,7 @@ MenuDossier::MenuDossier() {
     QObject::connect(sauver, SIGNAL(clicked()),this, SLOT(sauvegarder()));
     QObject::connect(terminer, SIGNAL(clicked()),this, SLOT(fin()));
     QObject::connect(completion, SIGNAL(clicked()),this, SLOT(calcul_completion()));
+    QObject::connect(souhaits,SIGNAL(clicked()),this,SLOT(menusouhaits()));
 
 }
 void MenuDossier::calcul_completion() {//A MODIFIER
@@ -94,6 +98,11 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
     }else{
     dm.removeDossier(dos);
     }
+}
+
+void MenuDossier::menusouhaits()
+{
+    dman->trouverDossier(dossiers->currentText().toUInt());
 
 }
 

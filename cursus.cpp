@@ -61,7 +61,7 @@ void formation::suppr_UV_obligatoire(const QString &code)
 {
     UVs_obligatoires.remove(code);
 }
-bool formation::estObligatoire(const QString &code)
+bool formation::estObligatoire(const QString &code) const
 {
     return UVs_obligatoires.contains(code);
 }
@@ -180,7 +180,7 @@ bool cursusManager::trouverFilForm(formation *form, const QString &fil)
     return form->filieresAssoc.contains(fil);
 }
 
-void cursusManager::sauverCursus(QWidget *parent)
+void cursusManager::sauverCursus()
 {
     QString fileOut = QDir::currentPath()+ "/formations.xml";
     qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
@@ -258,7 +258,7 @@ void cursusManager::sauverCursus(QWidget *parent)
         stream.writeEndDocument();
         f.close();
     }
-    QMessageBox::information(parent,"Sauvegarde","Cursus sauvegardés", QMessageBox::Ok);
+    QMessageBox::information(0,"Sauvegarde","Cursus sauvegardés", QMessageBox::Ok);
 }
 
 void cursusManager::chargerCursus()
