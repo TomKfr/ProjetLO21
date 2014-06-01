@@ -1,5 +1,6 @@
 #include"dossierGUI2.h"
 #include"cursus.h"
+#include"completionGUI.h"
 #include"UTProfiler.h"
 #include"dossier.h"
 #include "completion.h"
@@ -50,9 +51,17 @@ MenuDossier::MenuDossier() {
     QObject::connect(souhaits,SIGNAL(clicked()),this,SLOT(menusouhaits()));
 
 }
-void MenuDossier::calcul_completion() {//A MODIFIER
+void MenuDossier::calcul_completion() {
+    bool ok;
+    QString n1=dossiers->currentText();
+    unsigned int n2=n1.toInt(&ok);
+    Dossier* d=dman->trouverDossier(n2);
+
+    MenuCompletion*  fenetre=new MenuCompletion(d);
+    fenetre->show();
 
 }
+
 void MenuDossier::ajout() {
     bool ok;
     QString n1=dossiers->currentText();

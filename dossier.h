@@ -2,6 +2,7 @@
 #define DOSSIER_H
 
 #include "iterateur.h"
+#include"completion.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -47,9 +48,11 @@ class Dossier {
     Equivalences** equivalence;
     unsigned int nbEquivalences;
 
-    souhaits* souhait;
+    souhaits * Souhaits;
+    ChoixAppli** Completion;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), souhait(0) {
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0),
+        nbMaxResultats(0), Souhaits(0), Completion(0) {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
@@ -65,6 +68,7 @@ public :
     QMap<QString,UV*> getlisteUV() const {return listeUV;}
     QString* getlisteResultats() const {return listeResultats;}
     Equivalences ** getEquivalences() const {return equivalence;}
+    souhaits * getSouhaits() const {return Souhaits;}
 
     unsigned int getNbEquivalences() const {return nbEquivalences;}
 
@@ -79,6 +83,7 @@ public :
     void setListeResultats(QString* l) { listeResultats=l; }
     void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
     void setEquivalences(Equivalences** l) { equivalence=l; }
+    void setSouhaits(souhaits * s) {Souhaits=s;}
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
 

@@ -3,6 +3,9 @@
 #include "completion.h"
 
 #include <QMessageBox>
+#include<QDir>
+
+
 
 MenuSouhaits::MenuSouhaits(souhaits *sht)
 {
@@ -159,8 +162,8 @@ void MenuSouhaits::save()
     QMessageBox::information(this,"Sauvegarde","Les souhaits ont été sauvegardés !");
 }
 
-/*void MenuSouhaits::load()
-{
+void MenuSouhaits::load()
+{/*
     QString fileOut = QDir::currentPath()+ "/souhaits.xml";
     qDebug()<<"Ouverture du fichier "<<fileOut;
     QFile f(fileOut);
@@ -178,5 +181,192 @@ void MenuSouhaits::save()
 
             }
         }
-    }
-}*/
+    }*/
+}
+
+//commenté car pb d'inclusion empechant la compilation
+
+MenuCompletion::MenuCompletion(Dossier* d) : dos(d) {
+    this->setWindowTitle("Choix de l'operation");
+
+    calcul=new QPushButton("Lancer le calcul d'une proposition", this);
+
+    historique=new QPushButton("Consulter l'historique des propositions", this);
+    souhaits=new QPushButton("Saisir mes souhaits d'UV", this);
+    previsions=new QPushButton("Saisir mes previsions de semestre à l'etranger", this);
+    terminer=new QPushButton("Retour", this);
+
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(calcul);
+    coucheH1->addWidget(historique);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(souhaits);
+
+    coucheH3=new QHBoxLayout;
+    coucheH3->addWidget(previsions);
+
+    coucheH4=new QHBoxLayout;
+    coucheH4->addWidget(terminer);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    couche->addLayout(coucheH4);
+
+    setLayout(couche);
+
+    QObject::connect(historique,SIGNAL(clicked()),this,SLOT(consulter_historique()));
+    QObject::connect(souhaits,SIGNAL(clicked()),this,SLOT(saisir_souhaits()));
+    QObject::connect(previsions,SIGNAL(clicked()),this,SLOT(saisir_previsions()));
+    QObject::connect(calcul,SIGNAL(clicked()),this,SLOT(lancer_completion()));
+    QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
+
+}
+
+void MenuCompletion::fin() {this->close();}
+
+void MenuCompletion::consulter_historique() {
+
+    Historique * fenetre = new Historique();
+    fenetre->show();
+}
+
+Proposition::Proposition(Dossier * dossier) : d(dossier) {
+
+    this->setWindowTitle(QString("Propositions semestre par semestre jusqu'à la fin de vos études"));
+
+
+    semestreLabel=new QLabel("Afficher la proposition pour le semestre : ", this);
+    saison_concernee=new QComboBox(this) ;
+    saison_concernee->addItem("Automne");
+    saison_concernee->addItem("Printemps");
+
+    annee_concernee=new QComboBox(this) ;
+    annee_concernee->addItem("2014");
+    annee_concernee->addItem("2015");
+    annee_concernee->addItem("2016");
+    annee_concernee->addItem("2017");
+    annee_concernee->addItem("2018");
+
+
+    afficher=new QPushButton("Afficher", this); //affiche pour un semestre
+    terminer=new QPushButton("Enregistrer et fermer", this);
+    reponseLabel=new QLabel("Votre reponse à ces propositions : ", this);
+    reponse=new QComboBox(this);
+
+    reponse->addItem("Valider");
+    reponse->addItem("Refuser");
+    reponse->addItem("Avancer");
+    reponse->addItem("Retarder");
+
+    coucheH1=new QHBoxLayout;
+    coucheH1->addWidget(semestreLabel);
+    coucheH1->addWidget(saison_concernee);
+    coucheH1->addWidget(annee_concernee);
+    coucheH1->addWidget(afficher);
+
+    coucheH2=new QHBoxLayout;
+    coucheH2->addWidget(reponseLabel);
+    coucheH2->addWidget(reponse);
+
+    coucheH3=new QHBoxLayout;
+    coucheH3->addWidget(terminer);
+
+    couche=new QVBoxLayout;
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+
+    update();
+
+    this->setLayout(couche);
+
+    QObject::connect(afficher,SIGNAL(clicked()),this,SLOT(afficher_proposition()));
+    QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(enregistrer_reponse()));
+
+
+}
+
+void Proposition::enregistrer_reponse() { //a completer
+
+}
+
+void Proposition::afficher_proposition() {
+    //Recuperer le semestre
+    qDebug()<<"afficher proposition1";
+    Semestre s(Printemps, 2014);
+    qDebug()<<"afficher proposition2";
+    Saison  s2=StringToSaison(saison_concernee->currentText());
+    qDebug()<<"afficher proposition3";// OK
+    s.setSaison(s2);
+    bool ok;
+    const QString& n1=annee_concernee->currentText();
+    unsigned int n2=n1.toInt(&ok);
+    s.setAnnee(n2);
+
+    qDebug()<<"coucou"; // OK
+
+    ChoixAppliSemestre * choix = c->trouverChoix(s); //fonctionne pas->normal
+    qDebug()<<choix;
+    //puis faire appel à la fenetre daffichage
+    AfficherProposition * fenetre = new AfficherProposition(choix);
+    fenetre->show();
+
+}
+
+AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
+
+    blabla = new QLabel("Proposition pour le semestre  : ", this);
+    credits = new QLabel ("Cette proposition vous rapporte " , this);
+    uvs = new QLabel("", this);
+
+    //iterateur
+    terminer= new QPushButton("Retour", this);
+
+    coucheH1=new QHBoxLayout(this);
+    coucheH1->addWidget(blabla);
+
+    coucheH2=new QHBoxLayout(this);
+    coucheH2->addWidget(credits);
+
+    coucheH3=new QHBoxLayout(this);
+    coucheH3->addWidget(uvs);
+
+    couche=new QVBoxLayout(this);
+    couche->addLayout(coucheH1);
+    couche->addLayout(coucheH2);
+    couche->addLayout(coucheH3);
+    couche->addLayout(coucheH4);
+
+    this->setLayout(couche);
+
+
+    QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
+
+
+}
+
+void AfficherProposition::fin() {this->close();}
+
+
+
+Historique::Historique() {}
+
+void MenuCompletion::saisir_souhaits() {
+    MenuSouhaits* fenetre=new MenuSouhaits(dos->getSouhaits());
+    fenetre->show();
+}
+
+void MenuCompletion::saisir_previsions() {
+
+    /*MenuPrevisions * fenetre= new MenuPrevisions(dos->getPrevisions());
+    fenetre->show();*/
+}
+
+void MenuCompletion::lancer_completion() {
+    Proposition * fenetre=new Proposition(dos);
+    fenetre->show();
+}
