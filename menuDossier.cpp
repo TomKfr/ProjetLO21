@@ -56,7 +56,8 @@ void MenuDossier::calcul_completion() {
     QString n1=dossiers->currentText();
     unsigned int n2=n1.toInt(&ok);
     Dossier* d=dman->trouverDossier(n2);
-
+    ChoixManager& cm=ChoixManager::getInstance();
+    cm.load_completion();
     MenuCompletion*  fenetre=new MenuCompletion(d);
     fenetre->show();
 
@@ -74,6 +75,7 @@ void MenuDossier::ajout() {
 }
 
 void MenuDossier::fin() {
+
     this->close();
 }
 

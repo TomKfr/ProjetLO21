@@ -86,6 +86,15 @@ QString CategorieToString(Categorie c){
     }
 }
 
+QString SaisonToString(Saison s){
+    switch(s){
+    case Automne: return "Automne";
+    case Printemps: return "Printemps";
+
+    default: throw UTProfilerException("erreur, saison non traitee",__FILE__,__LINE__);
+    }
+}
+
 QTextStream& operator<<(QTextStream& f, const Categorie& cat){
     return f<<CategorieToString(cat);
 }

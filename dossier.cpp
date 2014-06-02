@@ -29,6 +29,8 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
 
 }
 
+
+
 void DossierManager::removeDossier(Dossier* dsup){
 
     unsigned int i=0;
@@ -119,6 +121,10 @@ void DossierManager::accept(visiteur2* v) {
     v->visitDossierManager(this);
 }
 
+
+void Dossier::acceptCompletion(visiteurCompletion* v) {
+    v->visitDossierManager(this);
+}
 iterateur<Dossier>& DossierManager::getIterateurDos()
 {
     iterateur<Dossier>* it=new iterateur<Dossier>(tabDossiers,nbDos);
@@ -154,3 +160,5 @@ void Dossier::ajouterResultat(const QString & res){
         listeResultats[nbResultats++]=res;
 
 }
+
+

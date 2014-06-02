@@ -23,6 +23,7 @@ QTextStream& operator>>(QTextStream& f, Categorie& cat);
 enum Note { A, B, C, D, E, F, FX, RES, ABS, /* en cours */ EC  };
 enum Saison { Automne, Printemps };
 Saison StringToSaison(const QString& s);
+QString SaisonToString(Saison c);
 inline QTextStream& operator<<(QTextStream& f, const Saison& s) { if (s==Automne) f<<"A"; else f<<"P"; return f;}
 
 class Semestre {

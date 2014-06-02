@@ -90,3 +90,68 @@ ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
     for (unsigned int i=0; i<nbSemestre; i++) {if (listePropositions[i]->getSemestre()==S) return listePropositions[i]; }
     return 0;
 }
+
+ChoixAppli * ChoixManager::trouverProposition(unsigned int id) {
+
+    for (unsigned int i=0; i<nbPropositions; i++) {if (ensemblePropositions[i]->getIdentifiant()==id) return ensemblePropositions[i];}
+    return 0;
+
+}
+
+
+
+ChoixManager::Handler ChoixManager::handler=Handler();
+
+ChoixManager& ChoixManager::getInstance() {
+    if (!handler.instance) handler.instance = new ChoixManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
+    return *handler.instance;
+}
+
+void ChoixManager::libererInstance() {
+    if (handler.instance) { delete handler.instance; handler.instance=0; }
+}
+
+void ChoixManager::ajoutProposition(unsigned int id, Dossier * d) {
+
+
+    if (trouverProposition(id)) {
+        throw UTProfilerException(QString("erreur, ChoixManager, Proposition ")+id+QString("deja existante"));
+    }else{
+
+        if (nbPropositions==nbPropositionsMax){
+            ChoixAppli** newtab=new ChoixAppli*[nbPropositionsMax+10];
+            for(unsigned int i=0; i<nbPropositions; i++) newtab[i]=ensemblePropositions[i];
+            nbPropositionsMax+=10;
+            ChoixAppli** old=ensemblePropositions;
+            ensemblePropositions=newtab;
+            delete[] old;
+        }
+
+        ensemblePropositions[nbPropositions++]=new ChoixAppli(id, d);
+    }
+}
+
+ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
+
+    ChoixAppli ** result;
+    unsigned int nbResult=0;
+    unsigned int nbResultMax=0;
+
+    for (unsigned int i=0; i<nbPropositions; i++) {
+        if (ensemblePropositions[i]->getDossier()==d)
+        {
+            if (nbResult==nbResultMax){
+                ChoixAppli** newtab=new ChoixAppli*[nbResultMax+5];
+                for(unsigned int i=0; i<nbResult; i++) newtab[i]=result[i];
+                nbResultMax+=5;
+                ChoixAppli** old=result;
+                result=newtab;
+                delete[] old;
+            }
+
+            result[nbResult++]=ensemblePropositions[i];
+        }
+    }
+
+}
+

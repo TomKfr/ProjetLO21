@@ -3,6 +3,7 @@
 
 #include "iterateur.h"
 #include"completion.h"
+#include"visiteur_completion.h"
 #include <QString>
 #include <QWidget>
 #include <QLayout>
@@ -14,8 +15,11 @@
 #include <QDebug>
 
 class visiteur2;
+class visiteurCompletion;
 class UV;
 class souhaits;
+class ChoixAppli;
+class ChoixAppliSemestre;
 
 class Equivalences {
     QString type;
@@ -42,7 +46,6 @@ class Dossier {
     unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,UV*> listeUV;
     QString * listeResultats;
-
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
     Equivalences** equivalence;
@@ -50,15 +53,21 @@ class Dossier {
 
     souhaits * Souhaits;
     ChoixAppli** Completion;
+    unsigned int nbPropositions;
+    unsigned int nbMaxPropositions;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0),
-        nbMaxResultats(0), Souhaits(0), Completion(0) {
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
+        nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0),
+        nbMaxResultats(0), Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0) {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
+
+    //void ajouterCompletionDossier(ChoixAppli * c);
     friend class DossierManager;
 
 public :
+
     unsigned int getNumero() const {return numero;}
     unsigned int getNbResultats() const {return nbResultats;}
     const QString& getNom() const {return nom;}
@@ -86,16 +95,18 @@ public :
     void setSouhaits(souhaits * s) {Souhaits=s;}
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
+    ChoixAppliSemestre* trouverCompletion();
 
     void ajouterResultat(const QString & res);
 
-    void ajouterSouhait(souhaits* s) {souhait=s;}
-    const souhaits* getSouhait() const {return souhait;}
+    void ajouterSouhait(souhaits* s) {Souhaits=s;}
+    const souhaits* getSouhait() const {return Souhaits;}
 
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}
+    void acceptCompletion(visiteurCompletion* v);
 
     /*class iterateur<UV>;
     iterateur<UV>& getIterateurUV();*/

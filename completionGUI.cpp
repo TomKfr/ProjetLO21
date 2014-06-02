@@ -226,7 +226,10 @@ MenuCompletion::MenuCompletion(Dossier* d) : dos(d) {
 
 }
 
-void MenuCompletion::fin() {this->close();}
+void MenuCompletion::fin() {
+    ChoixManager& cm=ChoixManager::getInstance();
+    cm.load_completion();
+    this->close();}
 
 void MenuCompletion::consulter_historique() {
 
