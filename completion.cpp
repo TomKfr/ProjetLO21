@@ -31,7 +31,7 @@ void souhaits::Suppr_rejet(const QString& code)
     rejets.remove(code);
 }
 
-void souhaits::save()
+/*void souhaits::save() DEPLACE DANS LE SAVE DE DOSSIERS
 {
     QString fileOut = QDir::currentPath()+ "/souhaits.xml";
     qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
@@ -43,7 +43,7 @@ void souhaits::save()
         stream.setAutoFormatting(true);
         stream.writeStartDocument();
         stream.writeStartElement("souhait");
-        stream.writeTextElement("dossier",QString::number(/*dos->getNumero()*/0));
+        stream.writeTextElement("dossier",QString::number(dos->getNumero()0));
         stream.writeStartElement("exigees");
         for(QSet<QString>::iterator it=exigences.begin();it!=exigences.end();it++)
         {
@@ -65,6 +65,11 @@ void souhaits::save()
         stream.writeEndElement();
         stream.writeEndDocument();
     }
+}*/
+
+void souhaits::load()
+{
+
 }
 
 void ChoixAppliSemestre::ajoutUV(UV* uv) {propositionUV.insert(uv->getCode(),uv);}

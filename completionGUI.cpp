@@ -21,7 +21,7 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
     vbox2=new QVBoxLayout(this);
     vbox3=new QVBoxLayout(this);
     vbox4=new QVBoxLayout(this);
-    titre=new QLabel("Gérer les souhaits du dossier de ",this);
+    titre=new QLabel("Gérer les souhaits de ",this);
     lblneutre=new QLabel("UVs non associées à une liste",this);
     txtexigees=new QLabel("UVs exigees :",this);
     txtpreferees=new QLabel("UVS souhaitées :",this);
@@ -84,8 +84,7 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
     QObject::connect(supprexigee,SIGNAL(clicked()),this,SLOT(suprexigee()));
     QObject::connect(supprpreferee,SIGNAL(clicked()),this,SLOT(suprpref()));
     QObject::connect(supprrejetee,SIGNAL(clicked()),this,SLOT(suprrejet()));
-    QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(save()));
-    QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(close()));
+    QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fermer()));
 
     update();
 }
@@ -156,32 +155,11 @@ void MenuSouhaits::suprrejet()
      objet->Suppr_rejet(choix4->currentText());
      update();
 }
-void MenuSouhaits::save()
+void MenuSouhaits::fermer()
 {
-    objet->save();
-    QMessageBox::information(this,"Sauvegarde","Les souhaits ont été sauvegardés !");
-}
-
-void MenuSouhaits::load()
-{/*
-    QString fileOut = QDir::currentPath()+ "/souhaits.xml";
-    qDebug()<<"Ouverture du fichier "<<fileOut;
-    QFile f(fileOut);
-    if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier filieres");}
-    QXmlStreamReader xml(&f);
-    while(!xml.atEnd() && !xml.hasError())
-    {
-        QXmlStreamReader::TokenType token = xml.readNext();
-        if(token == QXmlStreamReader::StartDocument) continue;
-        if(token == QXmlStreamReader::StartElement)
-        {
-            if(xml.name() == "filieres") continue;
-            if(xml.name() == "filiere")
-            {
-
-            }
-        }
-    }*/
+    DossierManager& dman=DossierManager::getInstance();
+    dman.save();
+    this->close();
 }
 
 //commenté car pb d'inclusion empechant la compilation
@@ -350,8 +328,6 @@ AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
 }
 
 void AfficherProposition::fin() {this->close();}
-
-
 
 Historique::Historique() {}
 

@@ -89,9 +89,6 @@ public :
 
     void ajouterResultat(const QString & res);
 
-    void ajouterSouhait(souhaits* s) {souhait=s;}
-    const souhaits* getSouhait() const {return souhait;}
-
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
