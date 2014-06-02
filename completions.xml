@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<completions>
+            <completion>
+		    <identifiant>1</identifiant>
+		    <dossier>52</dossier>
+		    <semestre>
+				<saison>Automne</saison>
+				<annee>2014</annee>
+		     </semestre>
+                <credits>12</credits>
+                <uvs>
+                <uv>BL01</uv>
+                </uvs>
+            </completion>
+</completions>
