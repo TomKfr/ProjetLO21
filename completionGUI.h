@@ -154,9 +154,7 @@ public slots:
     void suprexigee();
     void suprpref();
     void suprrejet();
-    void save();
-    void load();
-
+    void fermer();
 };
 
 class Historique : public QWidget {

@@ -67,6 +67,11 @@ void DossierManager::load()
                 Equivalences ** tab=new Equivalences*[5];
                 for (unsigned int j=0; j<5; j++) tab[j]=0;
 
+                //pour les souhaits
+
+                QSet<QString> exigees;
+                QSet<QString> preferees;
+                QSet<QString> rejetees;
 
                 xml.readNext();
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "dossier")) {
@@ -145,6 +150,60 @@ void DossierManager::load()
                                 xml.readNext();
                             }
                         }
+                        qDebug()<<"avant souhaits";
+                        if(xml.name()=="souhaits")
+                        {
+                            qDebug()<<"Chargement souhaits";
+                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="souhaits"))
+                            {
+                                if(xml.name()=="exigees")
+                                {
+                                    xml.readNext();
+                                    while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="exigees"))
+                                    {
+                                        if(xml.name()=="uv")
+                                        {
+                                            xml.readNext();
+                                            exigees.insert(xml.text().toString());
+                                            xml.readNext();
+                                        }
+                                        xml.readNext();
+                                    }
+                                }
+
+                                if(xml.name()=="preferees")
+                                {
+                                    xml.readNext();
+                                    while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="preferees"))
+                                    {
+                                        if(xml.name()=="uv")
+                                        {
+                                            xml.readNext();
+                                            preferees.insert(xml.text().toString());
+                                            xml.readNext();
+                                        }
+                                        xml.readNext();
+                                    }
+                                }
+
+                                if(xml.name()=="rejetees")
+                                {
+                                    xml.readNext();
+                                    while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="rejetees"))
+                                    {
+                                        if(xml.name()=="uv")
+                                        {
+                                            xml.readNext();
+                                            rejetees.insert(xml.text().toString());
+                                            xml.readNext();
+                                        }
+                                        xml.readNext();
+                                    }
+                                }
+
+                                xml.readNext();
+                            }
+                        }
 
                     }
                     xml.readNext();
@@ -165,6 +224,10 @@ void DossierManager::load()
                 d->setEquivalences(tab);
                 tab=d->getEquivalences();
 
+                for(QSet<QString>::iterator it=exigees.begin();it!=exigees.end();it++) qDebug()<<"exigees : "<<*it;
+                souhaits* newsouhait=new souhaits(d,exigees,preferees,rejetees);
+                d->setSouhaits(newsouhait);
+
                 //ON FAIT LES TYPES SIMPLES A CE NIVEAU
                 //PUIS ON GERE LES LISTES
             }
@@ -184,45 +247,45 @@ void DossierManager::save(){
     QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
     qDebug()<<"point1";
-     QXmlStreamWriter stream(&newfile);
-     stream.setAutoFormatting(true);
-     stream.writeStartDocument();
-     stream.writeStartElement("dossiers");
-     qDebug()<<"Nombre de dossiers à sauvegarder : "<<nbDos<<"***************************";
-     for(unsigned int i=0; i<nbDos; i++){
-         qDebug()<<"ecriture du dossier "<<i;
-         stream.writeStartElement("dossier");
+    QXmlStreamWriter stream(&newfile);
+    stream.setAutoFormatting(true);
+    stream.writeStartDocument();
+    stream.writeStartElement("dossiers");
+    qDebug()<<"Nombre de dossiers à sauvegarder : "<<nbDos<<"***************************";
+    for(unsigned int i=0; i<nbDos; i++){
+        qDebug()<<"ecriture du dossier "<<i;
+        stream.writeStartElement("dossier");
 
-         QString n; n.setNum(tabDossiers[i]->getNumero());
-         qDebug()<<"point3";
-         //QString n2; n2.setNum(tabDossiers[i]->getNumSemestre());
-         stream.writeTextElement("numero",n);
-         stream.writeTextElement("nom",tabDossiers[i]->getNom());
-         stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
-         stream.writeTextElement("formation",tabDossiers[i]->getFormation());
-         qDebug()<<"point4";
-         stream.writeTextElement("semestre",QString::number(tabDossiers[i]->getNumSemestre()));
-         qDebug()<<"point5";
+        QString n; n.setNum(tabDossiers[i]->getNumero());
+        qDebug()<<"point3";
+        //QString n2; n2.setNum(tabDossiers[i]->getNumSemestre());
+        stream.writeTextElement("numero",n);
+        stream.writeTextElement("nom",tabDossiers[i]->getNom());
+        stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
+        stream.writeTextElement("formation",tabDossiers[i]->getFormation());
+        qDebug()<<"point4";
+        stream.writeTextElement("semestre",QString::number(tabDossiers[i]->getNumSemestre()));
+        qDebug()<<"point5";
 
-         //ecriture des UV
+        //ecriture des UV
 
-         QString * listeRes=tabDossiers[i]->getlisteResultats();
-         qDebug()<<"point6";
-         unsigned int j=0;
-         //qDebug()<<listeRes[0];
-         qDebug()<<"point7";
-         stream.writeStartElement("uvs");
-         for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
-         {
-             stream.writeTextElement("uv",it.key());
-             //ecriture du resultat correspondant
-             stream.writeTextElement("result",listeRes[j]);
-             j++;
-         }
+        QString * listeRes=tabDossiers[i]->getlisteResultats();
+        qDebug()<<"point6";
+        unsigned int j=0;
+        //qDebug()<<listeRes[0];
+        qDebug()<<"point7";
+        stream.writeStartElement("uvs");
+        for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
+        {
+            stream.writeTextElement("uv",it.key());
+            //ecriture du resultat correspondant
+            stream.writeTextElement("result",listeRes[j]);
+            j++;
+        }
 
-         stream.writeEndElement();
+        stream.writeEndElement();
 
-         /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
+        /*for(iterateur<UV>& it=tabDossiers[i]->getIterateurUV(); !it.isDone(); it.next())
          {
              qDebug()<<"ecriture de l'uv: "<<it.courant()->getCode(); //CHAINE VIDE
              stream.writeTextElement("uv",it.courant()->getCode());
@@ -232,36 +295,62 @@ void DossierManager::save(){
 
          }*/
 
-         //ecriture des equivalences
+        //ecriture des equivalences
 
-         qDebug()<<"dans le save avant les equivalences";
-         unsigned int k=0; //ATTENTION pas de "i" ici sinon la boucle ne s'arrête jamais !!!
-         Equivalences** tab=tabDossiers[i]->getEquivalences();
+        qDebug()<<"dans le save avant les equivalences";
+        unsigned int k=0; //ATTENTION pas de "i" ici sinon la boucle ne s'arrête jamais !!!
+        Equivalences** tab=tabDossiers[i]->getEquivalences();
 
-         qDebug()<<"1";
+        qDebug()<<"1";
 
-         stream.writeStartElement("equivalences");
+        stream.writeStartElement("equivalences");
 
-         qDebug()<<"avant while";
-         qDebug()<<tab[k];
+        qDebug()<<"avant while";
+        qDebug()<<tab[k];
 
-         while (tab[k]!=0) {
-         stream.writeStartElement("equivalence");
-         stream.writeTextElement("type", tab[k]->getType());
-         QString n; n.setNum(tab[k]->getNbCredits());
-         stream.writeTextElement("credits", n);
-         stream.writeTextElement("description", tab[k]->getDescription());
+        while (tab[k]!=0) {
+            stream.writeStartElement("equivalence");
+            stream.writeTextElement("type", tab[k]->getType());
+            QString n; n.setNum(tab[k]->getNbCredits());
+            stream.writeTextElement("credits", n);
+            stream.writeTextElement("description", tab[k]->getDescription());
 
-         stream.writeEndElement();
-         k++;
-         }
-          qDebug()<<"3";
-          stream.writeEndElement();
-          stream.writeEndElement();
-          qDebug()<<"4";
-     }
-     stream.writeEndElement();
-     stream.writeEndDocument();
+            stream.writeEndElement();
+            k++;
+        }
+        qDebug()<<"3";
+        stream.writeEndElement();
 
-     newfile.close();
+        stream.writeStartElement("souhaits");
+        if(tabDossiers[i]->Souhaits!=0)
+        {
+            stream.writeTextElement("dossier",QString::number(tabDossiers[i]->getNumero()));
+            stream.writeStartElement("exigees");
+            for(QSet<QString>::iterator it=tabDossiers[i]->Souhaits->exigences.begin();it!=tabDossiers[i]->Souhaits->exigences.end();it++)
+            {
+                stream.writeTextElement("uv",*it);
+            }
+            stream.writeEndElement();
+            stream.writeStartElement("preferees");
+            for(QSet<QString>::iterator it=tabDossiers[i]->Souhaits->preferences.begin();it!=tabDossiers[i]->Souhaits->preferences.end();it++)
+            {
+                stream.writeTextElement("uv",*it);
+            }
+            stream.writeEndElement();
+            stream.writeStartElement("rejetees");
+            for(QSet<QString>::iterator it=tabDossiers[i]->Souhaits->rejets.begin();it!=tabDossiers[i]->Souhaits->rejets.end();it++)
+            {
+                stream.writeTextElement("uv",*it);
+            }
+            stream.writeEndElement();
+        }
+        stream.writeEndElement();
+
+        stream.writeEndElement();
+        qDebug()<<"4";
+    }
+    stream.writeEndElement();
+    stream.writeEndDocument();
+
+    newfile.close();
 }

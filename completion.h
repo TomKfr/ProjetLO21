@@ -112,13 +112,15 @@ public :
 
 class souhaits
 {
+    friend class DossierManager;
+
     Dossier *dos;
     QSet<QString> exigences;
     QSet<QString> preferences;
     QSet<QString> rejets;
 
 public:
-    souhaits() {} //tu ne remplis pas dos ?
+    souhaits(Dossier* d, QSet<QString>& e, QSet<QString>& p, QSet<QString>& r): dos(d), exigences(e), preferences(p), rejets(r) {}
     void Ajt_exigence(const QString& code);
     void Ajt_preference(const QString& code);
     void Ajt_rejet(const QString& code);
