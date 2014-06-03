@@ -217,7 +217,7 @@ void MenuCompletion::consulter_historique() {
 
 Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
-    this->setWindowTitle(QString("Propositions semestre par semestre jusqu'à la fin de vos études"));
+    this->setWindowTitle(QString("Propositions jusqu'à la fin de vos études"));
 
 
     semestreLabel=new QLabel("Afficher la proposition pour le semestre : ", this);
@@ -271,8 +271,10 @@ Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
 }
 
-void Proposition::enregistrer_reponse() { //a completer
-
+void Proposition::enregistrer_reponse() {
+    ChoixManager& cm=ChoixManager::getInstance();
+    cm.save_completion();
+    this->close();
 }
 
 void Proposition::afficher_proposition() {
@@ -346,6 +348,8 @@ void MenuCompletion::saisir_previsions() {
 }
 
 void MenuCompletion::lancer_completion() {
+
+    //LANCER LE CALCUL A CE NIVEAU
     Proposition * fenetre=new Proposition(dos);
     fenetre->show();
 }

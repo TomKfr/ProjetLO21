@@ -58,7 +58,7 @@ class Dossier {
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
         nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0),
-        nbMaxResultats(0), Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0) {
+        nbMaxResultats(0), Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0), nbTotalCredits(0) {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
@@ -88,7 +88,6 @@ public :
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
-    //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
     void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
     void setEquivalences(Equivalences** l) { equivalence=l; }
@@ -97,14 +96,12 @@ public :
     void supprimerUV(UV* uv);
     ChoixAppliSemestre* trouverCompletion();
 
+    ChoixAppli * calculCompletion();
+
     void ajouterResultat(const QString & res);
 
-<<<<<<< HEAD
     void ajouterSouhait(souhaits* s) {Souhaits=s;}
     const souhaits* getSouhait() const {return Souhaits;}
-
-=======
->>>>>>> 177655ef93c68a1473e802b484341de57ba7f7b9
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
