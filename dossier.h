@@ -45,21 +45,21 @@ class Dossier {
     QString prenom;
     QString F;
     unsigned int nbSemestre; //GI 01/02/03
-    QMap<QString,UV*> listeUV;
+    QMap<QString,UV*> listeUV; // A CHANGER !!!!!!
     QString * listeResultats;
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
     Equivalences** equivalence;
     unsigned int nbEquivalences;
-
+    prevision* semestreprevu;
     souhaits * Souhaits;
-    QMap<QString,prevision*> previsions; //tableau pour stocker les prévisions.
+    //QMap<QString,prevision*> previsions; //tableau pour stocker les prévisions.
     ChoixAppli** Completion;
     unsigned int nbPropositions;
     unsigned int nbMaxPropositions;
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
-        nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0),
+        nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), semestreprevu(0),
         Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0)
     {
         equivalence=new Equivalences*[5];
@@ -94,10 +94,12 @@ public :
     void setListeResultats(QString* l) { listeResultats=l; }
     void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
     void setEquivalences(Equivalences** l) { equivalence=l; }
+    void setprevision(prevision* prv) {semestreprevu=prv;}
+    prevision* getprevisions() {return semestreprevu;}
     void setSouhaits(souhaits * s) {Souhaits=s;}
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
-    bool estFaite(const QString& code);
+    bool estValidee(const QString& code);
     ChoixAppliSemestre* trouverCompletion();
 
     ChoixAppli * calculCompletion();
@@ -106,20 +108,16 @@ public :
 
     void ajouterSouhait(souhaits* s) {Souhaits=s;}
     const souhaits* getSouhait() const {return Souhaits;}
-<<<<<<< HEAD
 
     void ajt_prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh);
     void sup_prevision(const QString &d);
 
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
-=======
-    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
->>>>>>> 88d415284b3fabe723ab701364c46f0b928515d7
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}
-    QMap<QString,prevision*>::iterator getPrevisionsBegin() {return previsions.begin();}
-    QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
+    //QMap<QString,prevision*>::iterator getPrevisionsBegin() {return previsions.begin();}
+    //QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
     void acceptCompletion(visiteurCompletion* v);
 
     /*class iterateur<UV>;

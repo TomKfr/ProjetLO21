@@ -80,7 +80,7 @@ nbResultats--;*/
 
 }
 
-bool Dossier::estFaite(const QString &code)
+bool Dossier::estValidee(const QString &code)
 {
     if(listeUV.contains(code)) return true;
     else return false;
@@ -167,14 +167,14 @@ void Dossier::ajouterResultat(const QString & res){
 
 }
 
-void Dossier::ajt_prevision(const QString &d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh)
+/*void Dossier::ajt_prevision(const QString &d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh)
 {
     previsions.insert(d,new prevision(d,scs,ics,stm,itm,stsh,itsh));
 }
 void Dossier::sup_prevision(const QString &d)
 {
     previsions.remove(d);
-}
+}*/
 
 ChoixAppli* Dossier::calculCompletion() {
 

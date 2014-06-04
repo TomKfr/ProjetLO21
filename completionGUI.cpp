@@ -7,9 +7,10 @@
 
 
 
-MenuSouhaits::MenuSouhaits(souhaits *sht)
+MenuSouhaits::MenuSouhaits(Dossier *d, souhaits *sht)
 {
     this->setWindowTitle("Gérer les souhaits");
+    dos=d;
     objet=sht;
 
     mainbox=new QVBoxLayout(this);
@@ -91,9 +92,7 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
 
 void MenuSouhaits::update()
 {
-    qDebug()<<"Debut update";
     UVManager& uman=UVManager::getInstance();
-    DossierManager& dman= DossierManager::getInstance();
     choix1->clear();
     choix2->clear();
     choix3->clear();
@@ -103,7 +102,7 @@ void MenuSouhaits::update()
     QString list3;
     for(iterateur<UV>& it=uman.getIterateurForm();!it.isDone();it.next())
     {
-        if(!(dos->estFaite(it.courant()->getCode())))
+        if(!(dos->estValidee(it.courant()->getCode())))
         {
             if(objet->estExigee(it.courant()->getCode()))
             {
@@ -136,7 +135,6 @@ void MenuSouhaits::update()
         listpreferees->setText(list2);
         listrejetees->setText(list3);
     }
-    qDebug()<<"Fin update";
 }
 
 void MenuSouhaits::ajUV()
@@ -343,14 +341,14 @@ void AfficherProposition::fin() {this->close();}
 Historique::Historique() {}
 
 void MenuCompletion::saisir_souhaits() {
-    MenuSouhaits* fenetre=new MenuSouhaits(dos->getSouhaits());
+    MenuSouhaits* fenetre=new MenuSouhaits(dos, dos->getSouhaits());
     fenetre->show();
 }
 
 void MenuCompletion::saisir_previsions() {
 
-    /*MenuPrevisions * fenetre= new MenuPrevisions(dos->getPrevisions());
-    fenetre->show();*/
+    menuprevision * fenetre= new menuprevision(dos);
+    fenetre->show();
 }
 
 void MenuCompletion::lancer_completion() {
@@ -358,4 +356,84 @@ void MenuCompletion::lancer_completion() {
     //LANCER LE CALCUL A CE NIVEAU
     Proposition * fenetre=new Proposition(dos);
     fenetre->show();
+}
+
+menuprevision::menuprevision(Dossier *d): dos(d)
+{
+    this->setWindowTitle("Saisie d'une prévision");
+    mainbox=new QVBoxLayout(this);
+    hbox1=new QHBoxLayout(this);
+    hbox2=new QHBoxLayout(this);
+    hbox3=new QHBoxLayout(this);
+    vbox1=new QVBoxLayout(this);
+    vbox2=new QVBoxLayout(this);
+    vbox3=new QVBoxLayout(this);
+    lbldest=new QLabel("Destination : ",this);
+    lblcs=new QLabel("CS",this);
+    lbltm=new QLabel("TM",this);
+    lbltsh=new QLabel("TSH",this);
+    destination=new QLineEdit(this);
+    borneinfCS=new QSpinBox(this);
+    borneinfCS->setRange(0,40);
+    bornesupCS=new QSpinBox(this);
+    bornesupCS->setRange(0,40);
+    borneinfTM=new QSpinBox(this);
+    borneinfTM->setRange(0,40);
+    bornesupTM=new QSpinBox(this);
+    bornesupTM->setRange(0,40);
+    borneinfTSH=new QSpinBox(this);
+    borneinfTSH->setRange(0,40);
+    bornesupTSH=new QSpinBox(this);
+    bornesupTSH->setRange(0,40);
+    valider=new QPushButton("Valider",this);
+    annuler=new QPushButton("Terminé",this);
+
+    mainbox->addLayout(hbox1);
+    mainbox->addLayout(hbox2);
+    mainbox->addLayout(hbox3);
+    hbox2->addLayout(vbox1);
+    hbox2->addLayout(vbox2);
+    hbox2->addLayout(vbox3);
+
+    hbox1->addWidget(lbldest);
+    hbox1->addWidget(destination);
+    vbox1->addWidget(lblcs);
+    vbox1->addWidget(bornesupCS);
+    vbox1->addWidget(borneinfCS);
+    vbox2->addWidget(lbltm);
+    vbox2->addWidget(bornesupTM);
+    vbox2->addWidget(borneinfTM);
+    vbox3->addWidget(lbltsh);
+    vbox3->addWidget(bornesupTSH);
+    vbox3->addWidget(borneinfTSH);
+    hbox3->addWidget(annuler);
+    hbox3->addWidget(valider);
+
+    update();
+
+    QObject::connect(valider,SIGNAL(clicked()), this, SLOT(valider_prev()));
+    QObject::connect(annuler,SIGNAL(clicked()),this,SLOT(close()));
+
+    this->setLayout(mainbox);
+}
+
+void menuprevision::update()
+{
+    prevision* prev=dos->getprevisions();
+    if(prev)
+    {
+       destination->setText(prev->getdestination());
+       borneinfCS->setValue(prev->getbiCS());
+       borneinfTM->setValue(prev->getbiTM());
+       borneinfTSH->setValue(prev->getbiTSH());
+       bornesupCS->setValue(prev->getbsCS());
+       bornesupTM->setValue(prev->getbsTM());
+       bornesupTSH->setValue(prev->getbsTSH());
+    }
+}
+
+void menuprevision::valider_prev()
+{
+    dos->setprevision(new prevision(destination->text(),bornesupCS->value(),borneinfCS->value(),bornesupTM->value(),borneinfTM->value(),bornesupTSH->value(),borneinfTSH->value()));
+    update();
 }

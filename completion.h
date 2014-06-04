@@ -135,21 +135,41 @@ public:
 class prevision
 {
     QString destination;
-    unsigned int borneSupCS;
+    QPair<unsigned int, unsigned int> bornesCS; //first=borne inférieure, second=borne supérieure
+    QPair<unsigned int, unsigned int> bornesTM;
+    QPair<unsigned int, unsigned int> bornesTSH;
+    /*unsigned int borneSupCS;
     unsigned int borneInfCS;
     unsigned int borneSupTM;
     unsigned int borneInfTM;
     unsigned int borneSupTSH;
-    unsigned int borneInfTSH;
+    unsigned int borneInfTSH;*/
 
 public:
-    prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh): destination(d), borneSupCS(scs), borneInfCS(ics), borneSupTM(stm), borneInfTM(itm), borneSupTSH(stsh), borneInfTSH(itsh) {}
-    unsigned int getbsCS() {return borneSupCS;}
+    prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh): destination(d)
+    {
+        bornesCS.second=scs;
+        bornesCS.first=ics;
+        bornesTM.second=stm;
+        bornesTM.first=itm;
+        bornesTSH.second=stsh;
+        bornesTSH.first=itsh;
+    }
+    QString getdestination() {return destination;}
+    unsigned int getbsCS() {return bornesCS.second;}
+    unsigned int getbsTM() {return bornesTM.second;}
+    unsigned int getbsTSH() {return bornesTSH.second;}
+    unsigned int getbiCS() {return bornesCS.first;}
+    unsigned int getbiTM() {return bornesTM.first;}
+    unsigned int getbiTSH() {return bornesTSH.first;}
+    /*
+     * unsigned int getbsCS() {return borneSupCS;}
     unsigned int getbsTM() {return borneSupTM;}
     unsigned int getbsTSH() {return borneSupTSH;}
     unsigned int getbiCS() {return borneInfCS;}
     unsigned int getbiTM() {return borneInfTM;}
     unsigned int getbiTSH() {return borneInfTSH;}
+     */
 };
 
 #endif // COMPLETION_H
