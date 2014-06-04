@@ -91,7 +91,6 @@ public :
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
-    //void setListeUV(UV** l) { listeUV=l; }
     void setListeResultats(QString* l) { listeResultats=l; }
     void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
     void setEquivalences(Equivalences** l) { equivalence=l; }
@@ -101,15 +100,21 @@ public :
     bool estFaite(const QString& code);
     ChoixAppliSemestre* trouverCompletion();
 
+    ChoixAppli * calculCompletion();
+
     void ajouterResultat(const QString & res);
 
     void ajouterSouhait(souhaits* s) {Souhaits=s;}
     const souhaits* getSouhait() const {return Souhaits;}
+<<<<<<< HEAD
 
     void ajt_prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh);
     void sup_prevision(const QString &d);
 
     const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
+=======
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
+>>>>>>> 88d415284b3fabe723ab701364c46f0b928515d7
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}

@@ -144,7 +144,7 @@ void ChoixManager::load_completion()
     qDebug()<<"Chargement Completions termine!";
 }
 
-/*
+
 void ChoixManager::save_completion(){
 
     qDebug() << "Save Completions";
@@ -173,19 +173,21 @@ for (unsigned int j=0; j<nbPropositions; j++)
 
          QString n; n.setNum(choix->getId());
          stream.writeTextElement("identifiant", n);
+         Dossier * dos = choix->getDossier();
+         QString numDossier=QString::number(dos->getNumero());
 
-         QString n2;n2.setNum(choix->getDossier());
+         stream.writeTextElement("dossier", numDossier);
 
-         stream.writeTextElement("dossier", n2);
          stream.writeStartElement("semestre");
          Semestre s=choix->getSemestre();
-         Saison saison=s.saison ;
-         QString n3; n3.setNum(s.annee);
+
+         Saison saison=s.getSaison() ;
+         QString annee=QString::number(s.getAnnee());
          QString saisonString= SaisonToString(saison);
          stream.writeTextElement("saison",saisonString);
-         stream.writeTextElement("annee",n3);
-         QString n4; n4.setNum(choix->getNbCredits());
-         stream.writeTextElement("credits",n4));
+         stream.writeTextElement("annee",annee);
+         QString credits=QString::number(choix->getNbCredits());
+         stream.writeTextElement("credits",credits);
          qDebug()<<"point4";
 
 
@@ -213,4 +215,3 @@ for (unsigned int j=0; j<nbPropositions; j++)
 }
 
 
-*/
