@@ -18,6 +18,7 @@ class visiteur2;
 class visiteurCompletion;
 class UV;
 class souhaits;
+class prevision;
 class ChoixAppli;
 class ChoixAppliSemestre;
 
@@ -52,13 +53,15 @@ class Dossier {
     unsigned int nbEquivalences;
 
     souhaits * Souhaits;
+    QMap<QString,prevision*> previsions; //tableau pour stocker les prévisions.
     ChoixAppli** Completion;
     unsigned int nbPropositions;
     unsigned int nbMaxPropositions;
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
-        nbSemestre(nb), nbEquivalences(0), listeResultats(0), nbResultats(0),
-        nbMaxResultats(0), Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0) {
+        nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0),
+        Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0)
+    {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
@@ -95,20 +98,23 @@ public :
     void setSouhaits(souhaits * s) {Souhaits=s;}
     void ajouterUV(UV* nouv);
     void supprimerUV(UV* uv);
+    bool estFaite(const QString& code);
     ChoixAppliSemestre* trouverCompletion();
 
     void ajouterResultat(const QString & res);
 
-<<<<<<< HEAD
     void ajouterSouhait(souhaits* s) {Souhaits=s;}
     const souhaits* getSouhait() const {return Souhaits;}
 
-=======
->>>>>>> 177655ef93c68a1473e802b484341de57ba7f7b9
-    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code); // utiliser un const find !!!
+    void ajt_prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh);
+    void sup_prevision(const QString &d);
+
+    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}
+    QMap<QString,prevision*>::iterator getPrevisionsBegin() {return previsions.begin();}
+    QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
     void acceptCompletion(visiteurCompletion* v);
 
     /*class iterateur<UV>;

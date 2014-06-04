@@ -80,6 +80,12 @@ nbResultats--;*/
 
 }
 
+bool Dossier::estFaite(const QString &code)
+{
+    if(listeUV.contains(code)) return true;
+    else return false;
+}
+
 const QMap<QString,UV*>::const_iterator Dossier::trouverUV(const QString &code)
 {
     return listeUV.find(code);
@@ -152,8 +158,8 @@ void Dossier::ajouterResultat(const QString & res){
             qDebug()<<"4";
             listeResultats=newtab;
             qDebug()<<"5";
-            //delete[] old;
-             qDebug()<<"6";
+            delete[] old;
+            qDebug()<<"6";
         }
 
          qDebug()<<"ici";
@@ -161,4 +167,11 @@ void Dossier::ajouterResultat(const QString & res){
 
 }
 
-
+void Dossier::ajt_prevision(const QString &d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh)
+{
+    previsions.insert(d,new prevision(d,scs,ics,stm,itm,stsh,itsh));
+}
+void Dossier::sup_prevision(const QString &d)
+{
+    previsions.remove(d);
+}

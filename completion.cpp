@@ -31,46 +31,6 @@ void souhaits::Suppr_rejet(const QString& code)
     rejets.remove(code);
 }
 
-/*void souhaits::save() DEPLACE DANS LE SAVE DE DOSSIERS
-{
-    QString fileOut = QDir::currentPath()+ "/souhaits.xml";
-    qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
-    if(!fileOut.isEmpty())
-    {
-        QFile f(fileOut);
-        if(!f.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException("Erreur ouverture fichier xml!");
-        QXmlStreamWriter stream(&f);
-        stream.setAutoFormatting(true);
-        stream.writeStartDocument();
-        stream.writeStartElement("souhait");
-        stream.writeTextElement("dossier",QString::number(dos->getNumero()0));
-        stream.writeStartElement("exigees");
-        for(QSet<QString>::iterator it=exigences.begin();it!=exigences.end();it++)
-        {
-            stream.writeTextElement("uv",*it);
-        }
-        stream.writeEndElement();
-        stream.writeStartElement("preferees");
-        for(QSet<QString>::iterator it=preferences.begin();it!=preferences.end();it++)
-        {
-            stream.writeTextElement("uv",*it);
-        }
-        stream.writeEndElement();
-        stream.writeStartElement("rejetees");
-        for(QSet<QString>::iterator it=rejets.begin();it!=rejets.end();it++)
-        {
-            stream.writeTextElement("uv",*it);
-        }
-        stream.writeEndElement();
-        stream.writeEndElement();
-        stream.writeEndDocument();
-    }
-}*/
-
-void souhaits::load()
-{
-
-}
 
 void ChoixAppliSemestre::ajoutUV(UV* uv) {propositionUV.insert(uv->getCode(),uv);}
 void ChoixAppliSemestre::supprimerUV(UV* uv) {propositionUV.erase(propositionUV.find(uv->getCode()));}

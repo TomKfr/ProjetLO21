@@ -91,7 +91,9 @@ MenuSouhaits::MenuSouhaits(souhaits *sht)
 
 void MenuSouhaits::update()
 {
+    qDebug()<<"Debut update";
     UVManager& uman=UVManager::getInstance();
+    DossierManager& dman= DossierManager::getInstance();
     choix1->clear();
     choix2->clear();
     choix3->clear();
@@ -101,28 +103,31 @@ void MenuSouhaits::update()
     QString list3;
     for(iterateur<UV>& it=uman.getIterateurForm();!it.isDone();it.next())
     {
-        if(objet->estExigee(it.courant()->getCode()))
+        if(!(dos->estFaite(it.courant()->getCode())))
         {
-            list1+=it.courant()->getCode()+"\n";
-            choix2->addItem(it.courant()->getCode());
-        }
-        else
-        {
-            if(objet->estPreferee(it.courant()->getCode()))
+            if(objet->estExigee(it.courant()->getCode()))
             {
-                list2+=it.courant()->getCode()+"\n";
-                choix3->addItem(it.courant()->getCode());
+                list1+=it.courant()->getCode()+"\n";
+                choix2->addItem(it.courant()->getCode());
             }
             else
             {
-                if(objet->estRejetee(it.courant()->getCode()))
+                if(objet->estPreferee(it.courant()->getCode()))
                 {
-                    list3+=it.courant()->getCode()+"\n";
-                    choix4->addItem(it.courant()->getCode());
+                    list2+=it.courant()->getCode()+"\n";
+                    choix3->addItem(it.courant()->getCode());
                 }
                 else
                 {
-                    choix1->addItem(it.courant()->getCode());
+                    if(objet->estRejetee(it.courant()->getCode()))
+                    {
+                        list3+=it.courant()->getCode()+"\n";
+                        choix4->addItem(it.courant()->getCode());
+                    }
+                    else
+                    {
+                        choix1->addItem(it.courant()->getCode());
+                    }
                 }
             }
         }
@@ -131,6 +136,7 @@ void MenuSouhaits::update()
         listpreferees->setText(list2);
         listrejetees->setText(list3);
     }
+    qDebug()<<"Fin update";
 }
 
 void MenuSouhaits::ajUV()

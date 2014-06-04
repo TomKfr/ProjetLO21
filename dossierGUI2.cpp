@@ -6,7 +6,7 @@
 #include<sstream>
 
 
-DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) :  nbUV(0), nbMaxUV(0), M(dm),parent(p), dos(d) {
+DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos(d), nbUV(0), nbMaxUV(0), M(dm), parent(p) {
     qDebug()<<"ici";
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
@@ -443,7 +443,7 @@ void ModifResult::update() {
     resultats->addItem("FX");
     resultats->addItem("En cours");
     unsigned int i=0;
-    QString * res=dos->getlisteResultats();
+    //QString * res=dos->getlisteResultats();
 
 
     for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
@@ -718,7 +718,7 @@ void EquivalenceEditeur::modifier_equivalence() {//MARCHE
 void ModifEquivalences::slot_valider() {
 
     Equivalences** tab=dossier->getEquivalences();
-    unsigned int nb=dossier->getNbEquivalences();
+    //unsigned int nb=dossier->getNbEquivalences();
     unsigned int i=0;
 
     while (tab[i]->getDescription()!=choix->currentText()) {i++;}
