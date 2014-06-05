@@ -45,9 +45,9 @@ class Dossier {
     QString prenom;
     QString F;
     unsigned int nbSemestre; //GI 01/02/03
-    QMap<QString,UV*> listeUV; // A CHANGER !!!!!!
-    QString * listeResultats;
-    QMap<QString,Note> listUV2; //Code de l'UV + note obtenue !!
+    //QMap<QString,UV*> listeUV; // A CHANGER !!!!!!
+    //QString * listeResultats;
+    QMap<QString,Note> listeUV; //Code de l'UV + note obtenue !!
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
     Equivalences** equivalence;
@@ -60,7 +60,7 @@ class Dossier {
     unsigned int nbMaxPropositions;
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
-        nbSemestre(nb), listeResultats(0), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), semestreprevu(0),
+        nbSemestre(nb), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), semestreprevu(0),
         Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0)
     {
         equivalence=new Equivalences*[5];
@@ -78,8 +78,6 @@ public :
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
     unsigned int getNumSemestre() const {return nbSemestre;}
-    QMap<QString,UV*> getlisteUV() const {return listeUV;}
-    QString* getlisteResultats() const {return listeResultats;}
     Equivalences ** getEquivalences() const {return equivalence;}
     souhaits * getSouhaits() const {return Souhaits;}
 
@@ -92,13 +90,12 @@ public :
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
     void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
-    void setListeResultats(QString* l) { listeResultats=l; }
-    void setResultat(unsigned int i, QString note) {if (i>=nbResultats) throw UTProfilerException("erreur indice resultat"); listeResultats[i]=note;}
+    void setResultat(const QString& code, Note n);
     void setEquivalences(Equivalences** l) { equivalence=l; }
     void setprevision(prevision* prv) {semestreprevu=prv;}
     prevision* getprevisions() {return semestreprevu;}
     void setSouhaits(souhaits * s) {Souhaits=s;}
-    void ajouterUV(UV* nouv);
+    void ajouterUV(const QString& code, Note n);
     void supprimerUV(UV* uv);
     bool estValidee(const QString& code);
     ChoixAppliSemestre* trouverCompletion();
@@ -113,10 +110,10 @@ public :
     void ajt_prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh);
     void sup_prevision(const QString &d);
 
-    const QMap<QString,UV*>::const_iterator trouverUV(const QString& code);
+    const QMap<QString,Note>::const_iterator trouverUV(const QString& code);
 
-    QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
-    QMap<QString,UV*>::iterator getQmapIteratorUVend() {return listeUV.end();}
+    QMap<QString,Note>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
+    QMap<QString,Note>::iterator getQmapIteratorUVend() {return listeUV.end();}
     //QMap<QString,prevision*>::iterator getPrevisionsBegin() {return previsions.begin();}
     //QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
     void acceptCompletion(visiteurCompletion* v);

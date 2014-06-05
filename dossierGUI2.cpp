@@ -19,6 +19,7 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     SelectUV= new QPushButton("2 - Remplir la liste des UVs");
     SelectEquivalences=new QPushButton("3 - Saisir des equivalences");
     sauver=new QPushButton("1 - Sauver", this);
+    quitter=new QPushButton("4 - Quitter",this);
 
     num= new QLineEdit("", this);
     nom= new QLineEdit("", this);
@@ -66,6 +67,7 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     couche->addLayout(coucheH4);
     couche->addLayout(coucheH3);
     couche->addLayout(coucheH5);
+    couche->addWidget(quitter);
 
     setLayout(couche);
 
@@ -80,7 +82,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     QObject::connect(SelectEquivalences, SIGNAL(clicked()), this, SLOT(select_equivalences()));
     //update();
     qDebug()<<"iciii dans dossier ajout avant cliquer5";
-
+    QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(disable()));
+    QObject::connect(quitter,SIGNAL(clicked()),this,SLOT(close()));
 }
 
 void DossierAjout::slot_ajoutDossier() {
@@ -113,6 +116,8 @@ void DossierAjout::slot_selectUV() {
     AjoutUV* fenetre= new AjoutUV(d, this);
     fenetre->show();
 }
+
+void DossierAjout::disable(){sauver->setDisabled(true);}
 
 AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
     DA=dossier;
@@ -149,7 +154,6 @@ AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
 
     QObject::connect(submit, SIGNAL(clicked()), this, SLOT(ajout_UVDossier()));
     QObject::connect(retour, SIGNAL(clicked()), this, SLOT(end_listeUV()));
-
 }
 
 void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
@@ -158,8 +162,7 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
-    dos->ajouterUV(nouvelleUV);
-    dos->ajouterResultat(res);
+    dos->ajouterUV(Liste->currentText(),String2Note(Result->currentText()));
     QMessageBox::information(this,"Ajout UV","UV "+nouvelleUV->getCode()+" ajoutée au dossier n°"+QString::number(dos->getNumero()));
 
 }
@@ -255,8 +258,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     QObject::connect(modifEquivalences, SIGNAL(clicked()), this, SLOT(slot_modifEquivalences()));
 
 
-};
-
+}
 
 void ModifierDossier::slot_modifFormation() {
 
@@ -303,7 +305,6 @@ void ModifFormation::update() {
         {
             f->addItem(it.key());
         }
-
 }
 
 void ModifierDossier::slot_finModifDossier() {
@@ -343,6 +344,7 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
 
     uvs=new QComboBox(this);
     resultats=new QComboBox(this);
+    resultats->setDisabled(true);
     update();
 
     coucheH0->addWidget(explication);
@@ -362,22 +364,17 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
     QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(supprimerUV()));
     QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finUV()));
     QObject::connect(modifResultat, SIGNAL(clicked()), this, SLOT(modifierResult()));
+    QObject::connect(uvs,SIGNAL(currentTextChanged(QString)),this,SLOT(affResult()));
 
-};
+}
 
 void ModifUV::update() {
-    qDebug()<<"dans modifresult";
     uvs->clear();
     resultats->clear();
-    unsigned int i=0;
-    QString * res=dos->getlisteResultats();
-
-
-    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
+    for(QMap<QString,Note>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
     {
-        uvs->addItem(it.value()->getCode());
-        resultats->addItem(res[i]);
-        i++;
+        uvs->addItem(it.key());
+        resultats->addItem(Note2String(it.value()));
     }
 }
 
@@ -385,6 +382,12 @@ void ModifUV::modifierResult() {
 
     ModifResult* fenetre= new ModifResult(dos, this);
     fenetre->show();
+}
+
+void ModifUV::affResult()
+{
+    QMap<QString,Note>::const_iterator it=dos->trouverUV(uvs->currentText());
+    resultats->setCurrentText(Note2String(it.value()));
 }
 
 ModifResult::ModifResult(Dossier * d, ModifUV* mu) : dos(d), modifuv(mu) {
@@ -415,16 +418,14 @@ ModifResult::ModifResult(Dossier * d, ModifUV* mu) : dos(d), modifuv(mu) {
 
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer()));
     QObject::connect(retour, SIGNAL(clicked()), this, SLOT(fin2()));
+    QObject::connect(uvs,SIGNAL(currentTextChanged(QString)),this,SLOT(affResult()));
 
 }
 
 void ModifResult::fin2() {this->close();}
 
 void ModifResult::enregistrer() {
-
-    //recup le i du combobox et modifie à l'indice correspondant dans le tableau associe
-    unsigned int i=uvs->currentIndex();
-    dos->setResultat(i, resultats->currentText());
+    dos->setResultat(uvs->currentText(),String2Note(resultats->currentText()));
     modifuv->update();
     QMessageBox::information(this, "sauvegarde", " Resultat enregistre");
 
@@ -441,19 +442,18 @@ void ModifResult::update() {
     resultats->addItem("E");
     resultats->addItem("F");
     resultats->addItem("FX");
-    resultats->addItem("En cours");
-    unsigned int i=0;
-    //QString * res=dos->getlisteResultats();
+    resultats->addItem("EC");
 
-
-    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
+    for(QMap<QString,Note>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
     {
-        uvs->addItem(it.value()->getCode());
-        i++;
+        uvs->addItem(it.key());
     }
-
-
-
+    affResult();
+}
+void ModifResult::affResult()
+{
+    QMap<QString,Note>::const_iterator it=dos->trouverUV(uvs->currentText());
+    resultats->setCurrentText(Note2String(it.value()));
 }
 
 void ModifierDossier::slot_modifUV(){
@@ -492,7 +492,7 @@ SuppressionUV::SuppressionUV(Dossier* d) : dos(d)
     QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(suppression_une_uv()));
     QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finSuppression()));
 
-};
+}
 
 void SuppressionUV::finSuppression(){
 
@@ -513,10 +513,9 @@ void SuppressionUV::update() {
     qDebug()<<"dans suppr update";
     liste->clear();
 
-    for(QMap<QString,UV*>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
+    for(QMap<QString,Note>::iterator it=dos->getQmapIteratorUVbegin(); it!=dos->getQmapIteratorUVend();++it)
     {
-        liste->addItem(it.value()->getCode());
-
+        liste->addItem(it.key());
     }
 
 }

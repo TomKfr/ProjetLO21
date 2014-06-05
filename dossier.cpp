@@ -42,17 +42,8 @@ void DossierManager::removeDossier(Dossier* dsup){
     }
 
 
-void Dossier::ajouterUV(UV* uv) {
-   /* if (nbUV==nbMaxUV){
-        UV** newtab=new UV*[nbMaxUV+5];
-        for(unsigned int i=0; i<nbUV; i++) newtab[i]=listeUV[i];
-        nbMaxUV+=5;
-        UV** old=listeUV;
-        listeUV=newtab;
-        delete[] old;
-    }
-    listeUV[nbUV++]=uv;*/
-    listeUV.insert(uv->getCode(),uv);
+void Dossier::ajouterUV(const QString& code, Note n) {
+    listeUV.insert(code,n);
 }
 
 void Dossier::supprimerUV(UV* uv) {
@@ -82,11 +73,15 @@ nbResultats--;*/
 
 bool Dossier::estValidee(const QString &code)
 {
-    if(listeUV.contains(code)) return true;
+    if(listeUV.contains(code))
+    {
+        QMap<QString,Note>::const_iterator it=listeUV.constFind(code);
+        if(it.value()>String2Note("F") && it.value()!=String2Note("ABS") && it.value()!=String2Note("EC")) return true;
+    }
     else return false;
 }
 
-const QMap<QString,UV*>::const_iterator Dossier::trouverUV(const QString &code)
+const QMap<QString,Note>::const_iterator Dossier::trouverUV(const QString &code)
 {
     return listeUV.find(code);
 }
@@ -137,7 +132,13 @@ iterateur<Dossier>& DossierManager::getIterateurDos()
     return *it;
 }
 
-void Dossier::ajouterResultat(const QString & res){
+void Dossier::setResultat(const QString &code, Note n)
+{
+    QMap<QString,Note>::iterator it=listeUV.find(code);
+    it.value()=n;
+}
+
+/*void Dossier::ajouterResultat(const QString & res){ PLUS NECESSAIRE
 
      qDebug()<<"ajouter resultat";
 
@@ -165,7 +166,7 @@ void Dossier::ajouterResultat(const QString & res){
          qDebug()<<"ici";
         listeResultats[nbResultats++]=res;
 
-}
+}*/
 
 /*void Dossier::ajt_prevision(const QString &d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh)
 {

@@ -269,17 +269,15 @@ void DossierManager::save(){
 
         //ecriture des UV
 
-        QString * listeRes=tabDossiers[i]->getlisteResultats();
-        qDebug()<<"point6";
         unsigned int j=0;
         //qDebug()<<listeRes[0];
         qDebug()<<"point7";
         stream.writeStartElement("uvs");
-        for(QMap<QString,UV*>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
+        for(QMap<QString,Note>::iterator it=tabDossiers[i]->getQmapIteratorUVbegin();it!=tabDossiers[i]->getQmapIteratorUVend(); it++)
         {
             stream.writeTextElement("uv",it.key());
             //ecriture du resultat correspondant
-            stream.writeTextElement("result",listeRes[j]);
+            stream.writeTextElement("result", Note2String(it.value()));
             j++;
         }
 

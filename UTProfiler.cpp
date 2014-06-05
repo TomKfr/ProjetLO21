@@ -67,6 +67,35 @@ Categorie StringToCategorie(const QString& str){
     }
 }
 
+Note String2Note(const QString& n)
+{
+    if(n=="A") return A;
+    if(n=="B") return B;
+    if(n=="C") return C;
+    if(n=="D") return D;
+    if(n=="E") return E;
+    if(n=="F") return F;
+    if(n=="FX") return FX;
+    if(n=="RES") return RES;
+    if(n=="ABS") return ABS;
+    if(n=="EC") return EC;
+
+}
+QString Note2String(Note n)
+{
+        if(n==A) return "A";
+        if(n==B) return "B";
+        if(n==C) return "C";
+        if(n==D) return "D";
+        if(n==E) return "E";
+        if(n==F) return "F";
+        if(n==FX) return "FX";
+        if(n==RES) return "RES";
+        if(n==ABS) return "ABS";
+        if(n==EC) return "EC";
+
+}
+
 
 Saison StringToSaison(const QString& str){
     if (str=="Automne") {qDebug()<<"coucou1"; return Automne; }
