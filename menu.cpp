@@ -17,7 +17,9 @@
 #include"uvGUI.h"
 #include "dossier.h"
 
-
+/*!
+ * \brief Constructeur du menu initial
+ */
 MenuDebut::MenuDebut() {
 
     this->setWindowTitle(QString("Projet LO21"));
@@ -67,12 +69,17 @@ MenuDebut::MenuDebut() {
 
 }
 
+/*!
+ * \brief Ouvre le menu de gestion des UVs
+ */
 void MenuDebut::lancer_UV() {
     Debut * fenetre1 = new Debut;
     fenetre1->show();
 }
 
-
+/*!
+ * \brief Ouvre le menu de gestion des dossiers
+ */
 void MenuDebut::lancer_Dossiers() {
     qDebug()<<"avant le constructeur";
     //DossierManager& d=DossierManager::getInstance();
@@ -81,14 +88,23 @@ void MenuDebut::lancer_Dossiers() {
     fenetre->show();
 
 }
+/*!
+ * \brief Ouvre le menu de gestion des formations
+ */
 void MenuDebut::lancer_Formations() {
     menuFormation* fenetre3 =new menuFormation();
     fenetre3->show();
 }
+/*!
+ * \brief Ouvre le menu de gestion des filières
+ */
 void MenuDebut::lancer_Filieres(){
     menuFiliere* fenetre4=new menuFiliere();
     fenetre4->show();
 }
+/*!
+ * \brief Ferme l'application
+ */
 void MenuDebut::lancer_rien(){
     this->close();
 }

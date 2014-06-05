@@ -47,6 +47,7 @@ class Dossier {
     unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,UV*> listeUV; // A CHANGER !!!!!!
     QString * listeResultats;
+    QMap<QString,Note> listUV2; //Code de l'UV + note obtenue !!
     unsigned int nbResultats;
     unsigned int nbMaxResultats;
     Equivalences** equivalence;
