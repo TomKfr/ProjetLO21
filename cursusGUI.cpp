@@ -1,6 +1,7 @@
 #include "cursus.h"
 #include "cursusGUI.h"
 #include "UTProfiler.h"
+#include "dossier.h"
 #include <QMessageBox>
 #include <QCheckBox>
 
@@ -72,8 +73,19 @@ void menuFormation::ajout()
 
 void menuFormation::modif()
 {
+    try{
+    DossierManager& dman=DossierManager::getInstance();
+    for(iterateur<Dossier> it=dman.getIterateurDos();!it.isDone();it.next())
+    {
+        if(it.courant()->getFormation()==select->currentText())
+        {
+            throw UTProfilerException("L'étudiant "+it.courant()->getPrenom()+" "+it.courant()->getNom()+" est inscrit à la formation "+it.courant()->getFormation()+", vous ne pouvez pas la modifier !");
+        }
+    }
     modifFormation* fenetre=new modifFormation(m,this,m->trouverForm(select->currentText()));
     fenetre->show();
+    }
+    catch(UTProfilerException& e) {QMessageBox::warning(this,"Erreur",e.getInfo());}
 }
 
 void menuFormation::filir()

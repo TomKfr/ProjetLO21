@@ -79,21 +79,21 @@ Note String2Note(const QString& n)
     if(n=="RES") return RES;
     if(n=="ABS") return ABS;
     if(n=="EC") return EC;
-
+    else return ABS;
 }
 QString Note2String(Note n)
 {
-        if(n==A) return "A";
-        if(n==B) return "B";
-        if(n==C) return "C";
-        if(n==D) return "D";
-        if(n==E) return "E";
-        if(n==F) return "F";
-        if(n==FX) return "FX";
-        if(n==RES) return "RES";
-        if(n==ABS) return "ABS";
-        if(n==EC) return "EC";
-
+    if(n==A) return "A";
+    if(n==B) return "B";
+    if(n==C) return "C";
+    if(n==D) return "D";
+    if(n==E) return "E";
+    if(n==F) return "F";
+    if(n==FX) return "FX";
+    if(n==RES) return "RES";
+    if(n==ABS) return "ABS";
+    if(n==EC) return "EC";
+    else return "ABS";
 }
 
 
@@ -263,14 +263,16 @@ void UVManager::addItem(UV* uv){
     uvs[nbUV++]=uv;
 }
 
-void UVManager::ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p){
+UV* UVManager::ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p){
     if (trouverUV(c)) {
         throw UTProfilerException(QString("erreur, UVManager, UV ")+c+QString("d�ja existante"));
     }else{
         UV* newuv=new UV(c,t,nbc,cat,a,p);
         addItem(newuv);
         modification=true;
+        return newuv;
     }
+    return 0;
 }
 
 UV* UVManager::trouverUV(const QString& c)const{

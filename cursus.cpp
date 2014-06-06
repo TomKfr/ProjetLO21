@@ -78,7 +78,12 @@ void filiere::supprimer_UV(const QString &code)
 
 // ///////////////////////////////////////////////////////////////////
 
-
+formation* cursusManager::trouverForm(const QString &n)
+{
+    QMap<QString,formation*>::iterator it=formations.find(n);
+    if(it==formations.end()) return 0;
+    else return it.value();
+}
 
 cursusManager& cursusManager::getInstance() {
     if (!handler.instance) handler.instance = new cursusManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
@@ -89,7 +94,7 @@ void cursusManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
+formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
     if (formations.find(nom)!=formations.end())
     {
@@ -102,7 +107,9 @@ void cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigne
         newform->setNbCrRequis(TM,ctm);
         newform->setNbCrRequis(TSH,ctsh);
         formations.insert(nom,newform);
+        return newform;
     }
+    return 0;
 }
 
 void cursusManager::ajouterFiliere(const QString &nom, unsigned int c)
@@ -149,22 +156,25 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
 }
 void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
-    if (formations.find(newname)!=formations.end()) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
-    else
-    {
-        QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
-        QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
-        QSet<QString>* list3=new QSet<QString>(trouverForm(oldkey)->UVs_obligatoires);
-        supprimerFormation(oldkey);
-        ajouterFormation(newname,c,s,ccs,ctm,ctsh);
-        formation* newform=trouverForm(newname);
-        newform->uvs=*list;
-        delete list;
-        newform->filieresAssoc=*list2;
-        delete list2;
-        newform->UVs_obligatoires=*list3;
-        delete list3;
+    try{
+        if (formations.find(newname)!=formations.end() && newname!=oldkey) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
+        else
+        {
+            QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverForm(oldkey)->uvs);
+            QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
+            QSet<QString>* list3=new QSet<QString>(trouverForm(oldkey)->UVs_obligatoires);
+            supprimerFormation(oldkey);
+            ajouterFormation(newname,c,s,ccs,ctm,ctsh);
+            formation* newform=trouverForm(newname);
+            newform->uvs=*list;
+            delete list;
+            newform->filieresAssoc=*list2;
+            delete list2;
+            newform->UVs_obligatoires=*list3;
+            delete list3;
+        }
     }
+    catch(UTProfilerException& e) {QMessageBox::warning(0,"erreur",e.getInfo());}
 }
 
 void cursusManager::inscrFilForm(formation *form, const QString &fil)

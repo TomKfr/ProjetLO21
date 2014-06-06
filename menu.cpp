@@ -13,9 +13,11 @@
 #include<QHBoxLayout>
 #include<QVBoxLayout>
 #include<QComboBox>
+#include<QXmlStreamReader>
 #include"dossierGUI2.h"
 #include"uvGUI.h"
 #include "dossier.h"
+#include "cursus.h"
 
 /*!
  * \brief Constructeur du menu initial
@@ -30,6 +32,7 @@ MenuDebut::MenuDebut() {
     op_Formations=new QPushButton("Les formations", this);
     op_Filieres= new QPushButton("Les filières", this);
     no_op= new QPushButton("Terminer", this);
+    initload= new QPushButton("Fucking load this !", this);
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(texte);
@@ -57,6 +60,7 @@ MenuDebut::MenuDebut() {
     coucheV->addLayout(coucheH4);
     coucheV->addLayout(coucheH5);
     coucheV->addLayout(coucheH6);
+    coucheV->addWidget(initload);
 
 
     setLayout(coucheV);
@@ -66,6 +70,7 @@ MenuDebut::MenuDebut() {
     QObject::connect(op_Formations, SIGNAL(clicked()), this, SLOT(lancer_Formations()));
     QObject::connect(op_Filieres, SIGNAL(clicked()), this, SLOT(lancer_Filieres()));
     QObject::connect(no_op, SIGNAL(clicked()), this, SLOT(lancer_rien()));
+    QObject::connect(initload,SIGNAL(clicked()),this,SLOT(launch_this_fucking_initial_load()));
 
 }
 
@@ -109,3 +114,82 @@ void MenuDebut::lancer_rien(){
     this->close();
 }
 
+void MenuDebut::launch_this_fucking_initial_load()
+{
+    UVManager& uman=UVManager::getInstance();
+    cursusManager& cman=cursusManager::getInstance();
+
+    QString fileout= QFileDialog::getOpenFileName(this);
+    qDebug()<<"Ouverture du fichier "<<fileout;
+    QFile fin(fileout);
+    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug()<<"erreur ouverture fichier !!";
+        exit(2);
+    }
+    QXmlStreamReader xml(&fin);
+    while(!xml.atEnd() && !xml.hasError())
+    {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) continue;
+        if(token == QXmlStreamReader::StartElement)
+        {
+            if(xml.name()=="UVSection") xml.readNext();
+            if(xml.name()=="uv")
+            {
+                QString form;
+                QString uv;
+                QString titre;
+                QString cat;
+                unsigned int cr=0;
+                xml.readNext();
+                xml.readNext();
+                while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uv"))
+                {
+                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="code")
+                    {
+                        xml.readNext();
+                        uv=xml.text().toString();
+                    }
+                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="nom")
+                    {
+                        xml.readNext();
+                        titre=xml.text().toString();
+                    }
+                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="credit")
+                    {
+                        QXmlStreamAttributes attr=xml.attributes();
+                        cat=attr.value("type").toString();
+                        xml.readNext();
+                        cr=xml.text().toUInt();
+                    }
+                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="branche")
+                    {
+                        xml.readNext();
+                        form=xml.text().toString();
+                        formation* newform=cman.trouverForm(form);
+                        if(!newform)
+                        {
+                            qDebug()<<"erreur ajout formation ! Création d'une nouvelle";
+                            newform=cman.ajouterFormation(form,0,0,0,0,0);
+                        }
+                        else
+                        {
+                            UV* newuv=uman.trouverUV(uv);
+                            if(newuv)
+                            {
+                                newform->ajouter_UV(newuv);
+                            }
+                            else
+                            {
+                                qDebug()<<"UV non trouvée, création d'une nouvelle";
+                                newuv=uman.ajouterUV(uv,titre,cr,StringToCategorie(cat),false,false);
+                            }
+                        }
+                    }
+                    xml.readNext();
+                }
+            }
+        }
+        xml.readNext();
+    }
+}
