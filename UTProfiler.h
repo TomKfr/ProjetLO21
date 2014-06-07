@@ -1,3 +1,8 @@
+/*!
+ *  \file UTprofiler.h
+ *  \brief Fichier développé lors des scéances de TD.
+ */
+
 #ifndef UT_PROFILER_h
 #define UT_PROFILER_h
 

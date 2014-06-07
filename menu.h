@@ -20,6 +20,9 @@
 class cursusManager;
 class UVManager;
 
+/*!
+ * \brief Fenêtre de démarrage du programme.
+ */
 class MenuDebut : public QWidget{
     Q_OBJECT
 

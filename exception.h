@@ -3,6 +3,11 @@
 
 #include <QString>
 
+/*!
+ * \brief Classe de d'objets exception.
+ *
+ * Cette classe permet de gérer les éxception rencontrées lors de l'exécution.
+ */
 class UTProfilerException{
 public:
     UTProfilerException(const QString& message, const QString &f="na", unsigned int l=0):

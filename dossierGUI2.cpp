@@ -5,7 +5,12 @@
 #include<QDebug>
 #include<sstream>
 
-
+/*!
+ * \brief Constructeur de la fenêtre de création d'un dossier.
+ * \param dm pointeur vers le DossierManager
+ * \param p pointeur vers la fenêtre parente
+ * \param d pointeur vers le dossier
+ */
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos(d), nbUV(0), nbMaxUV(0), M(dm), parent(p) {
     qDebug()<<"ici";
 
@@ -86,6 +91,9 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     QObject::connect(quitter,SIGNAL(clicked()),this,SLOT(close()));
 }
 
+/*!
+ * \brief Slot exécutant l'ajout du nouveau dossier.
+ */
 void DossierAjout::slot_ajoutDossier() {
 
     bool ok;
@@ -107,7 +115,9 @@ void DossierAjout::slot_ajoutDossier() {
     parent->update();
 }
 
-
+/*!
+ * \brief Affiche la fenêtre d'ajout d'UVs au dossier.
+ */
 void DossierAjout::slot_selectUV() {
     bool ok;
     unsigned int n=num->text().toInt(&ok);
@@ -116,9 +126,13 @@ void DossierAjout::slot_selectUV() {
     AjoutUV* fenetre= new AjoutUV(d, this);
     fenetre->show();
 }
-
 void DossierAjout::disable(){sauver->setDisabled(true);}
-
+// PAUSE!!!!!
+/*!
+ * \brief AjoutUV::AjoutUV
+ * \param d
+ * \param dossier
+ */
 AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
     DA=dossier;
     dos=d;

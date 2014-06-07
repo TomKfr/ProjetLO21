@@ -1,3 +1,7 @@
+/// \file uvGUI.h
+/// \brief Fichier contenant les classes nécessaires à l'interface graphique de
+///  de gestion des UVs dans l'application.
+
 #ifndef UVEDITEUR_H
 #define UVEDITEUR_H
 
@@ -22,7 +26,9 @@
 class UVManager;
 class UV;
 
-
+/*!
+ * \brief Fenêtre menu de gestion des UVs
+ */
 class Debut : public QWidget {
     Q_OBJECT
     QComboBox * liste;
@@ -66,6 +72,9 @@ public slots :
     void modifUV();
 };*/
 
+/*!
+ * \brief Fenêtre de création d'une UV
+ */
 class UVAjout : public QWidget{
     Q_OBJECT
 
@@ -100,6 +109,9 @@ public slots:
 
 };
 
+/*!
+ * \brief Fenêtre permettant la modification d'une UV existante.
+ */
 class UVEditeur : public QWidget {
     Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
     UV& uv;
@@ -129,11 +141,11 @@ public:
     UVEditeur(UV& u, UVManager & uvm, QWidget* parent=0);
 public slots:
     void sauverUV();
-
 };
 
-
-
+/*!
+ * \brief Fenêtre permettant de visualiser les caractéristiques d'une UV.
+ */
 class UvAfficheur : public QWidget {
     Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
     UV& uv;

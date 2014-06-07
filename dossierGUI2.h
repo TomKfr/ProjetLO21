@@ -24,6 +24,9 @@ class UV;
 class Dossier;
 class Equivalences;
 
+/*!
+ * \brief Menu de gestion des dossiers
+ */
 class MenuDossier : public QWidget {
     Q_OBJECT
     DossierManager* dman;
@@ -55,6 +58,9 @@ public slots:
     void sauvegarder();
 };
 
+/*!
+ * \brief Fenêtre de création d'un nouveau dossier
+ */
 class DossierAjout : public QWidget{
     Q_OBJECT
 
@@ -104,7 +110,9 @@ public slots:
 };
 
 
-
+/*!
+ * \brief Fenêtre permettant d'ajouter des uvs réalisées dans un dossier.
+ */
 class AjoutUV : public QWidget {
     Q_OBJECT
 
@@ -133,11 +141,12 @@ public slots :
 
 };
 
+/*!
+ * \brief Fenêtre permettant la modification d'un dossier
+ */
 class ModifierDossier : public QWidget
 {
     Q_OBJECT
-
-
     DossierManager& M;
     Dossier* dos;
     MenuDossier * menu;
@@ -172,6 +181,9 @@ public slots:
 
 };
 
+/*!
+ * \brief Fenêtre permettant de modifier la formation d'un étudiant.
+ */
 class ModifFormation : public QWidget
 {
     Q_OBJECT
@@ -189,10 +201,11 @@ public :
 public slots :
    void enregistrer_formation();
    void update();
-
-
 };
 
+/*!
+ * \brief Fenêtre permettant de gérer les UVs d'un dossier.
+ */
 class ModifUV : public QWidget
 {
     Q_OBJECT
@@ -209,7 +222,6 @@ class ModifUV : public QWidget
     QHBoxLayout* coucheH1;
     Dossier* dos;
 
-
 public :
     ModifUV(Dossier* d);
 
@@ -222,6 +234,9 @@ public slots :
    void affResult();
 };
 
+/*!
+ * \brief Fenêtre permettant de modifier le résultat obtenu à une UV.
+ */
 class ModifResult : public QWidget
 {
     Q_OBJECT
@@ -246,6 +261,9 @@ public slots :
     void affResult();
 };
 
+/*!
+ * \brief Fenêtre permettant de retirer une UV d'un dossier.
+ */
 class SuppressionUV : public QWidget
 {
     Q_OBJECT
@@ -256,7 +274,6 @@ class SuppressionUV : public QWidget
     QHBoxLayout* coucheH1;
     Dossier* dos;
 
-
 public :
     SuppressionUV(Dossier* d);
     void update();
@@ -266,7 +283,9 @@ public slots :
    void finSuppression();
 };
 
-
+/*!
+ * \brief Fenêtre permettant de modifier les équvaleces associées à un dossier.
+ */
 class ModifEquivalences : public QWidget {
     Q_OBJECT
 
@@ -292,9 +311,11 @@ public slots :
     void update();
     void slot_ajouter();
     void slot_supprimer();
-
 };
 
+/*!
+ * \brief Fenêtre permettant d'ajouter des équivalences à un dossier.
+ */
 class AjoutEquivalences : public QWidget
 {
     Q_OBJECT
@@ -321,7 +342,9 @@ public slots :
     void ajouter_equivalence();
 };
 
-
+/*!
+ * \brief Fenêtre permettant de modifier une équivalence d'un dossier.
+ */
 class EquivalenceEditeur : public QWidget {
 
      Q_OBJECT

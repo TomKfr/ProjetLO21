@@ -22,6 +22,9 @@ class prevision;
 class ChoixAppli;
 class ChoixAppliSemestre;
 
+/*!
+ * \brief Un objet équivalences permet de stocker d'éventuelles équivalences de crédits obtenues.
+ */
 class Equivalences {
     QString type;
     unsigned int nb_credits;
@@ -38,6 +41,9 @@ class Equivalences {
     void setType(QString s) {type=s;}
 };
 
+/*!
+ * \brief Un objet dossier permet de stocker toutes les informations relatives à un étudiant.
+ */
 class Dossier {
 
     unsigned int numero;
@@ -122,7 +128,9 @@ public :
     iterateur<UV>& getIterateurUV();*/
 };
 
-
+/*!
+ * \brief Singleton gestionnaire des dossiers.
+ */
 class DossierManager {
     Dossier** tabDossiers;
     unsigned int nbDos;

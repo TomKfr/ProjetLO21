@@ -10,6 +10,14 @@ class UV;
 class UVManager;
 class cursusManager;
 
+/*!
+ * \brief Classe implémentant le design pattern visiteur.
+ *
+ * Un objet visiteur est capable de visiter les classes
+ * UVManager et cursusManager afin d'inscrire une liste
+ * d'UVs et une liste de filières dans une formation,
+ * à partir de n'importe quelle classe.
+ */
 class visiteur
 {
     QString nom;
