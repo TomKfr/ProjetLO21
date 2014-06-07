@@ -354,6 +354,8 @@ void MenuCompletion::saisir_previsions() {
 void MenuCompletion::lancer_completion() {
 
     //LANCER LE CALCUL A CE NIVEAU
+    ChoixManager& cm=ChoixManager::getInstance();
+    cm.calculCompletion(dos);
     Proposition * fenetre=new Proposition(dos);
     fenetre->show();
 }

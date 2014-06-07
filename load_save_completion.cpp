@@ -113,7 +113,7 @@ void ChoixManager::load_completion()
 
                             //ajouterCompletionDossier(id, annee,saison, d, credits, nbUVs);
 
-                            c=new ChoixAppliSemestre(id, annee,saison, d, credits, nbUVs, parent);
+                            c=new ChoixAppliSemestre(id, d, annee,saison, credits, nbUVs, parent);
 
                             //cree une completion simple et gere les uvs dans la suite
                         }//fin if pour uv

@@ -68,7 +68,10 @@ ChoixAppli * ChoixManager::trouverProposition(unsigned int id) {
 ChoixManager::Handler ChoixManager::handler=Handler();
 
 ChoixManager& ChoixManager::getInstance() {
-    if (!handler.instance) handler.instance = new ChoixManager; /* instance cr��e une seule fois lors de la premi�re utilisation*/
+    StrategieConcrete * s1=new StrategieConcrete;
+    StrategieConcrete& s=*s1;
+
+    if (!handler.instance) handler.instance = new ChoixManager(s); /* instance cr��e une seule fois lors de la premi�re utilisation*/
     return *handler.instance;
 }
 

@@ -36,6 +36,7 @@ SOURCES += \
     completionGUI.cpp \
     menuDossier.cpp \
     load_save_completion.cpp \
-    visiteur_completion.cpp
+    visiteur_completion.cpp \
+    algoCompletion.cpp
 
 

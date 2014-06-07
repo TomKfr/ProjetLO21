@@ -26,7 +26,6 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
         tabDossiers[nbDos]=new Dossier(n, name, firstname, form ,nb);
         nbDos++;
     }
-
 }
 
 
@@ -76,7 +75,8 @@ bool Dossier::estValidee(const QString &code)
     if(listeUV.contains(code))
     {
         QMap<QString,Note>::const_iterator it=listeUV.constFind(code);
-        if(it.value()>String2Note("F") && it.value()!=String2Note("ABS") && it.value()!=String2Note("EC")) return true;
+        if(it.value()>String2Note("F") && it.value()!=String2Note("ABS")) return true;
+        //on part du principe que les uvs en cours seront validees
     }
     else return false;
 }
@@ -177,46 +177,8 @@ void Dossier::sup_prevision(const QString &d)
     previsions.remove(d);
 }*/
 
-ChoixAppli* Dossier::calculCompletion() {
-
-unsigned int nbTotalCreditsCS;
-unsigned int nbTotalTM;
-unsigned int nbTotalTSH;
-
-/*calculer ces chiffres : si le total est obtenu, ne pas générer de completion
 
 
-Sinon : on ne peut qu'améliorer le dossier
-
-la 1ere fois : on créé un choix appli et une entrée correspondante dans le total des choix appli du choix manager
-unsigned int nbRestantsCreditsCS;
-unsigned int nbRestantsCreditsTM;
-unsigned int nbRestantsCreditsTSH; les 3 à calculer
-
-faire une copie des map pour les souhaits pour les modifier ensuite : as tu dailleurs verifie que les uvs des souhaits
-ne devaient pas etre les uvs deja faites ? je ne crois pas et il faudrait le faire du coup.
-
-NB : pour les UVs du dossier qui sont en cours, on part du principe qu'elles seront validees à la fin
-du semestre en cours.
-
-créer 3 listes d'uvs obligatoires pas encore faites par l'étudiants
-puis :
-
-si nbRestantsCreditsCS !=0 et nbCS <= 3 pécho la 1ere CS dans les UVs obligatoires non faites ; s'il les a toutes déjà faites, on parcourt la map des souhaitsCS favoris si elle est pas vide;
-si elle est vide, souhaits du dessous
-decrementer nbRestantsCreditsCS ; recommencer.
-virer l'uv de la map des souhaits associee
-
-pareil pour TM
-pareil pour les tsh (on tient pas compte des colonne/lignes fuck fuck)
-avec les contraintes sur le nb de tm, tsh, le nb total d'uv, le nb total de credits.
 
 
-augmenter le total dans chaque categorie
-generer un ChoixAppliSemestre, lui meme ajouté dans le choix appli du semestre correspondant
-
-*/
-
-
-}
 
