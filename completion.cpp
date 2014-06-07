@@ -80,23 +80,24 @@ void ChoixManager::libererInstance() {
 }
 
 void ChoixManager::ajoutProposition(unsigned int id, Dossier * d) {
+    try{
+        if (trouverProposition(id)) {
+            throw UTProfilerException(QString("erreur, ChoixManager, Proposition ")+id+QString("deja existante"));
+        }else{
 
+            if (nbPropositions==nbPropositionsMax){
+                ChoixAppli** newtab=new ChoixAppli*[nbPropositionsMax+10];
+                for(unsigned int i=0; i<nbPropositions; i++) newtab[i]=ensemblePropositions[i];
+                nbPropositionsMax+=10;
+                ChoixAppli** old=ensemblePropositions;
+                ensemblePropositions=newtab;
+                delete[] old;
+            }
 
-    if (trouverProposition(id)) {
-        throw UTProfilerException(QString("erreur, ChoixManager, Proposition ")+id+QString("deja existante"));
-    }else{
-
-        if (nbPropositions==nbPropositionsMax){
-            ChoixAppli** newtab=new ChoixAppli*[nbPropositionsMax+10];
-            for(unsigned int i=0; i<nbPropositions; i++) newtab[i]=ensemblePropositions[i];
-            nbPropositionsMax+=10;
-            ChoixAppli** old=ensemblePropositions;
-            ensemblePropositions=newtab;
-            delete[] old;
+            ensemblePropositions[nbPropositions++]=new ChoixAppli(id, d);
         }
-
-        ensemblePropositions[nbPropositions++]=new ChoixAppli(id, d);
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {

@@ -39,6 +39,7 @@
 
 void DossierManager::load()
 {
+    try{
     file=QDir::currentPath()+"/dossiers.xml";
     qDebug()<<"Chargement Dossiers!";
     QFile f(file);
@@ -238,12 +239,15 @@ void DossierManager::load()
     }
     xml.clear();
     qDebug()<<"Chargement Dossiers termine!";
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 void DossierManager::save(){
 
     qDebug() << "Save Dossier";
     file=QDir::currentPath()+"/dossiers.xml";
+    try{
     QFile newfile(file);
     if (!newfile.open(QIODevice::WriteOnly | QIODevice::Text)) throw UTProfilerException(QString("erreur ouverture fichier xml"));
     qDebug()<<"point1";
@@ -351,4 +355,6 @@ void DossierManager::save(){
     stream.writeEndDocument();
 
     newfile.close();
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }

@@ -10,22 +10,27 @@
 
 
 void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form, unsigned int nb){
-    if (trouverDossier(n)) {
-        throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+n+QString("d�ja existant"));
-    }else{
+    try{
+        if (trouverDossier(n)) {
+            throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+n+QString("d�ja existant"));
+        }else{
 
-        if (nbDos==nbMaxDos){
-            Dossier** newtab=new Dossier*[nbMaxDos+10];
-            for(unsigned int i=0; i<nbDos; i++) newtab[i]=tabDossiers[i];
-            nbMaxDos+=10;
-            Dossier** old=tabDossiers;
-            tabDossiers=newtab;
-            delete[] old;
+            if (nbDos==nbMaxDos){
+                Dossier** newtab=new Dossier*[nbMaxDos+10];
+                for(unsigned int i=0; i<nbDos; i++) newtab[i]=tabDossiers[i];
+                nbMaxDos+=10;
+                Dossier** old=tabDossiers;
+                tabDossiers=newtab;
+                delete[] old;
+            }
+
+            tabDossiers[nbDos]=new Dossier(n, name, firstname, form ,nb);
+            nbDos++;
         }
-
-        tabDossiers[nbDos]=new Dossier(n, name, firstname, form ,nb);
-        nbDos++;
     }
+
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+
 }
 
 

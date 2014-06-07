@@ -225,7 +225,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
 
     numsem=new QSpinBox(this);
     numsem->setRange(1,6);
-    numsem->setValue(1);
+    numsem->setValue(d->getNumSemestre());
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(numLabel);

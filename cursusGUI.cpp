@@ -5,6 +5,9 @@
 #include <QMessageBox>
 #include <QCheckBox>
 
+/*!
+ * \brief Constructeur de la fenêtre menuFormation.
+ */
 menuFormation::menuFormation()
 {
     m=&cursusManager::getInstance();
@@ -50,12 +53,18 @@ menuFormation::menuFormation()
     update();
 }
 
+/*!
+ * \brief Affiche la fenêtre visualiserFormation.
+ */
 void menuFormation::voir()
 {
     visualiserFormation* fenetre=new visualiserFormation(m,uvman,m->trouverForm(select->currentText()));
     fenetre->show();
 }
 
+/*!
+ * \brief Méthode de mise à jour des champs de la fenêtre menuFormation.
+ */
 void menuFormation::update()
 {
     select->clear();
@@ -65,12 +74,23 @@ void menuFormation::update()
     }
 }
 
+/*!
+ * \brief Affiche la fenêtre ajoutFormation.
+ */
 void menuFormation::ajout()
 {
     ajoutFormation* fenetre=new ajoutFormation(m, this);
     fenetre->show();
 }
 
+/*!
+ * \brief Affiche la fenêtre modifFormation.
+ *
+ * Ce slot affiche la fenêtre permettant de modifier une formation.
+ * Cependant elle vérifie préalablement si il existe un étudiant inscrit à cette formation, et dans ce cas, la modification
+ * est interdite pour garantir l'intégrité des données. Il faut d'abord supprimer tous les étudiants avant de pouvoir modifier
+ * ou supprimer la formation.
+ */
 void menuFormation::modif()
 {
     try{
@@ -88,17 +108,27 @@ void menuFormation::modif()
     catch(UTProfilerException& e) {QMessageBox::warning(this,"Erreur",e.getInfo());}
 }
 
+/*!
+ * \brief Affiche la fenêtre menuFiliere.
+ */
 void menuFormation::filir()
 {
     menuFiliere* f=new menuFiliere();
     f->show();
 }
+/*!
+ * \brief Affiche la fenêtre GestionFiliereFormation.
+ */
 void menuFormation::ajfilir()
 {
     GestionFiliereFormation* f=new GestionFiliereFormation(m->trouverForm(select->currentText()));
     f->show();
 }
-
+/*!
+ * \brief Supprime la formation sélectionnée.
+ *
+ * Cette méthode affiche un message demandant confirmation avant de supprimer la formation.
+ */
 void menuFormation::suppr()
 {
     if(QMessageBox::information(this,"Suppression","Voulez-vous supprimer la formation "+select->currentText()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
@@ -108,12 +138,19 @@ void menuFormation::suppr()
         this->update();
     }
 }
+/*!
+ * \brief Déclenche la sauvegarde du cursusManager.
+ */
 void menuFormation::save()
 {
     m->sauverCursus();
 }
 
 // ///////////////////////////////////////////////////////////////////
+/// \brief Constructeur de la fenêtre ajout formation
+/// \param m pointeur vers le cursusManager
+/// \param p pointeur vers la fenêtre parente menuFormation
+///
 ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
 
     this->setWindowTitle(QString("Ajout d'une formation"));
@@ -167,7 +204,9 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(ajout()));
 }
-
+/*!
+ * \brief Ajoute une formation avec les information entrées.
+ */
 void ajoutFormation::ajout()
 {
     man->ajouterFormation(nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
@@ -175,7 +214,12 @@ void ajoutFormation::ajout()
     parent->update();
     this->close();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre de modification d'une formation.
+ * \param m pointeur vers le cursusManager
+ * \param p pointeur vers la fenêtre parente menuFormation
+ * \param f pointeur vers la formation concernée par la modification
+ */
 modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
 {
     this->setWindowTitle(QString("Ajout d'une formation"));
@@ -235,7 +279,9 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(modif()));
 }
-
+/*!
+ * \brief Applique la modification d'une formation avec les paramètres sélectionnés.
+ */
 void modifFormation::modif()
 {
     man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
@@ -243,7 +289,12 @@ void modifFormation::modif()
     parent->update();
     this->close();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre de visualisation d'une formation
+ * \param cmanager pointeur vers le cursusManager
+ * \param umanager pointeur vers l'UVManager
+ * \param f pointeur vers la formation concernée
+ */
 visualiserFormation::visualiserFormation(cursusManager* cmanager, UVManager* umanager, formation* f)
 {
     this->setWindowTitle(f->getNom());
@@ -256,17 +307,21 @@ visualiserFormation::visualiserFormation(cursusManager* cmanager, UVManager* uma
     hbox1=new QHBoxLayout(this);
     hbox2=new QHBoxLayout(this);
     hbox3=new QHBoxLayout(this);
+    vbox3=new QVBoxLayout(this);
     form=new QLabel(objet->getNom(),this);
-    cred=new QLabel(QString::number(objet->getNbCred()),this);
-    cred->setFixedWidth(50);
-    semstr=new QLabel(QString::number(objet->getNbSem()),this);
-    semstr->setFixedWidth(50);
+    cred=new QLabel("Nombre de crédits à valider : "+QString::number(objet->getNbCred()),this);
+    semstr=new QLabel("Nombre de semestres : "+QString::number(objet->getNbSem()),this);
+    ccs=new QLabel("Nombre de crédits CS à valider : "+QString::number(objet->getCrRequis(CS)),this);
+    ctm=new QLabel("Nombre de crédits TM à valider : "+QString::number(objet->getCrRequis(TM)),this);
+    ctsh=new QLabel("Nombre de crédits TSH à valider : "+QString::number(objet->getCrRequis(TSH)),this);
     retour=new QPushButton("Retour",this);
     modif=new QPushButton("Modifier les UVs",this);
     lbluvs=new QLabel("UVs appartenant à la formation:",this);
     suppr=new QPushButton("Supprimer",this);
     supprUV=new QComboBox(this);
-    uvs=new QLabel(this);
+    uvs=new QTextEdit(this);
+    uvs->setReadOnly(true);
+    uvs->setFixedHeight(300);
     update();
 
     hbox1->addWidget(form);
@@ -276,11 +331,15 @@ visualiserFormation::visualiserFormation(cursusManager* cmanager, UVManager* uma
     hbox3->addWidget(modif);
     vbox1->addLayout(hbox1);
     vbox1->addLayout(hbox2);
+    vbox1->addLayout(vbox3);
     vbox1->addLayout(hbox3);
     vbox2->addWidget(lbluvs);
     vbox2->addWidget(uvs);
     vbox2->addWidget(supprUV);
     vbox2->addWidget(suppr);
+    vbox3->addWidget(ccs);
+    vbox3->addWidget(ctm);
+    vbox3->addWidget(ctsh);
     mainbox->addLayout(vbox1);
     mainbox->addLayout(vbox2);
     this->setLayout(mainbox);
@@ -289,13 +348,17 @@ visualiserFormation::visualiserFormation(cursusManager* cmanager, UVManager* uma
     QObject::connect(modif,SIGNAL(clicked()),this,SLOT(moduvs()));
     QObject::connect(suppr,SIGNAL(clicked()),this,SLOT(supprimer()));
 }
-
+/*!
+ * \brief Affiche la fenêtre de modification des UVs appartenant à la formation sélectionnée
+ */
 void visualiserFormation::moduvs()
 {
     selectUVsFormation* fenetre=new selectUVsFormation(cman,uman,objet,this);
     fenetre->show();
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre visualiserFormation en fonction des opérations effectuées.
+ */
 void visualiserFormation::update()
 {
     supprUV->clear();
@@ -316,14 +379,22 @@ void visualiserFormation::update()
     }
     uvs->setText(txt);
 }
-
+/*!
+ * \brief Exécute la désinscription d'une UV d'une formation.
+ */
 void visualiserFormation::supprimer()
 {
     objet->supprimer_UV(supprUV->currentText());
     this->update();
 }
 
-
+/*!
+ * \brief constructeur de la fenêtre permettant de sélectionner des UVs appartenant à une formation
+ * \param cm pointeur vers le cursusManager
+ * \param um pointeur vers l'UVManager
+ * \param f pointeur vers la formation concernée
+ * \param p pointeur vers la fenêtre parente visualiserFormation
+ */
 selectUVsFormation::selectUVsFormation(cursusManager* cm, UVManager* um, formation* f, visualiserFormation *p)
 {
     this->setWindowTitle("Modifier les UVs");
@@ -350,7 +421,9 @@ selectUVsFormation::selectUVsFormation(cursusManager* cm, UVManager* um, formati
 
     update();
 }
-
+/*!
+ * \brief Ajoute une UV àla formation sélectionnée.
+ */
 void selectUVsFormation::ajouterUV()
 {
     objet->ajouter_UV(&uman->getUV(choix->currentText()));
@@ -359,7 +432,9 @@ void selectUVsFormation::ajouterUV()
     parent->update();
     this->update();
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre selectUVsFormation
+ */
 void selectUVsFormation::update()
 {
     choix->clear();
@@ -371,6 +446,9 @@ void selectUVsFormation::update()
 }
 
 // ///////////////////////////////////////////////////////////////////
+/// \brief Constructeur de la fenêtre permettant de gérer les inscriptions de filières dans les formations.
+/// \param f pointeur vers la formation dont on souhaite gérer les filières.
+///
 GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::getInstance()), cman(cursusManager::getInstance()), objet(f)
 {
     mainbox=new QVBoxLayout(this);
@@ -404,13 +482,18 @@ GestionFiliereFormation::GestionFiliereFormation(formation *f): uman(UVManager::
 
     update();
 }
-
+/*!
+ * \brief Ajoute une filière à la formation.
+ */
 void GestionFiliereFormation::ajouterFiliere()
 {
     cman.inscrFilForm(objet,ajt->currentText());
     QMessageBox::information(this,"Ajout d'une filière","La filière "+ajt->currentText()+" a été ajoutée à la formation "+objet->getNom());
     this->update();
 }
+/*!
+ * \brief Mets à jour les champs de la fenêtre
+ */
 void GestionFiliereFormation::update()
 {
     ajt->clear();
@@ -431,6 +514,9 @@ void GestionFiliereFormation::update()
     }
     lbl3->setText("Filières déjà incluses dans la formation:\n"+txt);
 }
+/*!
+ * \brief Retire une filière de la formation
+ */
 void GestionFiliereFormation::supprimerFiliere()
 {
     if(QMessageBox::information(this,"Retrait d'une filière","Voulez-vous supprimer la filière "+suppr->currentText()+" de la formation "+objet->getNom()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
@@ -444,6 +530,10 @@ void GestionFiliereFormation::supprimerFiliere()
 
 
 // ///////////////////////////////////////////////////////////////////
+
+/*!
+ * \brief Fenêtre de gestion du menu des filières.
+ */
 menuFiliere::menuFiliere()
 {
     m=&cursusManager::getInstance();
@@ -481,14 +571,18 @@ menuFiliere::menuFiliere()
 
     update();
 }
-
+/*!
+ * \brief Affiche la fenêtre de gestion de filières.
+ */
 void menuFiliere::voir()
 {
     cursusManager& m=cursusManager::getInstance();
     visualiserFiliere* f=new visualiserFiliere(m.trouverFil(select->currentText()));
     f->show();
 }
-
+/*!
+ * \brief Met à jour les champs de le fenêtre menuFiliere
+ */
 void menuFiliere::update()
 {
     select->clear();
@@ -497,20 +591,26 @@ void menuFiliere::update()
         select->addItem(it.key());
     }
 }
-
+/*!
+ * \brief Affiche la fenêtre de création d'une nouvelle filière.
+ */
 void menuFiliere::ajout()
 {
     ajoutFiliere* fenetre=new ajoutFiliere(this);
     fenetre->show();
 }
-
+/*!
+ * \brief Affiche la fenêtre de modification d'une filière.
+ */
 void menuFiliere::modif()
 {
     cursusManager& m=cursusManager::getInstance();
     modifFiliere* f=new modifFiliere(this,m.trouverFil(select->currentText()));
     f->show();
 }
-
+/*!
+ * \brief Supprime une formation
+ */
 void menuFiliere::suppr()
 {
     if(QMessageBox::information(this,"Suppression","Voulez-vous supprimer la filière "+select->currentText()+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
@@ -524,7 +624,10 @@ void menuFiliere::save()
 {
     m->sauverCursus();
 }
-
+/*!
+ * \brief Constructreur de la fenêtre de création d'une nouvelle filière
+ * \param p fenêtre parente
+ */
 ajoutFiliere::ajoutFiliere(menuFiliere *p)
 {
     this->setWindowTitle(QString("Ajout d'une formation"));
@@ -554,7 +657,9 @@ ajoutFiliere::ajoutFiliere(menuFiliere *p)
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(ajout()));
 }
-
+/*!
+ * \brief Exécute l'ajout d'une nouvelle filière
+ */
 void ajoutFiliere::ajout()
 {
     cursusManager& m=cursusManager::getInstance();
@@ -563,7 +668,10 @@ void ajoutFiliere::ajout()
     parent->update();
     this->close();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre permetatnt de visualiser une formation
+ * \param f Pointeur vers la formation concernée
+ */
 visualiserFiliere::visualiserFiliere(filiere *f)
 {
     this->setWindowTitle(f->getNom());
@@ -605,13 +713,17 @@ visualiserFiliere::visualiserFiliere(filiere *f)
     QObject::connect(modif,SIGNAL(clicked()),this,SLOT(moduvs()));
     QObject::connect(suppr,SIGNAL(clicked()),this,SLOT(supprimer()));
 }
-
+/*!
+ * \brief Ouvre la fenêtre de gestion UVs de la filière en cours.
+ */
 void visualiserFiliere::moduvs()
 {
     selectUVsFiliere* f=new selectUVsFiliere(objet,this);
     f->show();
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void visualiserFiliere::update()
 {
     supprUV->clear();
@@ -624,13 +736,19 @@ void visualiserFiliere::update()
     }
     uvs->setText(txt);
 }
-
+/*!
+ * \brief Exécute le retrait d'une UV d'une filière.
+ */
 void visualiserFiliere::supprimer()
 {
     objet->supprimer_UV(supprUV->currentText());
     this->update();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre de modification d'une formation
+ * \param p fenêtre parente
+ * \param f filière concernée
+ */
 modifFiliere::modifFiliere(menuFiliere *p, filiere* f)
 {
     this->setWindowTitle(QString("Ajout d'une formation"));
@@ -664,7 +782,9 @@ modifFiliere::modifFiliere(menuFiliere *p, filiere* f)
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(modif()));
 }
-
+/*!
+ * \brief Exécute la modification de la filière.
+ */
 void modifFiliere::modif()
 {
     cursusManager& man=cursusManager::getInstance();
@@ -673,7 +793,11 @@ void modifFiliere::modif()
     parent->update();
     this->close();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre selectUVsFiliere
+ * \param f pointeur vers la filière concernée
+ * \param p pointeur vers la fenêtre parente
+ */
 selectUVsFiliere::selectUVsFiliere(filiere* f, visualiserFiliere *p): cman(cursusManager::getInstance()), uman(UVManager::getInstance())
 {
     this->setWindowTitle("Modifier les UVs");
@@ -696,7 +820,9 @@ selectUVsFiliere::selectUVsFiliere(filiere* f, visualiserFiliere *p): cman(cursu
     QObject::connect(retour,SIGNAL(clicked()),this,SLOT(close()));
     QObject::connect(ajouter,SIGNAL(clicked()),this,SLOT(ajouterUV()));
 }
-
+/*!
+ * \brief Exécute l'ajout
+ */
 void selectUVsFiliere::ajouterUV()
 {
     objet->ajouter_UV(&uman.getUV(choix->currentText()));
@@ -704,7 +830,9 @@ void selectUVsFiliere::ajouterUV()
     parent->update();
     this->update();
 }
-
+/*!
+ * \brief Mise à jour des champs
+ */
 void selectUVsFiliere::update()
 {
     choix->clear();

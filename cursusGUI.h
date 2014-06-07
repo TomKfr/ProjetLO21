@@ -10,6 +10,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QTextEdit>
 
 class cursusManager;
 class UVManager;
@@ -17,6 +18,12 @@ class UV;
 class filiere;
 class formation;
 
+/*!
+ * \brief Affiche le menu de gestion des formations.
+ *
+ * Cette classe-fenêtre permet d'afficher le menu de gestion des formations dans le lequel l'utilisateur peut
+ * soit ajouter une nouvelle formation, soit en choisir une existante et la supprimer ou la modifier.
+ */
 class menuFormation : public QWidget
 {
     Q_OBJECT
@@ -50,6 +57,9 @@ public slots:
     void save();
 };
 
+/*!
+ * \brief Affiche la fenêtre d'ajout d'une formation.
+ */
 class ajoutFormation : public QWidget {
     Q_OBJECT
     cursusManager* man;
@@ -81,6 +91,10 @@ public slots:
     void ajout();
 };
 
+
+/*!
+ * \brief Affiche la fenêtre permettant de modifier une formation.
+ */
 class modifFormation : public QWidget {
     Q_OBJECT
     cursusManager* man;
@@ -113,6 +127,12 @@ public slots:
     void modif();
 };
 
+
+/*!
+ * \brief Affiche la fenêtre de gestion d'une formation.
+ *
+ * Cette fenêtre permet de visualiser les détail d'une formation, et de gérer les UVs qui en font partie.
+ */
 class visualiserFormation : public QWidget
 {
     Q_OBJECT
@@ -125,11 +145,15 @@ class visualiserFormation : public QWidget
     QHBoxLayout* hbox1;
     QHBoxLayout* hbox2;
     QHBoxLayout* hbox3;
+    QVBoxLayout* vbox3;
     QLabel* form;
     QLabel* cred;
     QLabel* semstr;
     QLabel* lbluvs;
-    QLabel* uvs;
+    QTextEdit* uvs;
+    QLabel* ccs;
+    QLabel* ctm;
+    QLabel* ctsh;
     QComboBox* supprUV;
     QPushButton* retour;
     QPushButton* modif;
@@ -144,7 +168,9 @@ public slots:
 
 };
 
-
+/*!
+ * \brief Fenêtre de gestion des UVs pour une formation particulière.
+ */
 class selectUVsFormation : public QWidget
 {
     Q_OBJECT
@@ -170,6 +196,9 @@ public slots:
 
 // ////////////////////// fin formations ////////////////////////
 
+/*!
+ * \brief Fenêtre de gestion des filières inscrites dans une formation.
+ */
 class GestionFiliereFormation : public QWidget
 {
     Q_OBJECT
@@ -198,6 +227,13 @@ public slots:
     void supprimerFiliere();
 };
 
+
+/*!
+ * \brief Menu de gestion des filières.
+ *
+ * Cette classe-fenêtre permet d'afficher le menu de gestion des filières dans le lequel l'utilisateur peut
+ * soit ajouter une nouvelle filière, soit en choisir une existante et la supprimer ou la modifier.
+ */
 class menuFiliere : public QWidget
 {
     Q_OBJECT
@@ -227,6 +263,9 @@ public slots:
     void save();
 };
 
+/*!
+ * \brief Fenêtre permettant de créer une nouvelle filière.
+ */
 class ajoutFiliere: public QWidget {
     Q_OBJECT
     menuFiliere* parent;
@@ -247,6 +286,9 @@ public slots:
     void ajout();
 };
 
+/*!
+ * \brief Fenêtre permettant de visualiser les détail d'une filière et de gérer les UVs qui en font partie.
+ */
 class visualiserFiliere : public QWidget
 {
     Q_OBJECT
@@ -274,6 +316,9 @@ public slots:
     void supprimer();
 };
 
+/*!
+ * \brief Fenêtre permettant de modifier les caractéristiques d'une filière.
+ */
 class modifFiliere : public QWidget {
     Q_OBJECT
     menuFiliere* parent;
@@ -295,6 +340,9 @@ public slots:
     void modif();
 };
 
+/*!
+ * \brief Fenêtre permettant de gérer les UVs inscrites dans une filière.
+ */
 class selectUVsFiliere : public QWidget
 {
     Q_OBJECT

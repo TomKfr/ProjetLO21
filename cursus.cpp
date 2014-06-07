@@ -96,32 +96,38 @@ void cursusManager::libererInstance() {
 
 formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
-    if (formations.find(nom)!=formations.end())
-    {
-        throw UTProfilerException(QString("erreur, cursusManager, formation ")+nom+QString(" déja existante"));
+    try{
+        if (formations.find(nom)!=formations.end())
+        {
+            throw UTProfilerException(QString("erreur, cursusManager, formation ")+nom+QString(" déja existante"));
+        }
+        else
+        {
+            formation* newform=new formation(nom,c,s);
+            newform->setNbCrRequis(CS,ccs);
+            newform->setNbCrRequis(TM,ctm);
+            newform->setNbCrRequis(TSH,ctsh);
+            formations.insert(nom,newform);
+            return newform;
+        }
     }
-    else
-    {
-        formation* newform=new formation(nom,c,s);
-        newform->setNbCrRequis(CS,ccs);
-        newform->setNbCrRequis(TM,ctm);
-        newform->setNbCrRequis(TSH,ctsh);
-        formations.insert(nom,newform);
-        return newform;
-    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     return 0;
 }
 
 void cursusManager::ajouterFiliere(const QString &nom, unsigned int c)
 {
-    if(filieres.find(nom)!=filieres.end())
-    {
-        throw UTProfilerException(QString("erreur, cursusManager, filière ")+nom+QString(" déja existante"));
+    try{
+        if(filieres.find(nom)!=filieres.end())
+        {
+            throw UTProfilerException(QString("erreur, cursusManager, filière ")+nom+QString(" déja existante"));
+        }
+        else
+        {
+            filieres.insert(nom,new filiere(nom,c));
+        }
     }
-    else
-    {
-        filieres.insert(nom,new filiere(nom,c));
-    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 void cursusManager::supprimerFormation(const QString &nom)
@@ -135,24 +141,27 @@ void cursusManager::supprimerFiliere(const QString &nom)
 
 void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, unsigned int c)
 {
-    if(filieres.find(newname)!=filieres.end()) throw UTProfilerException(QString("erreur, cursusManager, filière ")+newname+QString(" déja existante"));
-    else
-    {
-        QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverFil(oldkey)->uvs);
-        supprimerFiliere(oldkey);
-        ajouterFiliere(newname,c);
-        filiere* newfil=trouverFil(newname);
-        newfil->uvs=*list;
-        delete list;
-    }
-    for(QMap<QString,formation*>::iterator it=getQmapIteratorFormbegin();it!=getQmapIteratorFormend();it++)
-    {
-        if(trouverFilForm(it.value(),oldkey))
+    try{
+        if(filieres.find(newname)!=filieres.end() && newname!=oldkey) throw UTProfilerException(QString("erreur, cursusManager, filière ")+newname+QString(" déja existante"));
+        else
         {
-            it.value()->filieresAssoc.remove(oldkey);
-            it.value()->filieresAssoc.insert(newname);
+            QMap<QString,UV*>* list=new QMap<QString,UV*>(trouverFil(oldkey)->uvs);
+            supprimerFiliere(oldkey);
+            ajouterFiliere(newname,c);
+            filiere* newfil=trouverFil(newname);
+            newfil->uvs=*list;
+            delete list;
+        }
+        for(QMap<QString,formation*>::iterator it=getQmapIteratorFormbegin();it!=getQmapIteratorFormend();it++)
+        {
+            if(trouverFilForm(it.value(),oldkey))
+            {
+                it.value()->filieresAssoc.remove(oldkey);
+                it.value()->filieresAssoc.insert(newname);
+            }
         }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
 {
@@ -194,7 +203,7 @@ void cursusManager::sauverCursus()
 {
     QString fileOut = QDir::currentPath()+ "/formations.xml";
     qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
-
+try{
     if(!fileOut.isEmpty())
     {
         QFile f(fileOut);
@@ -269,6 +278,8 @@ void cursusManager::sauverCursus()
         f.close();
     }
     QMessageBox::information(0,"Sauvegarde","Cursus sauvegardés", QMessageBox::Ok);
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 void cursusManager::chargerCursus()
@@ -276,6 +287,7 @@ void cursusManager::chargerCursus()
     // nécessaire de lire les filières d'abord pour pouvoir ajouter les formations !
     QString fileOut = QDir::currentPath()+ "/filieres.xml";
     qDebug()<<"Ouverture du fichier "<<fileOut;
+    try{
     QFile f(fileOut);
     if (!f.open(QIODevice::ReadOnly | QIODevice::Text)) {throw UTProfilerException("Erreur ouverture fichier filieres");}
     QXmlStreamReader xml(&f);
@@ -449,6 +461,8 @@ void cursusManager::chargerCursus()
         throw UTProfilerException("Erreur lecteur fichier formations, parser xml");
     }
     xml.clear();
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 /*iterateur<formation>& cursusManager::getIterateurForm()

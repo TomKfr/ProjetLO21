@@ -100,12 +100,14 @@ void MenuDossier::suppression() {
 
 void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
     Dossier* dos=dm.trouverDossier(num);
-
-    if (dos==0) {
-        throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
-    }else{
-    dm.removeDossier(dos);
+    try{
+        if (dos==0) {
+            throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+num+QString("non existant, suppression impossible"));
+        }else{
+            dm.removeDossier(dos);
+        }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 void MenuDossier::update()
