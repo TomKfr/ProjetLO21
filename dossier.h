@@ -73,24 +73,24 @@ class Dossier {
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
     }
 
-    //void ajouterCompletionDossier(ChoixAppli * c);
     friend class DossierManager;
 
 public :
 
     unsigned int getNumero() const {return numero;}
     unsigned int getNbResultats() const {return nbResultats;}
+    QMap<QString,Note> getListeUV() const {return listeUV; }
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
     unsigned int getNumSemestre() const {return nbSemestre;}
     Equivalences ** getEquivalences() const {return equivalence;}
     souhaits * getSouhaits() const {return Souhaits;}
-
     unsigned int getNbEquivalences() const {return nbEquivalences;}
+    prevision* getprevisions() {return semestreprevu;}
+    const souhaits* getSouhait() const {return Souhaits;}
 
     void setNbEquivalences(unsigned int nb) {nbEquivalences=nb;}
-
     void setNumero(unsigned int n) { numero=n; }
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
@@ -99,19 +99,19 @@ public :
     void setResultat(const QString& code, Note n);
     void setEquivalences(Equivalences** l) { equivalence=l; }
     void setprevision(prevision* prv) {semestreprevu=prv;}
-    prevision* getprevisions() {return semestreprevu;}
     void setSouhaits(souhaits * s) {Souhaits=s;}
+
     void ajouterUV(const QString& code, Note n);
     void supprimerUV(UV* uv);
     bool estValidee(const QString& code);
-    ChoixAppliSemestre* trouverCompletion();
+
 
     ChoixAppli * calculCompletion();
+    ChoixAppliSemestre* trouverCompletion();
 
     void ajouterResultat(const QString & res);
 
     void ajouterSouhait(souhaits* s) {Souhaits=s;}
-    const souhaits* getSouhait() const {return Souhaits;}
 
     void ajt_prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh);
     void sup_prevision(const QString &d);
@@ -124,8 +124,6 @@ public :
     //QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
     void acceptCompletion(visiteurCompletion* v);
 
-    /*class iterateur<UV>;
-    iterateur<UV>& getIterateurUV();*/
 };
 
 /*!

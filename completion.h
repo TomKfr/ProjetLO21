@@ -6,18 +6,33 @@
 #include <QSet>
 
 class Dossier;
+class StrategieConcrete;
 class ChoixAppli;
+class ChoixManager;
 enum Reponse {Valider, Refuser,Avancer, Retarder};
+
+class Strategie {
+
+public :
+    virtual ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const=0;
+};
+
+class StrategieConcrete : public Strategie {
+
+public :
+    ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const ; //a completer
+};
 
 class ChoixManager{
     ChoixAppli ** ensemblePropositions; //l'integralite des propositions de l'appli
     unsigned int nbPropositions;
     unsigned int nbPropositionsMax;
     QString file;
+    const StrategieConcrete& completion;
 
     unsigned int totalPropositionsSemestre;
 
-    ChoixManager() : ensemblePropositions(0), nbPropositions(0), nbPropositionsMax(0), totalPropositionsSemestre(0) {}
+    ChoixManager(const StrategieConcrete & s) : ensemblePropositions(0), nbPropositions(0), nbPropositionsMax(0), totalPropositionsSemestre(0), completion(s) {}
     ~ChoixManager() {}
     void operator=(const ChoixManager&);
     ChoixManager(const ChoixManager&);
@@ -38,6 +53,7 @@ public :
     static void libererInstance();
     unsigned int getTotalPropositionsSemestre() const {return totalPropositionsSemestre;}
     void setTotalPropositionsSemestre(unsigned int i) {totalPropositionsSemestre=i;}
+    ChoixAppli* calculCompletion(Dossier * d) {return (completion.algoCompletion(*this, d ));}
 
     void load_completion();
     void save_completion();
@@ -53,13 +69,14 @@ class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
     Semestre semestre_concerne;
     unsigned int nbCredits ; //nb de credits accumules avec ce semestre : pas plus de 35
     unsigned int nbUV ; //pas plus de 7
+    bool stage ; //l'etudiant est-il en stage pendant ce semestre ? o/n
     ChoixAppli * parent;
 
     Dossier* dos; //dossier concerne
 
 public :
 
-    ChoixAppliSemestre (unsigned int id, unsigned int annee=0, Saison s=Automne, Dossier*d=0,  unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
+    ChoixAppliSemestre (unsigned int id, Dossier*d=0, unsigned int annee=0, Saison s=Automne,  unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
     {
         ChoixManager& cm=ChoixManager::getInstance();
         unsigned int tot=cm.getTotalPropositionsSemestre();
@@ -76,6 +93,10 @@ public :
 
     void ajoutUV(UV* uv);
     void supprimerUV(UV* uv);
+
+    void setChoixAppli(ChoixAppli* c) {parent=c;}
+    void setNbCredits(unsigned int i) {nbCredits=i;}
+    void setNbUVs(unsigned int i) {nbUV=i;}
 
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return propositionUV.begin();}
@@ -130,6 +151,12 @@ public:
     bool estExigee(const QString& code) const {return exigences.contains(code);}
     bool estPreferee(const QString& code) const {return preferences.contains(code);}
     bool estRejetee(const QString& code) const {return rejets.contains(code);}
+
+    QSet<QString> getExigences() const {return exigences; }
+    QSet<QString> getPreferences() const {return preferences; }
+    QSet<QString> getRejets() const {return rejets; }
+    void setExigences(QSet<QString> s) {exigences=s;}
+    void setPreferences(QSet<QString> s) {preferences=s;}
 };
 
 class prevision
@@ -171,5 +198,7 @@ public:
     unsigned int getbiTSH() {return borneInfTSH;}
      */
 };
+
+
 
 #endif // COMPLETION_H

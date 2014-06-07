@@ -133,6 +133,7 @@ public:
      * @return "true" si l'UV est obligatoire, "false" sinon.
      */
     bool estObligatoire(const QString& code) const;
+    const QSet<QString> & getUVsObligatoires() const {return UVs_obligatoires;}
 };
 
 /**
