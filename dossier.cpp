@@ -169,7 +169,10 @@ unsigned int nbTotalTSH;
 
 /*calculer ces chiffres : si le total est obtenu, ne pas générer de completion
 
+
 Sinon : on ne peut qu'améliorer le dossier
+
+la 1ere fois : on créé un choix appli et une entrée correspondante dans le total des choix appli du choix manager
 unsigned int nbRestantsCreditsCS;
 unsigned int nbRestantsCreditsTM;
 unsigned int nbRestantsCreditsTSH; les 3 à calculer
@@ -183,17 +186,18 @@ du semestre en cours.
 créer 3 listes d'uvs obligatoires pas encore faites par l'étudiants
 puis :
 
-si nbRestantsCreditsCS !=0 pécho la 1ere CS dans les UVs obligatoires non faites ; s'il les a toutes déjà faites, on parcourt la map des souhaitsCS favoris si elle est pas vide;
+si nbRestantsCreditsCS !=0 et nbCS <= 3 pécho la 1ere CS dans les UVs obligatoires non faites ; s'il les a toutes déjà faites, on parcourt la map des souhaitsCS favoris si elle est pas vide;
 si elle est vide, souhaits du dessous
 decrementer nbRestantsCreditsCS ; recommencer.
 virer l'uv de la map des souhaits associee
 
 pareil pour TM
 pareil pour les tsh (on tient pas compte des colonne/lignes fuck fuck)
+avec les contraintes sur le nb de tm, tsh, le nb total d'uv, le nb total de credits.
 
 
-
-
+augmenter le total dans chaque categorie
+generer un ChoixAppliSemestre, lui meme ajouté dans le choix appli du semestre correspondant
 
 */
 
