@@ -59,7 +59,7 @@ class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
 
 public :
 
-    ChoixAppliSemestre (unsigned int id, unsigned int annee=0, Saison s=Automne, Dossier*d=0,  unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), dos(d), idChoix(id), parent(ensemble)
+    ChoixAppliSemestre (unsigned int id, unsigned int annee=0, Saison s=Automne, Dossier*d=0,  unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
     {
         ChoixManager& cm=ChoixManager::getInstance();
         unsigned int tot=cm.getTotalPropositionsSemestre();
@@ -95,7 +95,7 @@ class ChoixAppli { //regroupe tous les semestres proposes jusqu'à la fin des et
     Reponse rep; //reponse donnee par l'etudiant
 
 public :
-        ChoixAppli(unsigned int i, Dossier* d) : idProposition(i), dossier(d), listePropositions(0), nbSemestre(0), nbMaxSemestre(0) {}
+        ChoixAppli(unsigned int i, Dossier* d) : idProposition(i), listePropositions(0), nbSemestre(0), nbMaxSemestre(0), dossier(d) {}
         Reponse getReponse() const {return rep;}
         ChoixAppliSemestre** getListePropositions() const {return listePropositions;}
         unsigned int getIdentifiant() const {return idProposition;}
@@ -130,9 +130,46 @@ public:
     bool estExigee(const QString& code) const {return exigences.contains(code);}
     bool estPreferee(const QString& code) const {return preferences.contains(code);}
     bool estRejetee(const QString& code) const {return rejets.contains(code);}
+};
 
-    void save();
-    void load();
+class prevision
+{
+    QString destination;
+    QPair<unsigned int, unsigned int> bornesCS; //first=borne inférieure, second=borne supérieure
+    QPair<unsigned int, unsigned int> bornesTM;
+    QPair<unsigned int, unsigned int> bornesTSH;
+    /*unsigned int borneSupCS;
+    unsigned int borneInfCS;
+    unsigned int borneSupTM;
+    unsigned int borneInfTM;
+    unsigned int borneSupTSH;
+    unsigned int borneInfTSH;*/
+
+public:
+    prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh): destination(d)
+    {
+        bornesCS.second=scs;
+        bornesCS.first=ics;
+        bornesTM.second=stm;
+        bornesTM.first=itm;
+        bornesTSH.second=stsh;
+        bornesTSH.first=itsh;
+    }
+    QString getdestination() {return destination;}
+    unsigned int getbsCS() {return bornesCS.second;}
+    unsigned int getbsTM() {return bornesTM.second;}
+    unsigned int getbsTSH() {return bornesTSH.second;}
+    unsigned int getbiCS() {return bornesCS.first;}
+    unsigned int getbiTM() {return bornesTM.first;}
+    unsigned int getbiTSH() {return bornesTSH.first;}
+    /*
+     * unsigned int getbsCS() {return borneSupCS;}
+    unsigned int getbsTM() {return borneSupTM;}
+    unsigned int getbsTSH() {return borneSupTSH;}
+    unsigned int getbiCS() {return borneInfCS;}
+    unsigned int getbiTM() {return borneInfTM;}
+    unsigned int getbiTSH() {return borneInfTSH;}
+     */
 };
 
 #endif // COMPLETION_H

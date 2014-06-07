@@ -32,7 +32,6 @@ void ChoixManager::load_completion()
                 QString s;
                 Saison saison;
 
-
                 QStringList listUV;
                 ChoixAppliSemestre* c;
                 ChoixAppli* parent=0;

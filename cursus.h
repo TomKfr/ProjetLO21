@@ -159,7 +159,7 @@ public:
      * @param n Nom de la formation à rechercher
      * @return Un pointeur vers la formation recherchée si elle existe, 0 sinon.
      */
-    formation* trouverForm(const QString &n) {return formations.find(n).value();}
+    formation* trouverForm(const QString &n);
     /**
      * @brief Recherche une filière dans la liste des filières existantes.
      * @param n Nom de la filière à rechercher
@@ -185,7 +185,7 @@ public:
      * @param ctm Nombre de crédits requis dans la catégorie TM pour valider la formation
      * @param ctsh Nombre de crédits requis dans la catégorie TSH pour valider la formation
      */
-    void ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
+    formation* ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
     /**
      * @brief Retire une formation de la liste des formations et détruit l'objet correspondant.
      * @param nom Nom de la formation à supprimer.

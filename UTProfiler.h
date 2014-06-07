@@ -21,6 +21,8 @@ QString CategorieToString(Categorie c);
 QTextStream& operator>>(QTextStream& f, Categorie& cat);
 
 enum Note { A, B, C, D, E, F, FX, RES, ABS, /* en cours */ EC  };
+QString Note2String(Note n);
+Note String2Note(const QString& n);
 enum Saison { Automne, Printemps };
 Saison StringToSaison(const QString& s);
 QString SaisonToString(Saison c);
@@ -99,7 +101,7 @@ public:
     void save();
     static UVManager& getInstance();
     static void libererInstance();
-    void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
+    UV* ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     void supprimerUV(const QString& c);
     const UV& getUV(const QString& code) const;
     UV& getUV(const QString& code);

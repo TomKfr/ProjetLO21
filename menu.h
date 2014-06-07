@@ -28,6 +28,7 @@ class MenuDebut : public QWidget{
     QPushButton* op_Formations;
     QPushButton* op_Filieres;
     QPushButton* no_op;
+    QPushButton* initload;
 
     QLabel* texte;
 
@@ -50,6 +51,8 @@ public slots:
     void lancer_Formations();
     void lancer_Filieres();
     void lancer_rien();
+    void launch_this_fucking_initial_load();
 };
+
 
 #endif // MENU_H

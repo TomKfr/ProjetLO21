@@ -101,7 +101,42 @@ public slots :
 
 };
 
+class menuprevision : public QWidget
+{
+    Q_OBJECT
+    Dossier* dos;
+    QVBoxLayout *mainbox;
+    QHBoxLayout *hbox1;
+    QHBoxLayout *hbox2;
+    QHBoxLayout *hbox3;
+    QVBoxLayout *vbox1;
+    QVBoxLayout *vbox2;
+    QVBoxLayout *vbox3;
 
+    QLabel* lbldest;
+    QLabel* lblcs;
+    QLabel* lbltm;
+    QLabel* lbltsh;
+
+    QLineEdit* destination;
+
+    QSpinBox* bornesupCS;
+    QSpinBox* borneinfCS;
+    QSpinBox* bornesupTM;
+    QSpinBox* borneinfTM;
+    QSpinBox* bornesupTSH;
+    QSpinBox* borneinfTSH;
+
+    QPushButton* valider;
+    QPushButton* annuler;
+
+public:
+    menuprevision(Dossier* d);
+    void update();
+
+public slots:
+    void valider_prev();
+};
 
 class MenuSouhaits : public QWidget
 {
@@ -146,7 +181,7 @@ class MenuSouhaits : public QWidget
     QPushButton *terminer;
 
 public:
-    MenuSouhaits(souhaits* sht);
+    MenuSouhaits(Dossier* d, souhaits* sht);
     void update();
 
 public slots:

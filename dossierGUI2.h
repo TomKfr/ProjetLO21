@@ -80,6 +80,7 @@ class DossierAjout : public QWidget{
     QPushButton* SelectUV;
     QPushButton* SelectEquivalences;
     QPushButton* sauver;
+    QPushButton* quitter;
 
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
@@ -99,6 +100,7 @@ public slots:
  void slot_selectUV();
  void update();
  void select_equivalences();
+ void disable();
 };
 
 
@@ -217,6 +219,7 @@ public slots :
    void finUV();
    void update();
    void modifierResult();
+   void affResult();
 };
 
 class ModifResult : public QWidget
@@ -240,8 +243,7 @@ public slots :
     void update(); //avec que les uvs et les resultats du dossier
     void enregistrer();
     void fin2();
-
-
+    void affResult();
 };
 
 class SuppressionUV : public QWidget

@@ -40,12 +40,10 @@ void visiteur2::visitDossierManager(DossierManager* man)
     for(int i=0;i<taille;i++)
     {
         qDebug()<<"dossier trouve2";
-        dos->ajouterUV(tab[i]);
-         qDebug()<<"dossier trouvé3";
-        dos->ajouterResultat(tabRes[i]);
-         qDebug()<<"dossier trouvé4";
+        dos->ajouterUV(tab[i]->getCode(),String2Note(tabRes[i]));
+        qDebug()<<"dossier trouvé4";
     }
-     qDebug()<<"dossier trouvé2";
+    qDebug()<<"dossier trouvé2";
     qDebug()<<"UVs récupérées !";
 }
 
