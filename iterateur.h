@@ -2,6 +2,7 @@
 #define ITERATEUR_H
 
 #include "exception.h"
+#include <QMessageBox>
 
 /*!
  * \brief Template permettant de parcourir un ensemble d'objets dont le type est passé en paramètre.
@@ -20,8 +21,11 @@ public:
     bool isDone() {return current==nbtot;}
     void next()
     {
-        if(isDone()) throw UTProfilerException("Next sur un itérateur terminé !!");
-        current++;
+        try{
+            if(isDone()) throw UTProfilerException("Next sur un itérateur terminé !!");
+            current++;
+        }
+        catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     }
     I* courant() {return tab[current];}
 };

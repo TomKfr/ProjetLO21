@@ -39,89 +39,116 @@ QTextStream& operator<<(QTextStream& f, const UV& uv){
 }
 
 QTextStream& operator>>(QTextStream& f, Categorie& cat){
-    QString str;
-    f>>str;
-    if (str=="CS") cat=CS;
-    else
-    if (str=="TM") cat=TM;
-    else
-    if (str=="SP") cat=SP;
-    else
-    if (str=="TSH") cat=TSH;
-    else {
-        throw UTProfilerException("erreur, lecture categorie");
+    try{
+        QString str;
+        f>>str;
+        if (str=="CS") cat=CS;
+        else
+            if (str=="TM") cat=TM;
+            else
+                if (str=="SP") cat=SP;
+                else
+                    if (str=="TSH") cat=TSH;
+                    else {
+                        throw UTProfilerException("erreur, lecture categorie");
+                    }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     return f;
 }
 
 Categorie StringToCategorie(const QString& str){
-    if (str=="CS") return CS;
-    else
-    if (str=="TM") return TM;
-    else
-    if (str=="SP") return SP;
-    else
-    if (str=="TSH") return TSH;
-    else {
-        throw UTProfilerException(QString("erreur, StringToCategorie, categorie ")+str+" inexistante");
+    try{
+        if (str=="CS") return CS;
+        else
+            if (str=="TM") return TM;
+            else
+                if (str=="SP") return SP;
+                else
+                    if (str=="TSH") return TSH;
+                    else {
+                        throw UTProfilerException(QString("erreur, StringToCategorie, categorie ")+str+" inexistante");
+                    }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return CS;
 }
 
 Note String2Note(const QString& n)
 {
-    if(n=="A") return A;
-    if(n=="B") return B;
-    if(n=="C") return C;
-    if(n=="D") return D;
-    if(n=="E") return E;
-    if(n=="F") return F;
-    if(n=="FX") return FX;
-    if(n=="RES") return RES;
-    if(n=="ABS") return ABS;
-    if(n=="EC") return EC;
-    else return ABS;
+    try{
+        if(n=="A") return A;
+        if(n=="B") return B;
+        if(n=="C") return C;
+        if(n=="D") return D;
+        if(n=="E") return E;
+        if(n=="F") return F;
+        if(n=="FX") return FX;
+        if(n=="RES") return RES;
+        if(n=="ABS") return ABS;
+        if(n=="EC") return EC;
+        else throw UTProfilerException("Note "+n+" inconnue !");
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return EC;
 }
 QString Note2String(Note n)
 {
-    if(n==A) return "A";
-    if(n==B) return "B";
-    if(n==C) return "C";
-    if(n==D) return "D";
-    if(n==E) return "E";
-    if(n==F) return "F";
-    if(n==FX) return "FX";
-    if(n==RES) return "RES";
-    if(n==ABS) return "ABS";
-    if(n==EC) return "EC";
-    else return "ABS";
+    try{
+        if(n==A) return "A";
+        if(n==B) return "B";
+        if(n==C) return "C";
+        if(n==D) return "D";
+        if(n==E) return "E";
+        if(n==F) return "F";
+        if(n==FX) return "FX";
+        if(n==RES) return "RES";
+        if(n==ABS) return "ABS";
+        if(n==EC) return "EC";
+        else throw UTProfilerException("Note inconnue !");
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return "EC";
 }
 
 
 Saison StringToSaison(const QString& str){
-    if (str=="Automne") {qDebug()<<"coucou1"; return Automne; }
-    else if (str=="Printemps") { qDebug()<<"coucou2"; return Printemps; }
-    else {
-        throw UTProfilerException(QString("erreur, StringToSaison, saison ")+str+" inexistante");
+    try{
+        if (str=="Automne") {qDebug()<<"coucou1"; return Automne; }
+        else if (str=="Printemps") { qDebug()<<"coucou2"; return Printemps; }
+        else {
+            throw UTProfilerException(QString("erreur, StringToSaison, saison ")+str+" inexistante");
+        }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return Automne;
 }
 
 QString CategorieToString(Categorie c){
-    switch(c){
-    case CS: return "CS";
-    case TM: return "TM";
-    case SP: return "SP";
-    case TSH: return "TSH";
-    default: throw UTProfilerException("erreur, categorie non traitee",__FILE__,__LINE__);
+    try{
+        switch(c){
+        case CS: return "CS";
+        case TM: return "TM";
+        case SP: return "SP";
+        case TSH: return "TSH";
+        default: throw UTProfilerException("erreur, categorie non traitee",__FILE__,__LINE__);
+        }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return "";
 }
 
 QString SaisonToString(Saison s){
-    switch(s){
-    case Automne: return "Automne";
-    case Printemps: return "Printemps";
+    try{
+        switch(s){
+        case Automne: return "Automne";
+        case Printemps: return "Printemps";
 
-    default: throw UTProfilerException("erreur, saison non traitee",__FILE__,__LINE__);
+        default: throw UTProfilerException("erreur, saison non traitee",__FILE__,__LINE__);
+        }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return "";
 }
 
 QTextStream& operator<<(QTextStream& f, const Categorie& cat){
@@ -136,6 +163,7 @@ UVManager::UVManager():uvs(0),nbUV(0),nbMaxUV(0),modification(false),file("")
 
 
 void UVManager::load(){
+    try{
     QString fileOut = QDir::currentPath()+ "/UV_UTC.xml";
     qDebug()<<"Ouverture du fichier "<<fileOut;
     QFile fin(fileOut);
@@ -213,11 +241,14 @@ void UVManager::load(){
     }
     // Removes any device() or data from the reader * and resets its internal state to the initial state.
     xml.clear();
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 
 
 void UVManager::save(){
+    try{
     QString fileOut = QDir::currentPath()+ "/UV_UTC.xml";
     qDebug()<<"Sauvegarde dans le fichier "<<fileOut;
     QFile f(fileOut);
@@ -241,7 +272,8 @@ void UVManager::save(){
      stream.writeEndDocument();
 
      f.close();
-
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 UVManager::~UVManager(){
@@ -264,14 +296,17 @@ void UVManager::addItem(UV* uv){
 }
 
 UV* UVManager::ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p){
-    if (trouverUV(c)) {
-        throw UTProfilerException(QString("erreur, UVManager, UV ")+c+QString("d�ja existante"));
-    }else{
-        UV* newuv=new UV(c,t,nbc,cat,a,p);
-        addItem(newuv);
-        modification=true;
-        return newuv;
+    try{
+        if (trouverUV(c)) {
+            throw UTProfilerException(QString("erreur, UVManager, UV ")+c+QString("d�ja existante"));
+        }else{
+            UV* newuv=new UV(c,t,nbc,cat,a,p);
+            addItem(newuv);
+            modification=true;
+            return newuv;
+        }
     }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     return 0;
 }
 
@@ -282,9 +317,13 @@ UV* UVManager::trouverUV(const QString& c)const{
 }
 
 UV& UVManager::getUV(const QString& code){
-    UV* uv=trouverUV(code);
-    if (!uv) throw UTProfilerException("erreur, UVManager, UV inexistante",__FILE__,__LINE__);
-    return *uv;
+    try{
+        UV* uv=trouverUV(code);
+        if (!uv) throw UTProfilerException("erreur, UVManager, UV inexistante",__FILE__,__LINE__);
+        return *uv;
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return *new UV("","",0,CS,false,false);
 }
 
 
@@ -316,18 +355,15 @@ nbUV--;
 }
 
 void UVManager::supprimerUV(const QString& c) {
-
-
-
-    UV* uv=trouverUV(c);
-
-    if (uv==0) {
-        throw UTProfilerException(QString("erreur, UVManager, UV ")+c+QString("non existante, suppression impossible"));
-    }else{
-    removeItem(uv);
-
+    try{
+        UV* uv=trouverUV(c);
+        if (uv==0) {
+            throw UTProfilerException(QString("erreur, UVManager, UV ")+c+QString("non existante, suppression impossible"));
+        }else{
+            removeItem(uv);
+        }
     }
-
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 class visiteur;

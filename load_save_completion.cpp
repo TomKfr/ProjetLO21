@@ -10,7 +10,7 @@
 
 void ChoixManager::load_completion()
 {
-
+try{
     file=QDir::currentPath()+"/completions.xml";
     qDebug()<<"Chargement Completions!";
     QFile f(file);
@@ -142,11 +142,12 @@ void ChoixManager::load_completion()
     }
     xml.clear();
     qDebug()<<"Chargement Completions termine!";
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
 
 void ChoixManager::save_completion(){
-
     qDebug() << "Save Completions";
     file=QDir::currentPath()+"/completions.xml";
     QFile newfile(file);
