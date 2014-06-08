@@ -195,10 +195,6 @@ void Debut::modif() {
 void Debut::ajout() {
 
     UVManager& m=UVManager::getInstance();
-    try {
-        m.load();
-    }
-    catch (UTProfilerException e) {qDebug()<<e.getInfo();}
 
     UVAjout * fenetre= new UVAjout(m);
     fenetre->show();
@@ -301,7 +297,7 @@ UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
     code= new QLineEdit("", this);
     titre=new QTextEdit("", this);
     credits=new QSpinBox(this);
-    credits->setRange(1,8);
+    credits->setRange(1,35);
     credits->setValue(1);
 
     categorie=new QComboBox(this);

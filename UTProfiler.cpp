@@ -21,17 +21,17 @@ bool Semestre::operator<(const Semestre& b) const {
     }
 }
 
+ void Semestre::operator++() {
+
+     if (saison==Automne) {saison=Printemps; annee++;}
+     else saison=Automne;
+
+}
+
 bool Semestre::operator==(const Semestre& b) const {
 
-    if (annee<b.annee) return 0;
-
-    else if (annee>b.annee) return 0;
-
-    else {
-
-        if (saison==b.saison) return 1;
-        else  return 0;
-    }
+if (annee==b.annee) {if (saison==b.saison) return 1; }
+return 0;
 }
 
 QTextStream& operator<<(QTextStream& f, const UV& uv){

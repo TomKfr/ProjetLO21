@@ -51,7 +51,6 @@ Q_OBJECT
     //affiche toutes les propositions et demande la réponse
 
     Dossier * d;
-    ChoixAppli * c;
     QLabel * semestreLabel;
     QComboBox * saison_concernee ;
     QComboBox * annee_concernee ;
@@ -69,6 +68,7 @@ Q_OBJECT
     QHBoxLayout *coucheH3;
 
 public : Proposition(Dossier * dos) ;
+    bool verifierValiditeSemestre(Semestre s, ChoixAppli * c);
 public slots :
     void afficher_proposition();
     void enregistrer_reponse();

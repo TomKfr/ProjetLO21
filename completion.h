@@ -25,14 +25,15 @@ public :
 
 class ChoixManager{
     ChoixAppli ** ensemblePropositions; //l'integralite des propositions de l'appli
-    unsigned int nbPropositions;
+    ChoixAppli* lastProposition;
+    unsigned int nbPropositions; //sert de compteur pour les id des choix appli
     unsigned int nbPropositionsMax;
+    unsigned int nbChoixAppliSemestre; //sert de compteur pour les id des chois appli semestre
     QString file;
     const StrategieConcrete& completion;
+    Semestre SemestreActuel;
 
-    unsigned int totalPropositionsSemestre;
-
-    ChoixManager(const StrategieConcrete & s) : ensemblePropositions(0), nbPropositions(0), nbPropositionsMax(0), totalPropositionsSemestre(0), completion(s) {}
+    ChoixManager(const StrategieConcrete & s) : ensemblePropositions(0), nbPropositions(0), lastProposition(0), nbPropositionsMax(0), nbChoixAppliSemestre(0), completion(s) {}
     ~ChoixManager() {}
     void operator=(const ChoixManager&);
     ChoixManager(const ChoixManager&);
@@ -46,13 +47,22 @@ class ChoixManager{
 
 public :
 
-    ChoixAppli * trouverProposition(unsigned int id) ;
+    ChoixAppli * trouverProposition(unsigned int id) ; //trouver une proposition d'identifiant id
     ChoixAppli** trouverPropositionsDossier(Dossier * d) ; //trouver toutes les propositions pour un dossier en particulier
-    void ajoutProposition(unsigned int i, Dossier* d);
+
+    Semestre getSemestreActuel() const {return SemestreActuel; }
+    unsigned int getNbChoixSemestre() const {return nbChoixAppliSemestre; }
+    unsigned int getNbPropositions() const {return nbPropositions; }
+    ChoixAppli* getLastProposition() const {return lastProposition;}
+
+    void setNbChoixSemestre(unsigned int i) {nbChoixAppliSemestre=i;}
+    void setSemestreActuel(Semestre s) {SemestreActuel=s;}
+    void setLastProposition(ChoixAppli * p) {lastProposition=p;}
+
     static ChoixManager& getInstance();
     static void libererInstance();
-    unsigned int getTotalPropositionsSemestre() const {return totalPropositionsSemestre;}
-    void setTotalPropositionsSemestre(unsigned int i) {totalPropositionsSemestre=i;}
+
+    void ajouterProposition(ChoixAppli* c);
     ChoixAppli* calculCompletion(Dossier * d) {return (completion.algoCompletion(*this, d ));}
 
     void load_completion();
@@ -69,18 +79,18 @@ class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
     Semestre semestre_concerne;
     unsigned int nbCredits ; //nb de credits accumules avec ce semestre : pas plus de 35
     unsigned int nbUV ; //pas plus de 7
-    bool stage ; //l'etudiant est-il en stage pendant ce semestre ? o/n
+    bool stage ; //l'etudiant est-il en stage pendant tout le semestre ? 1 oui 0 non
     ChoixAppli * parent;
 
     Dossier* dos; //dossier concerne
 
 public :
 
-    ChoixAppliSemestre (unsigned int id, Dossier*d=0, unsigned int annee=0, Saison s=Automne,  unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(Semestre(s,annee)), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
+    ChoixAppliSemestre (unsigned int id, Dossier*d, Semestre s, unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(s), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
     {
         ChoixManager& cm=ChoixManager::getInstance();
-        unsigned int tot=cm.getTotalPropositionsSemestre();
-        cm.setTotalPropositionsSemestre(++tot);
+        unsigned int tot=cm.getNbChoixSemestre();
+        cm.setNbChoixSemestre(++tot);
 
     }
 
@@ -97,6 +107,7 @@ public :
     void setChoixAppli(ChoixAppli* c) {parent=c;}
     void setNbCredits(unsigned int i) {nbCredits=i;}
     void setNbUVs(unsigned int i) {nbUV=i;}
+    void setStage(bool s) {stage=s; }
 
 
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return propositionUV.begin();}

@@ -94,7 +94,7 @@ void cursusManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
+formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh, unsigned int csp)
 {
     try{
         if (formations.find(nom)!=formations.end())
@@ -107,6 +107,7 @@ formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, u
             newform->setNbCrRequis(CS,ccs);
             newform->setNbCrRequis(TM,ctm);
             newform->setNbCrRequis(TSH,ctsh);
+            newform->setNbCrRequis(SP,csp);
             formations.insert(nom,newform);
             return newform;
         }
@@ -163,7 +164,7 @@ void cursusManager::modifFiliere(const QString &oldkey, const QString &newname, 
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
-void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh)
+void cursusManager::modifFormation(const QString &oldkey, const QString &newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh, unsigned int csp)
 {
     try{
         if (formations.find(newname)!=formations.end() && newname!=oldkey) throw UTProfilerException(QString("erreur, cursusManager, formation ")+newname+QString(" déja existante"));
@@ -173,7 +174,7 @@ void cursusManager::modifFormation(const QString &oldkey, const QString &newname
             QSet<QString>* list2=new QSet<QString>(trouverForm(oldkey)->filieresAssoc);
             QSet<QString>* list3=new QSet<QString>(trouverForm(oldkey)->UVs_obligatoires);
             supprimerFormation(oldkey);
-            ajouterFormation(newname,c,s,ccs,ctm,ctsh);
+            ajouterFormation(newname,c,s,ccs,ctm,ctsh, csp);
             formation* newform=trouverForm(newname);
             newform->uvs=*list;
             delete list;
@@ -436,7 +437,7 @@ void cursusManager::chargerCursus()
                     }
                     xml.readNext();
                 }
-                ajouterFormation(nom,nbCredits,nbSem,0,0,0);
+                ajouterFormation(nom,nbCredits,nbSem,0,0,0, 0);
                 if(!listUVs.empty())
                 {
                     visiteur* v=new visiteur(nom,listUVs);

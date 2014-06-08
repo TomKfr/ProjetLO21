@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include"UTProfiler.h"
 #include<QWidget>
 #include<QObject>
 #include<QPushButton>
@@ -32,8 +33,12 @@ class MenuDebut : public QWidget{
     QPushButton* op_Filieres;
     QPushButton* no_op;
     QPushButton* initload;
+    QLabel* SemestreActuel;
+    QComboBox* saison;
+    QComboBox* Annee;
 
     QLabel* texte;
+    QLabel* choixOP;
 
     QHBoxLayout* coucheH1;
     QHBoxLayout* coucheH2;
@@ -41,11 +46,14 @@ class MenuDebut : public QWidget{
     QHBoxLayout* coucheH4;
     QHBoxLayout* coucheH5;
     QHBoxLayout* coucheH6;
+    QHBoxLayout* coucheH7;
+    QHBoxLayout* coucheH8;
 
     QVBoxLayout* coucheV;
 
 public :
     MenuDebut();
+    void enregistrer_semestre();
 
 
 public slots:

@@ -18,6 +18,7 @@
 #include"uvGUI.h"
 #include "dossier.h"
 #include "cursus.h"
+#include"UTProfiler.h"
 
 /*!
  * \brief Constructeur du menu initial
@@ -26,16 +27,37 @@ MenuDebut::MenuDebut() {
 
     this->setWindowTitle(QString("Projet LO21"));
 
-    texte = new QLabel("Bienvenue ! Sur quel partie du projet souhaitez-vous travailler ?", this);
+    texte = new QLabel("Bienvenue !", this);
+    choixOP=new QLabel("Sur quelle partie du projet souhaitez-vous travailler ?", this);
     op_UV=new QPushButton("Les UVs", this);
     op_Dossiers=new QPushButton("Les dossiers étudiants", this);
     op_Formations=new QPushButton("Les formations", this);
     op_Filieres= new QPushButton("Les filières", this);
     no_op= new QPushButton("Terminer", this);
     initload= new QPushButton("Fucking load this !", this);
+    SemestreActuel= new QLabel("Quel est le semestre actuel :", this);
+    saison = new QComboBox(this);
+    saison->addItem("Automne");
+    saison->addItem("Printemps");
+
+    Annee = new QComboBox(this);
+    Annee->addItem("2014");
+    Annee->addItem("2015");
+    Annee->addItem("2016");
+    Annee->addItem("2017");
+    Annee->addItem("2018");
+
 
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(texte);
+
+    coucheH7=new QHBoxLayout;
+    coucheH7->addWidget(SemestreActuel);
+    coucheH7->addWidget(saison);
+    coucheH7->addWidget(Annee);
+
+    coucheH8=new QHBoxLayout;
+    coucheH8->addWidget(choixOP);
 
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(op_UV);
@@ -55,6 +77,8 @@ MenuDebut::MenuDebut() {
 
     coucheV=new QVBoxLayout;
     coucheV->addLayout(coucheH1);
+    coucheV->addLayout(coucheH7);
+    coucheV->addLayout(coucheH8);
     coucheV->addLayout(coucheH2);
     coucheV->addLayout(coucheH3);
     coucheV->addLayout(coucheH4);
@@ -77,7 +101,26 @@ MenuDebut::MenuDebut() {
 /*!
  * \brief Ouvre le menu de gestion des UVs
  */
+
+void MenuDebut::enregistrer_semestre() {
+
+Saison s= StringToSaison(saison->currentText()) ;
+
+bool ok;
+QString n1=Annee->currentText();
+unsigned int n2=n1.toInt(&ok);
+qDebug()<<"saison : "<<s<<" annee :"<<n2;
+
+Semestre * sem= new Semestre(s, n2);
+
+ChoixManager& cm=ChoixManager::getInstance();
+cm.setSemestreActuel(*sem);
+
+}
+
+
 void MenuDebut::lancer_UV() {
+
     Debut * fenetre1 = new Debut;
     fenetre1->show();
 }
@@ -89,7 +132,10 @@ void MenuDebut::lancer_Dossiers() {
     qDebug()<<"avant le constructeur";
     //DossierManager& d=DossierManager::getInstance();
     //d.load();
-    MenuDossier * fenetre= new MenuDossier;
+
+    enregistrer_semestre();
+
+    MenuDossier * fenetre= new MenuDossier();
     fenetre->show();
 
 }
@@ -170,7 +216,7 @@ void MenuDebut::launch_this_fucking_initial_load()
                         if(!newform)
                         {
                             qDebug()<<"erreur ajout formation ! Création d'une nouvelle";
-                            newform=cman.ajouterFormation(form,0,0,0,0,0);
+                            newform=cman.ajouterFormation(form,0,0,0,0,0, 0);
                         }
                         else
                         {

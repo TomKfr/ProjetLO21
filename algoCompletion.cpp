@@ -6,11 +6,18 @@
 
 
 ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
+    qDebug()<<"DANS LE CALCUL DE COMPLETION";
     UVManager& uvm=UVManager::getInstance();
     cursusManager& curMan=cursusManager::getInstance();
     ChoixAppli * propositionFinale;
+    Semestre semestre = cm.getSemestreActuel();
 
-    bool first=1;
+    qDebug()<<semestre.getAnnee();
+    qDebug()<<semestre.getSaison();
+
+
+    bool first=0;
+    bool stage=0;
 
     //VERIFICATION QUE LETUDIANT NA PAS DEJA FINI SES ETUDES
 
@@ -30,58 +37,86 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
                                      }
     } //fin for
 
-    qDebug()<<nbTotalCreditsCS;
-    qDebug()<<nbTotalCreditsTM;
-    qDebug()<<nbTotalCreditsTSH;
-    qDebug()<<nbTotalCreditsSP;
-    //FONCTIONNE :)
-
     formation* f=curMan.trouverForm(d->getFormation());
     if (f==0) throw UTProfilerException("Rentrez une formation dans ce dossier !!");
 
     unsigned int nbCreditsRequisCS;
     unsigned int nbCreditsRequisTM;
     unsigned int nbCreditsRequisTSH;
-    unsigned int nbCreditsRequisSP;
+    unsigned int nbCreditsRequisSP; //les memes pour toutes les branches
 
     for (typename QMap<Categorie,unsigned int>::iterator it=f->getCrRequisBegin(); it!=f->getCrRequisEnd(); ++it)
     {
         if (it.key()==CS) nbCreditsRequisCS=it.value();
         else if (it.key()==TM) nbCreditsRequisTM=it.value();
         else if (it.key()==TSH) nbCreditsRequisTSH=it.value();
-        if (it.key()==SP) nbCreditsRequisSP=it.value();
+        else if (it.key()==SP) nbCreditsRequisSP=it.value();
     }
+    qDebug()<<nbCreditsRequisCS;
+    qDebug()<<nbCreditsRequisTM;
+    qDebug()<<nbCreditsRequisTSH;
+    qDebug()<<nbCreditsRequisSP;
 
 
-    qDebug()<<nbCreditsRequisCS; qDebug()<<nbCreditsRequisTM; qDebug()<<nbCreditsRequisTSH; qDebug()<<nbCreditsRequisSP;
-    //FONCTIONNE :)
+    int nbRestantsCreditsCS=nbCreditsRequisCS-nbTotalCreditsCS;
+    int nbRestantsCreditsTM=nbCreditsRequisTM-nbTotalCreditsTM;
+    int nbRestantsCreditsTSH=nbCreditsRequisTSH-nbTotalCreditsTSH;
+    int nbRestantsCreditsSP=nbCreditsRequisSP-nbTotalCreditsSP;
 
-    unsigned int nbRestantsCreditsCS=nbCreditsRequisCS-nbTotalCreditsCS;
-    unsigned int nbRestantsCreditsTM=nbCreditsRequisTM-nbTotalCreditsTM;
-    unsigned int nbRestantsCreditsTSH=nbCreditsRequisTSH-nbTotalCreditsTSH;
-    unsigned int nbRestantsCreditsSP=nbCreditsRequisSP-nbTotalCreditsSP;
+    qDebug()<<"credits restants :";
+    qDebug()<<nbRestantsCreditsCS;
+    qDebug()<<nbRestantsCreditsTM;
+    qDebug()<<nbRestantsCreditsTSH;
+    qDebug()<<nbRestantsCreditsSP;
 
-    while(nbRestantsCreditsCS!=0 && nbRestantsCreditsTM !=0 && nbRestantsCreditsTSH!=0 && nbRestantsCreditsSP !=0) {
-        //ALORS LETUDIANT NA PAS FINI SES ETUDES : ON VA GENERER UN CHOIX DE LAPPLICATION
-        if (first==1) { propositionFinale=new ChoixAppli(2154, d); /*pb de l'id à résoudre*/  first=0; }
+    qDebug()<<"avant while";
+
+while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 || nbRestantsCreditsSP >0) {
+        //ALORS LETUDIANT NA PAS FINI SES ETUDES : ON VA GENERER UN CHOIX DE LAPPLICATION POUR UN SEMESTRE
+
+        qDebug()<<"Calcul d'une propositionSemestre";
+        stage=0; //indique qu'on ne cherche plus d'uv car il y a deja un stage
+        if (first==0) {
+            unsigned int id = cm.getNbPropositions();
+            qDebug()<<"identifiant :"<<id;
+            propositionFinale=new ChoixAppli(++id, d);
+            qDebug()<<"crée ici";
+            first=1; //on ne créé l'ensemble de propositions de semestre 1 seule fois par calcul de completion
+            cm.ajouterProposition(propositionFinale);
+            qDebug()<<"ajouter proposition effectuee";
+            cm.setLastProposition(propositionFinale);
+            qDebug()<<"proposition finale creee";
+        }
         //la premiere fois on créé cet ensemble de semestres proposés en mémoire
 
+        unsigned int id2=cm.getNbChoixSemestre();
+        qDebug()<<"avant creation de proposition semestre, ";
+        ++semestre;
+        ChoixAppliSemestre * propositionSemestre = new ChoixAppliSemestre(++id2, d, semestre);
+        qDebug()<<"proposition semestre creee";
+        qDebug()<<propositionFinale;
+        qDebug()<<propositionSemestre; // OK
 
-        ChoixAppliSemestre * propositionSemestre = new ChoixAppliSemestre(154, d);
-        /*pb arguments à résoudre plus tard*/
+
         propositionFinale->ajouter_proposition(propositionSemestre);
+        qDebug()<<"MAJ choix appli";
+        qDebug()<<propositionFinale->getNbSemestres(); // OK
 
         unsigned int nbCSSemestre=0; //pas plus de 4 cs par semestre
         unsigned int nbTMSemestre=0; //pas plus de 4 tm par semestre
         unsigned int nbTSHSemestre=0; //pas plus de 4 tsh par semestre
-        unsigned int nbRestantsCreditsObligatoiresCS=0;
-        unsigned int nbRestantsCreditsObligatoiresTM=0;
-        unsigned int nbRestantsCreditsObligatoiresTSH=0;
-        unsigned int nbRestantsCreditObligatoiresSP=0;
+        unsigned int nbSPSemestre=0; //pas plus de 1 stage par semestre
+
+        int nbRestantsCreditsObligatoiresCS=0;
+        int nbRestantsCreditsObligatoiresTM=0;
+        int nbRestantsCreditsObligatoiresTSH=0;
+        int nbRestantsCreditsObligatoiresSP=0;
+
         unsigned int nbUV=0; //<7 sur le semestre
         unsigned int nbCredits=0 ; //<35 sur le semestre
 
         const QSet<QString>& copie_UVsOblig=f->getUVsObligatoires();
+
         QSet<QString> CS_obligatoires_restantes;
         QSet<QString> TM_obligatoires_restantes;
         QSet<QString> TSH_obligatoires_restantes;
@@ -91,17 +126,30 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
 
         for (QSet<QString>::const_iterator it=copie_UVsOblig.begin(); it!=copie_UVsOblig.end(); ++it)
         {
+            qDebug()<<"une uv obligatoire";
             UV* uv=uvm.trouverUV(*it); //pointeur vers l'uv en elle meme
+            qDebug()<<uv->getCode();
+
+            QMap<QString,Note> listeUV=d->getListeUV();
+
             const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
-            if (uvDossier==0 || (uvDossier!=0 && !(d->estValidee(uv->getCode())))) {
+
+            if (uvDossier==listeUV.end() || (uvDossier!=listeUV.end() && !(d->estValidee(uv->getCode())))) {
                 //alors letudiant n'a pas fait cette uv obligatoire ou il a echoue
+                qDebug()<<"UV non faite";
                 unsigned int nb=uv->getNbCredits();
-                if (uv->getCategorie()==CS) {CS_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresCS+=nb;}
-                else if (uv->getCategorie()==TM) {TM_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTM+=nb;}
+                if (uv->getCategorie()==CS) {qDebug()<<"une cs obligatoire"; CS_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresCS+=nb;}
+                else if (uv->getCategorie()==TM) {qDebug()<<"une tm obligatoire";TM_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTM+=nb;}
                 else if (uv->getCategorie()==TSH) {TSH_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTSH+=nb;}
-                else if (uv->getCategorie()==SP)  {SP_obligatoires_restants.insert(*it); nbRestantsCreditObligatoiresSP+=nb;}
+                else if (uv->getCategorie()==SP)  {SP_obligatoires_restants.insert(*it); nbRestantsCreditsObligatoiresSP+=nb;}
                 }
          }
+
+        qDebug()<<"liste obligatoires remplies";
+        qDebug()<<*(TM_obligatoires_restantes.begin());
+
+        //OK
+
         //les uvs non obligatoires de la formation restantes
         QSet<QString> CS_formation;
         QSet<QString> TM_formation;
@@ -110,11 +158,17 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
 
         QSet<QString>::const_iterator it2;
 
+        qDebug()<<"avant liste2";
 
-        for ( QMap<QString,UV*>::const_iterator it=f->getQmapIteratorUVbegin(); it!=f->getQmapIteratorUVend(); ++it)
+        QMap<QString,UV*> uvFormation=f->getUVFormation();
+        qDebug()<<uvFormation;
+        qDebug()<<uvFormation.begin().key();//OK
+
+        for ( QMap<QString,UV*>::const_iterator it3=uvFormation.begin(); it3!=uvFormation.end(); ++it3)
         {
-
-            UV* uv=uvm.trouverUV(it.key()); //pointeur vers l'uv en elle meme
+            qDebug()<<"encore une uv!";
+            UV* uv=uvm.trouverUV(it3.key()); //pointeur vers l'uv en elle meme
+            qDebug()<< it3.key(); qDebug()<<uv ;
             QString code=uv->getCode();
             const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
             //renvoie un it pointant sur l'uv dans la liste d'uv du dossier
@@ -123,38 +177,77 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
                 //alors letudiant n'a pas fait cette uv ou il a echoue
                 unsigned int nb=uv->getNbCredits();
                 if (uv->getCategorie()==CS) {
-                    it2=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), it.key());
+                    it2=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), it3.key());
                     if (it2!=CS_obligatoires_restantes.end()) break;
                     CS_formation.insert(code); nbRestantsCreditsObligatoiresCS+=nb;}
 
                 else if (uv->getCategorie()==TM) {
-                    it2=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), it.key());
+                    it2=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), it3.key());
                     if (it2!=TM_obligatoires_restantes.end()) break;
                     TM_formation.insert(code);
                     nbRestantsCreditsObligatoiresTM+=nb;}
                 else if (uv->getCategorie()==TSH) {
-                    it2=find(TSH_obligatoires_restantes.begin(), TSH_obligatoires_restantes.end(), it.key());
+                    it2=find(TSH_obligatoires_restantes.begin(), TSH_obligatoires_restantes.end(), it3.key());
                     if (it2!=TSH_obligatoires_restantes.end()) break;
                     TSH_formation.insert(code);
                     nbRestantsCreditsObligatoiresTSH+=nb;}
-                else if (uv->getCategorie()==SP)  {SP_formation.insert(code); nbRestantsCreditObligatoiresSP+=nb;}
+                else if (uv->getCategorie()==SP)  {it2=find(SP_obligatoires_restants.begin(), SP_obligatoires_restants.end(), it3.key());
+                    if (it2!=SP_obligatoires_restants.end()) break;
+                    SP_formation.insert(code);
+                    nbRestantsCreditsObligatoiresSP+=nb;}
                 }
          }
 
+        qDebug()<<"autres listes remplies";
 
 
-while (nbRestantsCreditsObligatoiresCS!=0 && nbRestantsCreditsObligatoiresTM!=0 && nbRestantsCreditsObligatoiresTSH!=0 && /*nbRestantsCreditsObligatoiresSP!=0 */nbUV<=7 && nbCredits<=35) {
+
+while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty()) ) ||  ( nbRestantsCreditsObligatoiresTM>0 && !(TM_obligatoires_restantes.empty()))
+         || ( nbRestantsCreditsObligatoiresTSH>0 && !(TSH_obligatoires_restantes.empty())) ||
+         ( nbRestantsCreditsObligatoiresSP>0 && !(SP_obligatoires_restants.empty())) ) && nbUV<=7 && nbCredits<=35 && stage==0) {
             //ON AJOUTE LES UVS OBLIGATOIRES UNE PAR UNE
+    qDebug()<<"je demarre l'affectation des uvs obligatoires";
+    qDebug()<<nbRestantsCreditsObligatoiresCS;
+    qDebug()<<nbRestantsCreditsObligatoiresTM;
+    qDebug()<<nbRestantsCreditsObligatoiresTSH;
+    qDebug()<<nbRestantsCreditsObligatoiresSP;
     QSet<QString>::iterator it;
     QString code_ajout;
     UV* uv_ajout;
 
-    if (nbRestantsCreditsObligatoiresCS!=0 && nbCSSemestre <4) {
-        //alors on ajoute une CS
-       code_ajout=*(CS_obligatoires_restantes.begin());
+    qDebug()<<"avant la serie de if";
+
+    if (nbRestantsCreditsObligatoiresSP>0 && nbSPSemestre <1 && !(SP_obligatoires_restants.empty())) {
+        //alors on ajoute un stage
+       code_ajout=*(SP_obligatoires_restants.begin());
        uv_ajout= uvm.trouverUV(code_ajout);
 
+       if(code_ajout=="TN05" && d->getNumSemestre()<2 ) break; //TN05 impossible : trop tôt
+       else if(code_ajout=="TN09" && (d->getNumSemestre()>3 || d->getNumSemestre()<2 )) break; //TN09 impossible
+       else if(code_ajout=="TN10" && d->getNumSemestre()<4 ) break; //TN10 impossible : trop tôt
+
        propositionSemestre->ajoutUV(uv_ajout);
+
+       nbUV++;
+       nbCredits+=uv_ajout->getNbCredits();
+       nbRestantsCreditsObligatoiresSP-=uv_ajout->getNbCredits();
+       nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+       it=find(SP_obligatoires_restants.begin(), SP_obligatoires_restants.end(), code_ajout);
+       SP_obligatoires_restants.erase(it);//on met à jour la liste des uv obligatoires
+       if (code_ajout=="TN09" || code_ajout=="TN10") {propositionSemestre->setStage(1); stage=1;}
+       //retour au while
+        }
+
+    else if (nbRestantsCreditsObligatoiresCS>0 && nbCSSemestre <4 && !(CS_obligatoires_restantes.empty())) {
+        //alors on ajoute une CS
+       qDebug()<<"jajoute une cs";
+       code_ajout=*(CS_obligatoires_restantes.begin());
+       qDebug()<<code_ajout;
+       uv_ajout= uvm.trouverUV(code_ajout);
+       qDebug()<<"adresse de l'uv "<<uv_ajout;
+
+       propositionSemestre->ajoutUV(uv_ajout);
+       qDebug()<<"proposition semestre completee" ;
 
        nbUV++;
        nbCredits+=uv_ajout->getNbCredits();
@@ -162,12 +255,16 @@ while (nbRestantsCreditsObligatoiresCS!=0 && nbRestantsCreditsObligatoiresTM!=0 
        nbRestantsCreditsCS-=uv_ajout->getNbCredits();
        it=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), code_ajout);
        CS_obligatoires_restantes.erase(it);//on met à jour la liste des uv obligatoires
-       break; //retour au while
+       qDebug()<<"termine ici";
+       //retour au while
         }
-    if (nbRestantsCreditsObligatoiresTM!=0 && nbTMSemestre <4) {
+
+    else if (nbRestantsCreditsObligatoiresTM>0 && nbTMSemestre <4 && !(TM_obligatoires_restantes.empty())) {
         //alors on ajoute une TM
+       qDebug()<<"jajoute une tm obligatoire car je nai que ces credits : "<<nbRestantsCreditsObligatoiresTM;
        code_ajout=*(TM_obligatoires_restantes.begin());
        uv_ajout= uvm.trouverUV(code_ajout);
+       qDebug()<<code_ajout;
 
        propositionSemestre->ajoutUV(uv_ajout);
 
@@ -177,10 +274,10 @@ while (nbRestantsCreditsObligatoiresCS!=0 && nbRestantsCreditsObligatoiresTM!=0 
        nbRestantsCreditsTM-=uv_ajout->getNbCredits();
        it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
        TM_obligatoires_restantes.erase(it);
-       break; //retour au while
+        //retour au while
         }
 
-    if (nbRestantsCreditsObligatoiresTSH!=0 && nbTMSemestre <4) {
+    else if (nbRestantsCreditsObligatoiresTSH>0 && nbTMSemestre <4 && !(TSH_obligatoires_restantes.empty())) {
         //alors on ajoute une TM
        code_ajout=*(TSH_obligatoires_restantes.begin());
        uv_ajout= uvm.trouverUV(code_ajout);
@@ -193,9 +290,9 @@ while (nbRestantsCreditsObligatoiresCS!=0 && nbRestantsCreditsObligatoiresTM!=0 
        nbRestantsCreditsTSH-=uv_ajout->getNbCredits();
        it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
        TM_obligatoires_restantes.erase(it);
-       break; //retour au while
+        //retour au while
         }
-//GESION DES STAGES PLUS TARD car on a 1 seul stage par semestre blabla
+
 }//fin while uvs obligatoires, sans tenir compte des souhaits
 
 
@@ -204,13 +301,22 @@ QSet<QString> copie_exigences = souhaitsDossier->getExigences();
 QSet<QString> copie_preferences = souhaitsDossier->getPreferences();
 QSet<QString> copie_rejets = souhaitsDossier->getRejets();
 
-while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!=0 && /*nbRestantsCreditsSP!=0 */nbUV<=7 && nbCredits<=35) {
+qDebug()<<"affectation des uvs obligatoires terminees";
+qDebug()<<nbRestantsCreditsCS;
+qDebug()<<nbRestantsCreditsTM;
+qDebug()<<nbRestantsCreditsTSH;
+qDebug()<<nbRestantsCreditsSP;
+
+while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0 || nbRestantsCreditsSP>0) && nbUV<=7 && nbCredits<=35 && stage==0) {
+//on ne modifie plus le bool stage pour les stages car les stages d'un semestre sont dans la categorie obligatoire deja exploree
 //ON AJOUTE LES UVS EN TENANT COMPTE DES SOUHAITS dans un premier temps
 
     UV* uv_ajout;
     QSet<QString>::const_iterator itRejets;
     QSet<QString>::iterator itAjoute;
     QString code_ajout;
+
+    qDebug()<<"while des uvs non obligatoires";
 
     if (!(copie_exigences.empty()))
          {
@@ -223,7 +329,22 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
         if (itRejets==copie_rejets.end()) {
             //alors cette uv ne fait pas partie des rejets et on peut continuer
 
-            if (uv_ajout->getCategorie()==CS && nbRestantsCreditsCS!=0 && nbCSSemestre <4) {
+              if (uv_ajout->getCategorie()==SP && nbRestantsCreditsSP>0 && nbSPSemestre <1) {
+                   //alors on ajoute un stage souhaité, par ex un TN07
+                  code_ajout=*it;
+                  uv_ajout= uvm.trouverUV(code_ajout);
+
+                  propositionSemestre->ajoutUV(uv_ajout);
+
+                  nbUV++;
+                  nbCredits+=uv_ajout->getNbCredits();
+                  nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+                  itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
+                  copie_exigences.erase(itAjoute);//on met à jour la liste des uv
+                   //retour au while
+                   }
+
+            else if (uv_ajout->getCategorie()==CS && nbRestantsCreditsCS>0 && nbCSSemestre <4) {
                 //alors on ajoute une CS
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -235,9 +356,9 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbRestantsCreditsCS-=uv_ajout->getNbCredits();
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
-            if (uv_ajout->getCategorie()==TM && nbRestantsCreditsTM!=0 && nbTMSemestre <4) {
+            else if (uv_ajout->getCategorie()==TM && nbRestantsCreditsTM>0 && nbTMSemestre <4) {
                 //alors on ajoute une TM
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -248,10 +369,10 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbCredits+=uv_ajout->getNbCredits();
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
 
-            if (uv_ajout->getCategorie()==TSH && nbRestantsCreditsTSH!=0 && nbTSHSemestre <4) {
+            else if (uv_ajout->getCategorie()==TSH && nbRestantsCreditsTSH>0 && nbTSHSemestre <4) {
                 //alors on ajoute une CS
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -262,7 +383,7 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbCredits+=uv_ajout->getNbCredits();
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
         }
    } // fin if not in rejets pour les exigences
@@ -278,7 +399,22 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
         if (itRejets==copie_rejets.end()) {
             //alors cette uv ne fait pas partie des rejets et on peut continuer
 
-            if (uv_ajout->getCategorie()==CS && nbRestantsCreditsCS!=0 && nbCSSemestre <4) {
+             if (uv_ajout->getCategorie()==SP && nbRestantsCreditsSP>0 && nbSPSemestre <4) {
+                   //alors on ajoute un stage
+                  code_ajout=*it;
+                  uv_ajout= uvm.trouverUV(code_ajout);
+
+                  propositionSemestre->ajoutUV(uv_ajout);
+
+                  nbUV++;
+                  nbCredits+=uv_ajout->getNbCredits();
+                  nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+                  itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
+                  copie_preferences.erase(itAjoute);//on met à jour la liste des uv
+                 //retour au while
+                   }
+
+            else if (uv_ajout->getCategorie()==CS && nbRestantsCreditsCS>0 && nbCSSemestre <4) {
                 //alors on ajoute une CS
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -290,9 +426,9 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbRestantsCreditsCS-=uv_ajout->getNbCredits();
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
-            if (uv_ajout->getCategorie()==TM && nbRestantsCreditsTM!=0 && nbTMSemestre <4) {
+            else if (uv_ajout->getCategorie()==TM && nbRestantsCreditsTM>0 && nbTMSemestre <4) {
                 //alors on ajoute une TM
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -303,10 +439,10 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbCredits+=uv_ajout->getNbCredits();
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
 
-            if (uv_ajout->getCategorie()==TSH && nbRestantsCreditsTSH!=0 && nbTSHSemestre <4) {
+           else if (uv_ajout->getCategorie()==TSH && nbRestantsCreditsTSH>0 && nbTSHSemestre <4) {
                 //alors on ajoute une CS
                code_ajout=*it;
                uv_ajout= uvm.trouverUV(code_ajout);
@@ -317,7 +453,7 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
                nbCredits+=uv_ajout->getNbCredits();
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
-               break; //retour au while
+                //retour au while
                 }
         }
 
@@ -325,7 +461,23 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
 
 //ensuite on prend les uvs restantes quelconques
 
-        if (nbRestantsCreditsCS!=0 && nbCSSemestre <4) {
+       if (nbRestantsCreditsSP>0 && nbSPSemestre <1 && !(SP_formation.empty())) {
+           //alors on ajoute un stage
+          code_ajout=*(SP_formation.begin());
+          uv_ajout= uvm.trouverUV(code_ajout);
+
+          propositionSemestre->ajoutUV(uv_ajout);
+
+          nbUV++;
+          nbCredits+=uv_ajout->getNbCredits();
+          nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+          itAjoute=find(SP_formation.begin(), SP_formation.end(), code_ajout);
+          SP_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
+           //retour au while
+           }
+
+
+       else if (nbRestantsCreditsCS>0 && nbCSSemestre <4 && !(CS_formation.empty())) {
             //alors on ajoute une CS
            code_ajout=*(CS_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
@@ -337,9 +489,9 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
            nbRestantsCreditsCS-=uv_ajout->getNbCredits();
            itAjoute=find(CS_formation.begin(), CS_formation.end(), code_ajout);
            CS_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
-           break; //retour au while
+            //retour au while
             }
-        if (nbRestantsCreditsTM!=0 && nbTMSemestre <4) {
+        else if (nbRestantsCreditsTM>0 && nbTMSemestre <4 && !(TM_formation.empty())) {
             //alors on ajoute une TM
            code_ajout=*(TM_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
@@ -351,11 +503,11 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
            nbRestantsCreditsTM-=uv_ajout->getNbCredits();
            itAjoute=find(TM_formation.begin(), TM_formation.end(), code_ajout);
            TM_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
-           break; //retour au while
+            //retour au while
 
             }
 
-        if (nbRestantsCreditsTSH!=0 && nbTSHSemestre <4) {
+        else if (nbRestantsCreditsTSH>0 && nbTSHSemestre <4 && !(TSH_formation.empty())) {
             //alors on ajoute une TSH
            code_ajout=*(TSH_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
@@ -367,13 +519,15 @@ while (nbRestantsCreditsCS!=0 && nbRestantsCreditsTM!=0 && nbRestantsCreditsTSH!
            nbRestantsCreditsTSH-=uv_ajout->getNbCredits();
            itAjoute=find(TSH_formation.begin(), TSH_formation.end(), code_ajout);
            TSH_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
-           break; //retour au while
+            //retour au while
 
             }
 
 
 }//fin while des autres Uvs
 
+
+qDebug()<<"fin du travail pour ce semestre";
 
 //la liste des uvs proposees est alors complete
 propositionSemestre->setNbCredits(nbCredits);
@@ -386,7 +540,7 @@ souhaitsDossier->setPreferences(copie_preferences);
 
 }//fin while general
 
-
+qDebug()<<"fin de l'algo";
 
 }//fin fonction
 

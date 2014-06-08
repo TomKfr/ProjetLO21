@@ -45,6 +45,7 @@ public:
     void setAnnee(unsigned int a) { annee=a; }
     bool operator<(const Semestre& b) const;
     bool operator==(const Semestre& b) const;
+    void operator++() ;
 
 };
 
