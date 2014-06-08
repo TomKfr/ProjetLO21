@@ -129,9 +129,9 @@ void DossierAjout::slot_selectUV() {
 void DossierAjout::disable(){sauver->setDisabled(true);}
 // PAUSE!!!!!
 /*!
- * \brief AjoutUV::AjoutUV
- * \param d
- * \param dossier
+ * \brief constructeur de la fenêtre d'ajout d'une UV dans un dossier
+ * \param d dossier concerné
+ * \param dossier fenêtre parente
  */
 AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
     DA=dossier;
@@ -170,6 +170,9 @@ AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
     QObject::connect(retour, SIGNAL(clicked()), this, SLOT(end_listeUV()));
 }
 
+/*!
+ * \brief Exécute l'ajout de l'UV
+ */
 void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
 {
     qDebug()<<"uv ajoutee";
@@ -181,10 +184,11 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
 
 }
 
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void DossierAjout::update()
 {
-
     f->clear();
     qDebug()<<"update1";
     cursusManager& m=cursusManager::getInstance();
@@ -195,7 +199,9 @@ void DossierAjout::update()
     qDebug()<<"update3";
 }
 
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void AjoutUV::update()
 {
     Liste->clear();
@@ -206,11 +212,19 @@ void AjoutUV::update()
     }
 }
 
+/*!
+ * \brief Ferme la fenêtre
+ */
 void AjoutUV::end_listeUV() {
     this->close();
 }
 //MODIF
-
+/*!
+ * \brief constructeur de la fenêtre ModifierDossier
+ * \param dm pointeur vers le dossierManager
+ * \param d pointeur vers le dossier concerné
+ * \param md pointeur vers la fenêtre parente
+ */
 ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * md) : M(dm), dos(d), menu(md)
 {
     this->setWindowTitle(QString("Modification d'un dossier"));
@@ -270,22 +284,28 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     QObject::connect(modifUV, SIGNAL(clicked()), this, SLOT(slot_modifUV()));
     QObject::connect(modifFormation, SIGNAL(clicked()), this, SLOT(slot_modifFormation()));
     QObject::connect(modifEquivalences, SIGNAL(clicked()), this, SLOT(slot_modifEquivalences()));
-
-
 }
 
+/*!
+ * \brief Ouvre la fenêtre de modifivation de la formation du dossier
+ */
 void ModifierDossier::slot_modifFormation() {
 
     ModifFormation * fenetre= new ModifFormation(dos);
     fenetre->show();
 }
-
+/*!
+ * \brief Valide la modification de la formation du dossier
+ */
 void ModifFormation::enregistrer_formation() {
       dossier->setFormation(f->currentText());
       QMessageBox::information(this, "sauvegarde", "Formation enregistree");
       this->close();
 }
-
+/*!
+ * \brief Constructeur de la fenêtre de modification de la formation
+ * \param d Dossier concerné par la formation
+ */
 ModifFormation ::ModifFormation(Dossier * d)
 {
     this->setWindowTitle(QString("Modification de la formation de l'etudiant"));
@@ -310,7 +330,9 @@ ModifFormation ::ModifFormation(Dossier * d)
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer_formation()));
 
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void ModifFormation::update() {
 
         f->clear();
@@ -320,7 +342,9 @@ void ModifFormation::update() {
             f->addItem(it.key());
         }
 }
-
+/*!
+ * \brief exécute la modification du Dossier
+ */
 void ModifierDossier::slot_finModifDossier() {
     bool ok;
 
@@ -329,7 +353,6 @@ void ModifierDossier::slot_finModifDossier() {
 
     QString n=nom->text();
     QString p=prenom->text();
-
 
     unsigned int oldkey=dos->getNumero();
     QString oldname=dos->getNom();
@@ -343,7 +366,10 @@ void ModifierDossier::slot_finModifDossier() {
     this->close();
 }
 
-
+/*!
+ * \brief constructeur de la fenêtre de modification
+ * \param d dossier concerné
+ */
 ModifUV::ModifUV(Dossier* d) : dos(d)
 {
     this->setWindowTitle(QString("Que souhaitez-vous faire ?"));
@@ -381,7 +407,9 @@ ModifUV::ModifUV(Dossier* d) : dos(d)
     QObject::connect(uvs,SIGNAL(currentTextChanged(QString)),this,SLOT(affResult()));
 
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void ModifUV::update() {
     uvs->clear();
     resultats->clear();
@@ -391,19 +419,32 @@ void ModifUV::update() {
         resultats->addItem(Note2String(it.value()));
     }
 }
-
+/*!
+ * \brief Ouvre la fenêtre de modification du résultat d'une UV
+ */
 void ModifUV::modifierResult() {
 
     ModifResult* fenetre= new ModifResult(dos, this);
     fenetre->show();
 }
-
+/*!
+ * \brief Affiche le résultat correspondant à l'UV affichée dans la combobox uvs.
+ *
+ * Ce slot est appelé lors d'une modification de la combobox uvs. Ainsi,
+ * lorsque l'on change l'uv affichée, le résultat correspondant s'affiche
+ * automatiquement sur la combobox resultats.
+ */
 void ModifUV::affResult()
 {
     QMap<QString,Note>::const_iterator it=dos->trouverUV(uvs->currentText());
     resultats->setCurrentText(Note2String(it.value()));
 }
 
+/*!
+ * \brief constructeur de la fenêtre de modification du résultat associé à une UV
+ * \param d dossier concerné
+ * \param mu fenêtre parente
+ */
 ModifResult::ModifResult(Dossier * d, ModifUV* mu) : dos(d), modifuv(mu) {
     explication=new QLabel("UVs actuelles du dossier et resultat associe :", this);
 
@@ -435,15 +476,21 @@ ModifResult::ModifResult(Dossier * d, ModifUV* mu) : dos(d), modifuv(mu) {
     QObject::connect(uvs,SIGNAL(currentTextChanged(QString)),this,SLOT(affResult()));
 
 }
-
+/*!
+ * \brief Ferme la fenêtre
+ */
 void ModifResult::fin2() {this->close();}
-
+/*!
+ * \brief exécute les modifications apportées aux résultats
+ */
 void ModifResult::enregistrer() {
     dos->setResultat(uvs->currentText(),String2Note(resultats->currentText()));
     modifuv->update();
     QMessageBox::information(this, "sauvegarde", " Resultat enregistre");
-
 }
+/*!
+ * \brief Mets à jour les champs de la fenêtre
+ */
 void ModifResult::update() {
 
     qDebug()<<"dans modifresult";
@@ -464,28 +511,49 @@ void ModifResult::update() {
     }
     affResult();
 }
+/*!
+ * \brief Affiche le résultat correspondant à l'UV affichée dans la combobox uvs.
+ *
+ * Ce slot est appelé lors d'une modification de la combobox uvs. Ainsi,
+ * lorsque l'on change l'uv affichée, le résultat correspondant s'affiche
+ * automatiquement sur la combobox resultats.
+ */
 void ModifResult::affResult()
 {
     QMap<QString,Note>::const_iterator it=dos->trouverUV(uvs->currentText());
     resultats->setCurrentText(Note2String(it.value()));
 }
-
+/*!
+ * \brief Ouvre la fenêtre de modification des uvs associées au dossier.
+ */
 void ModifierDossier::slot_modifUV(){
     ModifUV * fenetre= new ModifUV(dos);
     fenetre->show();
 }
-
+/*!
+ * \brief Ouvre la fenêtre de suppression d'une UV du dossier
+ */
 void ModifUV::supprimerUV() {
     SuppressionUV * fenetre= new SuppressionUV(dos);
     fenetre->show();
 }
+/*!
+ * \brief Ouvre la fenêtre d'ajout d'une UV au Dossier
+ */
 void ModifUV::ajouterUV() {
     AjoutUV * fenetre= new AjoutUV(dos);
     fenetre->show();
 }
+/*!
+ * \brief Fermeture de la fenêtre
+ */
 void ModifUV::finUV() {
     this->close();
 }
+/*!
+ * \brief Constructeur de la fenêtre de suppression d'une UV.
+ * \param d dossier concerné
+ */
 SuppressionUV::SuppressionUV(Dossier* d) : dos(d)
 {
     liste=new QComboBox;
@@ -507,12 +575,16 @@ SuppressionUV::SuppressionUV(Dossier* d) : dos(d)
     QObject::connect(fin, SIGNAL(clicked()), this, SLOT(finSuppression()));
 
 }
-
+/*!
+ * \brief Ferme la fenêtre
+ */
 void SuppressionUV::finSuppression(){
 
     this->close();
 }
-
+/*!
+ * \brief exécute la suppression d'une UV du dossier
+ */
 void SuppressionUV::suppression_une_uv(){
 
     const QString& uv=liste->currentText();
@@ -521,7 +593,9 @@ void SuppressionUV::suppression_une_uv(){
 
     dos->supprimerUV(u);
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void SuppressionUV::update() {
 
     qDebug()<<"dans suppr update";
@@ -533,7 +607,11 @@ void SuppressionUV::update() {
     }
 
 }
-
+/*!
+ * \brief constructeur de la fenêtre d'ajout d'équivalences au dossier
+ * \param d dossier concerné
+ * \param m fenêtre parente
+ */
 AjoutEquivalences::AjoutEquivalences(Dossier * d, ModifEquivalences * m) : dos(d), me(m) {
 
     typeLabel = new QLabel ("Type d'equivalence :", this);
@@ -568,15 +646,18 @@ AjoutEquivalences::AjoutEquivalences(Dossier * d, ModifEquivalences * m) : dos(d
     setLayout(couche);
 
      QObject::connect(valider, SIGNAL(clicked()), this, SLOT(ajouter_equivalence()));
-
 }
-
+/*!
+ * \brief Ouvre la fenêtre d'ajout des équivalences au dossier.
+ */
 void DossierAjout::select_equivalences(){
     AjoutEquivalences* fenetre = new AjoutEquivalences(dos);
     qDebug()<<"dos dans dossier ajout"<<dos;
     fenetre->show();
 }
-
+/*!
+ * \brief exécute l'ajout d'une équivalence au dossier.
+ */
 void AjoutEquivalences::ajouter_equivalence() {
     //on cree une equivalence
 
@@ -605,7 +686,10 @@ void AjoutEquivalences::ajouter_equivalence() {
    if (me!=0) me->update();
     this->close();
 }
-
+/*!
+ * \brief constructeur de la fenêtre de modification des équivalences
+ * \param dos dossier concerné
+ */
 ModifEquivalences::ModifEquivalences(Dossier * dos) : dossier(dos) {
 
     valider=new QPushButton("Modifier cette equivalence", this);
@@ -641,9 +725,10 @@ ModifEquivalences::ModifEquivalences(Dossier * dos) : dossier(dos) {
     QObject::connect(ajouter, SIGNAL(clicked()), this, SLOT(slot_ajouter()));
     QObject::connect(supprimer, SIGNAL(clicked()), this, SLOT(slot_supprimer()));
     QObject::connect(quitter, SIGNAL(clicked()), this, SLOT(slot_quitter()));
-
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void ModifEquivalences::update() { // FONCTIONNE
 
     Equivalences** tab=dossier->getEquivalences();
@@ -660,21 +745,29 @@ void ModifEquivalences::update() { // FONCTIONNE
         i++;}
     }
 }
-
+/*!
+ * \brief Ouvre la fenêtre de modification des équivalences
+ */
 void ModifierDossier::slot_modifEquivalences() {
 
     ModifEquivalences* fenetre= new ModifEquivalences(dos);
     fenetre->show();
 
 }
-
+/*!
+ * \brief Ouvre la fenêtre d'ajout d'une nouvelle équivalence.
+ */
 void ModifEquivalences::slot_ajouter() {
 
     AjoutEquivalences* fenetre = new AjoutEquivalences(dossier, this);
     fenetre->show();
-
 }
-
+/*!
+ * \brief constructeur de la fenêtre de modification d'une équivalence.
+ * \param d pointeur vers le dossier concerné
+ * \param e pointeur vers l'objet equivalences concerné
+ * \param m pointeur vers la fenêtre parente
+ */
 EquivalenceEditeur::EquivalenceEditeur(Dossier * d, Equivalences* e, ModifEquivalences * m) : dos(d), eq(e), me(m) {
 
     typeLabel = new QLabel ("Type d'equivalence :", this);
@@ -713,7 +806,9 @@ EquivalenceEditeur::EquivalenceEditeur(Dossier * d, Equivalences* e, ModifEquiva
 
     QObject::connect(valider, SIGNAL(clicked()), this, SLOT(modifier_equivalence()));
 }
-
+/*!
+ * \brief exécute la modification de l'équivalence sélectionnée
+ */
 void EquivalenceEditeur::modifier_equivalence() {//MARCHE
 
     eq->setDescription(description->text());
@@ -725,7 +820,6 @@ void EquivalenceEditeur::modifier_equivalence() {//MARCHE
     eq->setNbCredits(n2);
 
     this->close();
-
 }
 
 void ModifEquivalences::slot_valider() {
@@ -741,7 +835,9 @@ void ModifEquivalences::slot_valider() {
 }
 
 void ModifEquivalences::slot_quitter() {this->close();}
-
+/*!
+ * \brief supprime l'équivalence sélectionnée
+ */
 void  ModifEquivalences::slot_supprimer() {
 
     Equivalences** tab=dossier->getEquivalences();
@@ -769,7 +865,6 @@ void  ModifEquivalences::slot_supprimer() {
     update();
 
     QMessageBox::information(this, "sauvegarde", "Equivalence supprimee");
-
 }
 
 
