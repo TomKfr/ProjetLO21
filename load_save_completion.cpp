@@ -112,8 +112,9 @@ try{
                             d=dm.trouverDossier(numDossier);
 
                             //ajouterCompletionDossier(id, annee,saison, d, credits, nbUVs);
+                            Semestre s(saison, annee);
 
-                            c=new ChoixAppliSemestre(id, d, annee,saison, credits, nbUVs, parent);
+                            c=new ChoixAppliSemestre(id, d, s, credits, nbUVs, parent);
 
                             //cree une completion simple et gere les uvs dans la suite
                         }//fin if pour uv

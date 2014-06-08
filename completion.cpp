@@ -50,9 +50,19 @@ listePropositions[nbSemestre++]=prop;
 }
 
 ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
-    qDebug()<<nbSemestre;
 
-    for (unsigned int i=0; i<nbSemestre; i++) {if (listePropositions[i]->getSemestre()==S) return listePropositions[i]; }
+
+    for (unsigned int i=0; i<nbSemestre; i++) {
+        qDebug()<<"recherche";
+        qDebug()<<listePropositions[i]->getSemestre().getAnnee();
+        qDebug()<<S.getAnnee();
+        qDebug()<<listePropositions[i]->getSemestre().getSaison();
+        qDebug()<<S.getSaison();
+        if ( ( listePropositions[i]->getSemestre() ) ==S)
+        { qDebug()<<"trouve";
+          return listePropositions[i]; }
+    }
+
     return 0;
 }
 
@@ -79,10 +89,10 @@ void ChoixManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-void ChoixManager::ajoutProposition(unsigned int id, Dossier * d) {
+void ChoixManager::ajouterProposition(ChoixAppli* c) {
     try{
-        if (trouverProposition(id)) {
-            throw UTProfilerException(QString("erreur, ChoixManager, Proposition ")+id+QString("deja existante"));
+        if (trouverProposition(c->getIdentifiant())) {
+            throw UTProfilerException(QString("erreur, ChoixManager, Proposition ")+c->getIdentifiant()+QString("deja existante"));
         }else{
 
             if (nbPropositions==nbPropositionsMax){
@@ -94,7 +104,7 @@ void ChoixManager::ajoutProposition(unsigned int id, Dossier * d) {
                 delete[] old;
             }
 
-            ensemblePropositions[nbPropositions++]=new ChoixAppli(id, d);
+            ensemblePropositions[nbPropositions++]=c;
         }
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}

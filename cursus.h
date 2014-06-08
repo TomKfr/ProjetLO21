@@ -39,6 +39,7 @@ protected:
     virtual ~abstract_cursus_item() {}
 
 public:
+    QMap<QString,UV*> getUVFormation() const {return uvs; }
     /**
      * @brief Fonction d'ajout d'une UV
      * @param newuv UV à ajouter
@@ -186,7 +187,7 @@ public:
      * @param ctm Nombre de crédits requis dans la catégorie TM pour valider la formation
      * @param ctsh Nombre de crédits requis dans la catégorie TSH pour valider la formation
      */
-    formation* ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
+    formation* ajouterFormation(const QString& nom, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh,  unsigned int csp);
     /**
      * @brief Retire une formation de la liste des formations et détruit l'objet correspondant.
      * @param nom Nom de la formation à supprimer.
@@ -214,7 +215,7 @@ public:
      * @param ctm Nouveau nombre de crédits requis dans la catégorie TM
      * @param ctsh Nouveau nombre de crédits requis dans la catégorie TSH
      */
-    void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh);
+    void modifFormation(const QString& oldkey, const QString& newname, unsigned int c, unsigned int s, unsigned int ccs, unsigned int ctm, unsigned int ctsh, unsigned int csp);
     /**
      * @brief Sauvegarde des filière et des formations dans les fichiers .xml
      */

@@ -69,17 +69,20 @@ class ajoutFormation : public QWidget {
     QHBoxLayout* hbox2;
     QHBoxLayout* hbox3;
     QHBoxLayout* hbox4;
+    QHBoxLayout* hbox5;
     QLabel* lbl1;
     QLabel* lbl2;
     QLabel* lbl3;
     QLabel* lblcs;
     QLabel* lbltm;
     QLabel* lbltsh;
+    QLabel* lblsp;
     QLineEdit* nom;
     QSpinBox* credits;
     QSpinBox* creditscs;
     QSpinBox* creditstm;
     QSpinBox* creditstsh;
+    QSpinBox* creditssp;
     QSpinBox* semstr;
     QPushButton* valider;
 
@@ -105,17 +108,20 @@ class modifFormation : public QWidget {
     QHBoxLayout* hbox2;
     QHBoxLayout* hbox3;
     QHBoxLayout* hbox4;
+    QHBoxLayout* hbox5;
     QLabel* lbl1;
     QLabel* lbl2;
     QLabel* lbl3;
     QLabel* lblcs;
     QLabel* lbltm;
     QLabel* lbltsh;
+    QLabel* lblsp;
     QLineEdit* nom;
     QSpinBox* credits;
     QSpinBox* creditscs;
     QSpinBox* creditstm;
     QSpinBox* creditstsh;
+    QSpinBox* creditssp;
     QSpinBox* semstr;
     QPushButton* valider;
 

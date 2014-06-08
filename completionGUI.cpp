@@ -223,7 +223,6 @@ Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
     this->setWindowTitle(QString("Propositions jusqu'à la fin de vos études"));
 
-
     semestreLabel=new QLabel("Afficher la proposition pour le semestre : ", this);
     saison_concernee=new QComboBox(this) ;
     saison_concernee->addItem("Automne");
@@ -265,8 +264,6 @@ Proposition::Proposition(Dossier * dossier) : d(dossier) {
     couche->addLayout(coucheH2);
     couche->addLayout(coucheH3);
 
-    update();
-
     this->setLayout(couche);
 
     QObject::connect(afficher,SIGNAL(clicked()),this,SLOT(afficher_proposition()));
@@ -281,12 +278,24 @@ void Proposition::enregistrer_reponse() {
     this->close();
 }
 
+bool Proposition::verifierValiditeSemestre(Semestre s, ChoixAppli * c){
+
+    //s'il fait partie des semestres de choix appli concerne
+    ChoixAppliSemestre ** propositionSemestre = c->getListePropositions();
+    for (unsigned int i=0; i<c->getNbSemestres(); i++) {if (s==propositionSemestre[i]->getSemestre()) return 1;}
+    return 0;
+
+}
+
 void Proposition::afficher_proposition() {
     //Recuperer le semestre
+
+
     qDebug()<<"afficher proposition1";
     Semestre s(Printemps, 2014);
     qDebug()<<"afficher proposition2";
     Saison  s2=StringToSaison(saison_concernee->currentText());
+    qDebug()<<"la saison : "<<s2;
     qDebug()<<"afficher proposition3";// OK
     s.setSaison(s2);
     bool ok;
@@ -294,41 +303,76 @@ void Proposition::afficher_proposition() {
     unsigned int n2=n1.toInt(&ok);
     s.setAnnee(n2);
 
-    qDebug()<<"coucou"; // OK
+    qDebug()<<"afficher proposition 4"; // OK
+    ChoixManager& c=ChoixManager::getInstance();
+    qDebug()<<"afficher proposition 5";
+    ChoixAppli * currentChoixAppli=c.getLastProposition();
+    if (!verifierValiditeSemestre(s, currentChoixAppli)) QMessageBox::information(this,"Modification","Semestre invalide",QMessageBox::Ok);
 
-    ChoixAppliSemestre * choix = c->trouverChoix(s); //fonctionne pas->normal
-    qDebug()<<choix;
+    else {
+    qDebug()<<"afficher proposition 6 "<<currentChoixAppli;
+
+    ChoixAppliSemestre * choix = currentChoixAppli->trouverChoix(s);
+    qDebug()<<"afficher proposition 7";
     //puis faire appel à la fenetre daffichage
+    qDebug()<<choix; //OK
+
     AfficherProposition * fenetre = new AfficherProposition(choix);
     fenetre->show();
+    qDebug()<<"afficher proposition 8";
+    }
 
 }
 
 AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
 
-    blabla = new QLabel("Proposition pour le semestre  : ", this);
-    credits = new QLabel ("Cette proposition vous rapporte " , this);
-    uvs = new QLabel("", this);
+qDebug()<<"dans afficher proposition";
 
-    //iterateur
-    terminer= new QPushButton("Retour", this);
+    QString listeUV="UVs proposees  : ";
 
-    coucheH1=new QHBoxLayout(this);
-    coucheH1->addWidget(blabla);
 
-    coucheH2=new QHBoxLayout(this);
-    coucheH2->addWidget(credits);
+    for (QMap<QString,UV*>::const_iterator it=c->getQmapIteratorUVbegin(); it!=c->getQmapIteratorUVend(); ++it) {
+        listeUV+=it.key()+" ; ";
 
-    coucheH3=new QHBoxLayout(this);
-    coucheH3->addWidget(uvs);
+    }
 
-    couche=new QVBoxLayout(this);
-    couche->addLayout(coucheH1);
-    couche->addLayout(coucheH2);
-    couche->addLayout(coucheH3);
-    couche->addLayout(coucheH4);
+    qDebug()<<"dans afficher proposition2";
+    QString semestre=SaisonToString(c->getSemestre().getSaison());
+    semestre+=" ";
+    semestre+=QString::number(c->getSemestre().getAnnee());
+
+    blabla = new QLabel("Proposition pour le semestre : "+semestre, this);
+
+    credits = new QLabel ("Cette proposition vous rapporte "+QString::number(c->getNbCredits())+" credits." , this);
+    qDebug()<<"dans afficher proposition3";
+    uvs = new QLabel(listeUV, this);
+
+    terminer= new QPushButton("Retourner consulter un autre semestre proposé", this);
+
+     qDebug()<<"dans afficher proposition4";
+
+     coucheH1=new QHBoxLayout;
+     coucheH1->addWidget(blabla);
+
+
+     coucheH2=new QHBoxLayout;
+     coucheH2->addWidget(uvs);
+
+     coucheH3=new QHBoxLayout;
+     coucheH3->addWidget(credits);
+
+     coucheH4=new QHBoxLayout;
+     coucheH4->addWidget(terminer);
+
+     couche=new QVBoxLayout;
+     couche->addLayout(coucheH1);
+     couche->addLayout(coucheH2);
+     couche->addLayout(coucheH3);
+     couche->addLayout(coucheH4);
+
 
     this->setLayout(couche);
+    qDebug()<<"dans afficher proposition5";
 
 
     QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
@@ -338,7 +382,14 @@ AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
 
 void AfficherProposition::fin() {this->close();}
 
-Historique::Historique() {}
+Historique::Historique() {
+
+
+
+
+
+
+}
 
 void MenuCompletion::saisir_souhaits() {
     MenuSouhaits* fenetre=new MenuSouhaits(dos, dos->getSouhaits());

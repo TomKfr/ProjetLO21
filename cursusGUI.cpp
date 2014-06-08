@@ -162,12 +162,14 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     hbox2=new QHBoxLayout(this);
     hbox3=new QHBoxLayout(this);
     hbox4=new QHBoxLayout(this);
+    hbox5=new QHBoxLayout(this);
     lbl1=new QLabel("Nom de la formation :",this);
     lbl2=new QLabel("Nombre de semestres :",this);
     lbl3=new QLabel("Nombre de crédits :",this);
     lblcs=new QLabel("Nombre de crédits CS requis: ",this);
     lbltm=new QLabel("Nombre de crédits TM requis: ",this);
     lbltsh=new QLabel("Nombre de crédits TSH requis: ",this);
+    lblsp= new QLabel("Nombre de crédits SP requis: ",this);
     nom=new QLineEdit(this);
     valider=new QPushButton("Valider",this);
     valider->setDefault(true);
@@ -180,6 +182,8 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     creditstm->setRange(0,200);
     creditstsh=new QSpinBox(this);
     creditstsh->setRange(0,200);
+    creditssp=new QSpinBox(this);
+    creditssp->setRange(0,200);
     semstr=new QSpinBox(this);
     semstr->setRange(4,6);
 
@@ -194,12 +198,16 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
     hbox3->addWidget(lbltm);
     hbox3->addWidget(creditstm);
     hbox3->addWidget(lbltsh);
+    hbox5->addWidget(creditssp);
+    hbox5->addWidget(lblsp);
     hbox3->addWidget(creditstsh);
     hbox4->addWidget(valider);
     mainbox->addLayout(hbox1);
     mainbox->addLayout(hbox2);
     mainbox->addLayout(hbox3);
+    mainbox->addLayout(hbox5);
     mainbox->addLayout(hbox4);
+
     this->setLayout(mainbox);
 
     QObject::connect(valider, SIGNAL(clicked()),this,SLOT(ajout()));
@@ -209,7 +217,7 @@ ajoutFormation::ajoutFormation(cursusManager* m, menuFormation* p) {
  */
 void ajoutFormation::ajout()
 {
-    man->ajouterFormation(nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
+    man->ajouterFormation(nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value(), creditssp->value());
     QMessageBox::information(this,"Ajout d'une formation", "Formation ajoutée !",QMessageBox::Ok);
     parent->update();
     this->close();
@@ -236,7 +244,9 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     lblcs=new QLabel("Nombre de crédits CS requis: ",this);
     lbltm=new QLabel("Nombre de crédits TM requis: ",this);
     lbltsh=new QLabel("Nombre de crédits TSH requis: ",this);
+    lblsp=new QLabel("Nombre de crédits SP requis: ",this);
     hbox4=new QHBoxLayout(this);
+    hbox5=new QHBoxLayout(this);
     nom=new QLineEdit(this);
     nom->setText(f->getNom());
     valider=new QPushButton("Valider",this);
@@ -254,6 +264,9 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     creditstsh=new QSpinBox(this);
     creditstsh->setRange(0,200);
     creditstsh->setValue(f->getCrRequis(TSH));
+    creditssp=new QSpinBox(this);
+    creditssp->setRange(0,200);
+    creditssp->setValue(f->getCrRequis(SP));
     semstr=new QSpinBox(this);
     semstr->setRange(4,6);
     semstr->setValue(f->getNbSem());
@@ -270,10 +283,13 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
     hbox3->addWidget(creditstm);
     hbox3->addWidget(lbltsh);
     hbox3->addWidget(creditstsh);
+    hbox5->addWidget(lblsp);
+    hbox5->addWidget(creditssp);
     hbox4->addWidget(valider);
     mainbox->addLayout(hbox1);
     mainbox->addLayout(hbox2);
     mainbox->addLayout(hbox3);
+    mainbox->addLayout(hbox5);
     mainbox->addLayout(hbox4);
     this->setLayout(mainbox);
 
@@ -284,7 +300,7 @@ modifFormation::modifFormation(cursusManager* m, menuFormation *p, formation* f)
  */
 void modifFormation::modif()
 {
-    man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value());
+    man->modifFormation(form->getNom(),nom->text(),credits->value(), semstr->value(),creditscs->value(),creditstm->value(),creditstsh->value(), creditssp->value());
     QMessageBox::information(this,"Modification","Modification effectuée",QMessageBox::Ok);
     parent->update();
     this->close();
