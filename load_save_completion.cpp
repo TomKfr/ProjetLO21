@@ -9,7 +9,7 @@
 #include <QFileDialog>
 
 
-//ATTENTION A BIEN RECHARGER DANS LE MANAGER
+
 void ChoixManager::load_completion()
 {
 try{

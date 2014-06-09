@@ -457,9 +457,6 @@ else {
 
             }
 
-
-
-
             texte+="\n Credits rapportés : "+QString::number(ensemble[j]->getNbCredits())+"\n";
 
 

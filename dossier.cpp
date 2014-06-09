@@ -49,6 +49,7 @@ void DossierManager::removeDossier(Dossier* dsup){
 
     ChoixManager& cm=ChoixManager::getInstance();
     cm.removeChoix(dsup);
+    cm.save_completion();
   }
 
 

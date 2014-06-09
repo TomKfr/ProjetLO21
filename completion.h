@@ -53,6 +53,7 @@ public :
     ChoixAppli** trouverPropositionsDossier(Dossier * d) ; //trouver toutes les propositions pour un dossier en particulier
     unsigned int trouverNbPropositionsDossier(Dossier * d);
     void removeChoix(Dossier * d);
+    //void removeSemestres(ChoixAppli* c);
 
     Semestre getSemestreActuel() const {return SemestreActuel; }
     unsigned int getNbChoixSemestre() const {return nbChoixAppliSemestre; }
@@ -141,6 +142,7 @@ public :
         Dossier * getDossier() const {return dossier;}
 
         void setReponse(Reponse r) {rep=r;}
+        void setNbSemestres(unsigned int i) {nbSemestre=0;}
 
         ChoixAppliSemestre* trouverChoix(Semestre S) ;
 

@@ -280,8 +280,8 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
         //retour au while
         }
 
-    else if (nbRestantsCreditsObligatoiresTSH>0 && nbTMSemestre <4 && !(TSH_obligatoires_restantes.empty())) {
-        //alors on ajoute une TM
+    else if (nbRestantsCreditsObligatoiresTSH>0 && nbTSHSemestre <4 && !(TSH_obligatoires_restantes.empty())) {
+        //alors on ajoute une TSH
        code_ajout=*(TSH_obligatoires_restantes.begin());
        uv_ajout= uvm.trouverUV(code_ajout);
 
@@ -291,8 +291,8 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        nbCredits+=uv_ajout->getNbCredits();
        nbRestantsCreditsObligatoiresTSH-=uv_ajout->getNbCredits();
        nbRestantsCreditsTSH-=uv_ajout->getNbCredits();
-       it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
-       TM_obligatoires_restantes.erase(it);
+       it=find(TSH_obligatoires_restantes.begin(), TSH_obligatoires_restantes.end(), code_ajout);
+       TSH_obligatoires_restantes.erase(it);
         //retour au while
         }
 
