@@ -5,7 +5,32 @@
 #include <QMessageBox>
 #include<QDir>
 
+Reponse StringToReponse(const QString& r){
+    try{
+        if (r=="Valider") {return Valider; }
+        else if (r=="Refuser") {return Refuser; }
+        else if (r=="Retarder") {return Retarder; }
+        else if(r=="Avancer") { return Avancer; }
+            throw UTProfilerException(QString("erreur, StringToSaison, saison ")+r+" inexistante");
+        }
 
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+
+}
+
+QString ReponseToString(Reponse c){
+    try{
+        switch(c){
+        case Valider: return "Valider";
+        case Refuser: return "Refuser";
+        case Retarder: return "Retarder";
+        case Avancer: return "Avancer";
+        default: throw UTProfilerException("erreur, categorie non traitee",__FILE__,__LINE__);
+        }
+    }
+    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
+    return "";
+}
 
 MenuSouhaits::MenuSouhaits(Dossier *d, souhaits *sht)
 {
@@ -214,8 +239,8 @@ void MenuCompletion::fin() {
     this->close();}
 
 void MenuCompletion::consulter_historique() {
-
-    Historique * fenetre = new Historique();
+    qDebug()<<"dans le slot";
+    Historique * fenetre = new Historique(dos);
     fenetre->show();
 }
 
@@ -274,6 +299,9 @@ Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
 void Proposition::enregistrer_reponse() {
     ChoixManager& cm=ChoixManager::getInstance();
+    ChoixAppli * c = cm.getLastProposition();
+    Reponse rep=StringToReponse(reponse->currentText());
+    c->setReponse(rep);
     cm.save_completion();
     this->close();
 }
@@ -382,14 +410,95 @@ qDebug()<<"dans afficher proposition";
 
 void AfficherProposition::fin() {this->close();}
 
-Historique::Historique() {
+
+Historique::Historique(Dossier * d) : dos(d) {
+
+intitule=new QLabel("Récapitulatif des propositions de l'application pour votre dossier : ", this);
+
+QString texte="";
 
 
+ChoixManager& cm=ChoixManager::getInstance();
+
+ChoixAppli ** choixDossier = cm.trouverPropositionsDossier(dos);
+qDebug()<<"Choix dossier : "<<choixDossier;
+
+if (choixDossier==0) texte="Aucune proposition n'a été générée jusqu'à ce jour.";
+
+else {
 
 
+    qDebug()<<"ici 1";
 
+    for (unsigned int i=0; i<cm.getNbPropositions(); i++)
+    {
+        qDebug()<<"ici 2, i="<<i;
+        ChoixAppliSemestre** ensemble=choixDossier[i]->getListePropositions();
+
+        texte+="Proposition "+QString::number(i)+" :";
+
+        for (unsigned int j=0; j<choixDossier[i]->getNbSemestres(); j++) {
+
+            qDebug()<<"ici 2, j="<<j;
+            QString semestre=SaisonToString(ensemble[j]->getSemestre().getSaison());
+            semestre+=" ";
+            semestre+=QString::number(ensemble[j]->getSemestre().getAnnee());
+            qDebug()<<semestre;
+
+            texte+="\n Semestre "+semestre;
+
+            texte+="\n UVs proposees  : ";
+
+            qDebug()<<texte;
+
+            for (QMap<QString,UV*>::const_iterator it=ensemble[j]->getQmapIteratorUVbegin(); it!=ensemble[j]->getQmapIteratorUVend(); ++it) {
+                qDebug()<<it.key();
+                texte+=it.key()+" ; ";
+
+            }
+
+            qDebug()<<texte;
+
+
+            texte+="\n Credits rapportés : "+QString::number(ensemble[j]->getNbCredits());
+
+        }//fin for j
+
+        texte+="\nReponse accordee : "+ReponseToString(choixDossier[i]->getReponse());
+        texte+="\n \n \n";
+
+    }//fin for i
+
+}//fin else
+
+
+contenu=new QLabel(texte, this);
+retour= new QPushButton("Retour", this);
+
+coucheH1=new QHBoxLayout;
+coucheH1->addWidget(intitule);
+
+
+coucheH2=new QHBoxLayout;
+coucheH2->addWidget(contenu);
+
+coucheH3=new QHBoxLayout;
+coucheH3->addWidget(retour);
+
+couche=new QVBoxLayout;
+couche->addLayout(coucheH1);
+couche->addLayout(coucheH2);
+couche->addLayout(coucheH3);
+
+this->setLayout(couche);
+
+ QObject::connect(retour,SIGNAL(clicked()),this,SLOT(fin()));
 
 }
+
+
+void Historique::fin() {this->close();}
+
 
 void MenuCompletion::saisir_souhaits() {
     MenuSouhaits* fenetre=new MenuSouhaits(dos, dos->getSouhaits());

@@ -43,7 +43,12 @@ void DossierManager::removeDossier(Dossier* dsup){
     for (unsigned int j=i; j<nbDos-2; j++) {tmp=tabDossiers[j]; tabDossiers[j]=tabDossiers[j+1]; tabDossiers[j+1]=tmp;}
     delete tabDossiers[nbDos-1];
     nbDos--;
-    }
+
+    //il faut aussi supprimer les choix correspondant
+
+    ChoixManager& cm=ChoixManager::getInstance();
+    cm.removeChoix(dsup);
+  }
 
 
 void Dossier::ajouterUV(const QString& code, Note n) {

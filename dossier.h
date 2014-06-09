@@ -62,7 +62,7 @@ class Dossier {
     unsigned int nbMaxPropositions;
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
-        nbSemestre(nb), nbResultats(0), nbMaxResultats(0), nbEquivalences(0), semestreprevu(0),
+        nbSemestre(nb), nbEquivalences(0), semestreprevu(0),
         Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0)
     {
         equivalence=new Equivalences*[5];
@@ -74,7 +74,6 @@ class Dossier {
 public :
 
     unsigned int getNumero() const {return numero;}
-    unsigned int getNbResultats() const {return nbResultats;}
     QMap<QString,Note> getListeUV() const {return listeUV; }
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}

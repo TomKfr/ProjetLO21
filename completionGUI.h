@@ -196,7 +196,19 @@ class Historique : public QWidget {
 
 Q_OBJECT
 
-public : Historique();
+    QLabel * intitule;
+    QLabel* contenu ;
+    QPushButton * retour ;
+
+    QVBoxLayout *couche;
+    QHBoxLayout *coucheH1;
+    QHBoxLayout *coucheH2;
+    QHBoxLayout *coucheH3;
+
+    Dossier * dos;
+
+public : Historique(Dossier * d);
+public slots : void fin();
 
 };
 

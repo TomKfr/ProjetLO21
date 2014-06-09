@@ -92,7 +92,7 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
         unsigned int id2=cm.getNbChoixSemestre();
         qDebug()<<"avant creation de proposition semestre, ";
         ++semestre;
-        ChoixAppliSemestre * propositionSemestre = new ChoixAppliSemestre(++id2, d, semestre);
+        ChoixAppliSemestre * propositionSemestre = new ChoixAppliSemestre(++id2, d, semestre, propositionFinale);
         qDebug()<<"proposition semestre creee";
         qDebug()<<propositionFinale;
         qDebug()<<propositionSemestre; // OK
@@ -267,6 +267,8 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        qDebug()<<code_ajout;
 
        propositionSemestre->ajoutUV(uv_ajout);
+       qDebug()<<"uv ajoutee";
+       qDebug()<<propositionSemestre->getNbUV();
 
        nbUV++;
        nbCredits+=uv_ajout->getNbCredits();
@@ -274,6 +276,7 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        nbRestantsCreditsTM-=uv_ajout->getNbCredits();
        it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
        TM_obligatoires_restantes.erase(it);
+       qDebug()<<"termine pour les tm";
         //retour au while
         }
 
@@ -316,7 +319,7 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
     QSet<QString>::iterator itAjoute;
     QString code_ajout;
 
-    qDebug()<<"while des uvs non obligatoires";
+    //qDebug()<<"while des uvs non obligatoires";
 
     if (!(copie_exigences.empty()))
          {

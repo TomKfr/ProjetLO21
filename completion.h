@@ -49,6 +49,8 @@ public :
 
     ChoixAppli * trouverProposition(unsigned int id) ; //trouver une proposition d'identifiant id
     ChoixAppli** trouverPropositionsDossier(Dossier * d) ; //trouver toutes les propositions pour un dossier en particulier
+    unsigned int trouverNbPropositionsDossier(Dossier * d);
+    void removeChoix(Dossier * d);
 
     Semestre getSemestreActuel() const {return SemestreActuel; }
     unsigned int getNbChoixSemestre() const {return nbChoixAppliSemestre; }
@@ -64,6 +66,7 @@ public :
 
     void ajouterProposition(ChoixAppli* c);
     ChoixAppli* calculCompletion(Dossier * d) {return (completion.algoCompletion(*this, d ));}
+
 
     void load_completion();
     void save_completion();
@@ -86,7 +89,7 @@ class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
 
 public :
 
-    ChoixAppliSemestre (unsigned int id, Dossier*d, Semestre s, unsigned int cr=0 ,unsigned int nbuv=0, ChoixAppli* ensemble=0) : idChoix(id), semestre_concerne(s), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
+    ChoixAppliSemestre (unsigned int id, Dossier*d, Semestre s, ChoixAppli* ensemble, unsigned int cr=0 ,unsigned int nbuv=0) : idChoix(id), semestre_concerne(s), nbCredits(cr), nbUV(nbuv), parent(ensemble), dos(d)
     {
         ChoixManager& cm=ChoixManager::getInstance();
         unsigned int tot=cm.getNbChoixSemestre();
@@ -100,6 +103,7 @@ public :
     unsigned int getNbUV() const {return nbUV;}
     unsigned int getId() const {return idChoix;}
     Dossier * getDossier() const {return dos;}
+    ChoixAppli* getParent() const {return parent;}
 
     void ajoutUV(UV* uv);
     void supprimerUV(UV* uv);

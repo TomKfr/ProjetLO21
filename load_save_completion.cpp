@@ -8,6 +8,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+
+//ATTENTION A BIEN RECHARGER DANS LE MANAGER
 void ChoixManager::load_completion()
 {
 try{
@@ -28,13 +30,14 @@ try{
                 unsigned int numDossier;
                 unsigned int credits;
                 unsigned int annee;
+                unsigned int nbUVs;
                 unsigned int idChoixAppli;
                 QString s;
                 Saison saison;
 
                 QStringList listUV;
                 ChoixAppliSemestre* c;
-                ChoixAppli* parent=0;
+                ChoixAppli* parent;
                 Dossier * d;
 
                 xml.readNext();
@@ -53,11 +56,15 @@ try{
                         if(xml.name() == "dossier") {
                             xml.readNext(); numDossier=xml.text().toString().toUInt();
                             qDebug()<<xml.name();
+                            DossierManager& dm=DossierManager::getInstance();
+                            d=dm.trouverDossier(numDossier);
                         }
                         if(xml.name() == "idChoixAppli") {
                             xml.readNext(); idChoixAppli=xml.text().toUInt();
                             ChoixManager& cm=ChoixManager::getInstance();
                             parent=cm.trouverProposition(id);
+                            if (parent==0) { parent=new ChoixAppli(id,d); cm.ajouterProposition(parent);
+                                qDebug()<<"dans le manager : nb choix appli"<<cm.getNbPropositions();}
                             qDebug()<<xml.name();
                         }
 
@@ -65,6 +72,7 @@ try{
                         {
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="semestre"))
                             {
+                                qDebug()<<"dans le semestre";
                                         if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="saison")
                                         {
                                             xml.readNext();
@@ -94,7 +102,7 @@ try{
 
                         if(xml.name() == "uvs")
                         {
-                            unsigned int nbUVs=0;
+                            nbUVs=0;
                             xml.readNext();
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
                             {
@@ -108,23 +116,21 @@ try{
 
                                 xml.readNext();
                             }
-                            DossierManager& dm=DossierManager::getInstance();
-                            d=dm.trouverDossier(numDossier);
 
-                            //ajouterCompletionDossier(id, annee,saison, d, credits, nbUVs);
                             Semestre s(saison, annee);
 
-                            c=new ChoixAppliSemestre(id, d, s, credits, nbUVs, parent);
+                            c=new ChoixAppliSemestre(id, d, s, parent, credits, nbUVs);
+                            parent->ajouter_proposition(c);
+                            qDebug()<<"dans le choix appli combien de semestres "<<parent->getNbSemestres();
 
                             //cree une completion simple et gere les uvs dans la suite
                         }//fin if pour uv
+
 
                     }
                     xml.readNext();
                 }
                 qDebug()<<listUV;
-
-                //Dossier * d=trouverDossier(numDossier);
 
                 if(!listUV.empty())
                 {
@@ -175,10 +181,13 @@ for (unsigned int j=0; j<nbPropositions; j++)
 
          QString n; n.setNum(choix->getId());
          stream.writeTextElement("identifiant", n);
+
          Dossier * dos = choix->getDossier();
          QString numDossier=QString::number(dos->getNumero());
-
          stream.writeTextElement("dossier", numDossier);
+
+         ChoixAppli* parent=choix->getParent();
+         stream.writeTextElement("idChoixAppli", QString::number(parent->getIdentifiant()));
 
          stream.writeStartElement("semestre");
          Semestre s=choix->getSemestre();

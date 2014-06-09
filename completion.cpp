@@ -105,6 +105,7 @@ void ChoixManager::ajouterProposition(ChoixAppli* c) {
             }
 
             ensemblePropositions[nbPropositions++]=c;
+            qDebug()<<nbPropositions;
         }
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
@@ -112,13 +113,20 @@ void ChoixManager::ajouterProposition(ChoixAppli* c) {
 
 ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
 
-    ChoixAppli ** result;
+    qDebug()<<"dans la recherche de la proposition";
+    qDebug()<<"dossier : "<<d;
+    qDebug()<<nbPropositions;
+
+    ChoixAppli ** result=0;
     unsigned int nbResult=0;
     unsigned int nbResultMax=0;
 
     for (unsigned int i=0; i<nbPropositions; i++) {
+        qDebug()<<ensemblePropositions[i]->getDossier();
         if (ensemblePropositions[i]->getDossier()==d)
         {
+            //alors on complete le resultat
+            qDebug()<<"jen ai trouve un";
             if (nbResult==nbResultMax){
                 ChoixAppli** newtab=new ChoixAppli*[nbResultMax+5];
                 for(unsigned int i=0; i<nbResult; i++) newtab[i]=result[i];
@@ -132,5 +140,39 @@ ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
         }
     }
 
+   return result;
+
+}
+
+unsigned int ChoixManager::trouverNbPropositionsDossier(Dossier *d) {
+    qDebug()<<"dans le calcul du nb de propositions";
+
+    unsigned int nbResult=0;
+
+    for (unsigned int i=0; i<nbPropositions; i++) {
+        if (ensemblePropositions[i]->getDossier()==d) nbResult++;
+    }
+
+   return nbResult;
+}
+
+
+void ChoixManager::removeChoix(Dossier * d) {
+    qDebug()<<"dans la suppression des choix";
+
+    ChoixAppli** aSupprimer = trouverPropositionsDossier(d);
+    unsigned int nb=trouverNbPropositionsDossier(d);
+
+    for (unsigned int i=0; i<nb; i++) { //pour chaque choix appli à supprimer
+
+        unsigned int j=0;
+        while (ensemblePropositions[j]!=aSupprimer[i]) j++; //j represente alors l'indice du choix appli à supprimer
+        ChoixAppli* tmp ;
+
+        for (unsigned int k=j; k<nbPropositions-2; k++) {tmp=ensemblePropositions[k]; ensemblePropositions[k]=ensemblePropositions[k+1]; ensemblePropositions[k+1]=tmp;}
+        delete ensemblePropositions[nbPropositions-1];
+        nbPropositions--;
+
+    }
 }
 
