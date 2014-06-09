@@ -10,6 +10,8 @@ class StrategieConcrete;
 class ChoixAppli;
 class ChoixManager;
 enum Reponse {Valider, Refuser,Avancer, Retarder};
+Reponse StringToReponse(const QString& s);
+QString ReponseToString(Reponse c);
 
 class Strategie {
 

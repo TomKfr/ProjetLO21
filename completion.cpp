@@ -164,6 +164,7 @@ void ChoixManager::removeChoix(Dossier * d) {
     unsigned int nb=trouverNbPropositionsDossier(d);
 
     for (unsigned int i=0; i<nb; i++) { //pour chaque choix appli à supprimer
+        qDebug()<<"je supprime";
 
         unsigned int j=0;
         while (ensemblePropositions[j]!=aSupprimer[i]) j++; //j represente alors l'indice du choix appli à supprimer

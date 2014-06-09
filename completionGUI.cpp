@@ -435,7 +435,7 @@ else {
         qDebug()<<"ici 2, i="<<i;
         ChoixAppliSemestre** ensemble=choixDossier[i]->getListePropositions();
 
-        texte+="Proposition "+QString::number(i)+" :";
+        texte+="Identifiant de la proposition : "+QString::number(choixDossier[i]->getIdentifiant())+"\n";
 
         for (unsigned int j=0; j<choixDossier[i]->getNbSemestres(); j++) {
 
@@ -445,9 +445,9 @@ else {
             semestre+=QString::number(ensemble[j]->getSemestre().getAnnee());
             qDebug()<<semestre;
 
-            texte+="\n Semestre "+semestre;
+            texte+="\n Pour le semestre "+semestre;
 
-            texte+="\n UVs proposees  : ";
+            texte+="\n Les UVs proposees sont  : ";
 
             qDebug()<<texte;
 
@@ -457,14 +457,16 @@ else {
 
             }
 
-            qDebug()<<texte;
 
 
-            texte+="\n Credits rapportés : "+QString::number(ensemble[j]->getNbCredits());
+
+            texte+="\n Credits rapportés : "+QString::number(ensemble[j]->getNbCredits())+"\n";
+
 
         }//fin for j
-
-        texte+="\nReponse accordee : "+ReponseToString(choixDossier[i]->getReponse());
+        QString rep = ReponseToString(choixDossier[i]->getReponse());
+        qDebug()<<rep ;
+        texte+="\nReponse accordee à cette proposition : "+rep;
         texte+="\n \n \n";
 
     }//fin for i

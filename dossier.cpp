@@ -36,6 +36,7 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
 
 
 void DossierManager::removeDossier(Dossier* dsup){
+    qDebug()<<"remove dossier";
 
     unsigned int i=0;
     while (tabDossiers[i]!=dsup) i++;

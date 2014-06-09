@@ -33,7 +33,9 @@ try{
                 unsigned int nbUVs;
                 unsigned int idChoixAppli;
                 QString s;
+                QString r;
                 Saison saison;
+                Reponse reponse;
 
                 QStringList listUV;
                 ChoixAppliSemestre* c;
@@ -45,22 +47,24 @@ try{
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "completion")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
                         qDebug()<<"completions6";
-                        qDebug()<<xml.name();
 
                         if(xml.name() == "identifiant") {
+                            qDebug()<<"je pecho un identifiant";
                             xml.readNext(); id=xml.text().toString().toUInt();
                         }
 
-                        qDebug()<<xml.name();
-
                         if(xml.name() == "dossier") {
+                            qDebug()<<"dossier";
                             xml.readNext(); numDossier=xml.text().toString().toUInt();
+
                             qDebug()<<xml.name();
                             DossierManager& dm=DossierManager::getInstance();
                             d=dm.trouverDossier(numDossier);
                         }
                         if(xml.name() == "idChoixAppli") {
+                            qDebug()<<"idChoixAppli";
                             xml.readNext(); idChoixAppli=xml.text().toUInt();
+
                             ChoixManager& cm=ChoixManager::getInstance();
                             parent=cm.trouverProposition(id);
                             if (parent==0) { parent=new ChoixAppli(id,d); cm.ajouterProposition(parent);
@@ -70,20 +74,25 @@ try{
 
                         if(xml.name() == "semestre")
                         {
-                            while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="semestre"))
+                             xml.readNext();
+                           while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="semestre"))
                             {
+
                                 qDebug()<<"dans le semestre";
                                         if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="saison")
                                         {
                                             xml.readNext();
                                             s=xml.text().toString();
                                             saison=StringToSaison(s);
+                                            qDebug()<<"saison :"<<saison;
                                         }
 
                                         if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="annee")
                                         {
+                                            qDebug()<<"annee";
                                             xml.readNext();
                                             annee=xml.text().toUInt();
+                                            qDebug()<<annee;
                                         }
 
 
@@ -102,12 +111,14 @@ try{
 
                         if(xml.name() == "uvs")
                         {
+                            qDebug()<<"les uvs";
                             nbUVs=0;
                             xml.readNext();
                             while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uvs"))
                             {
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
+                                    qDebug()<<"une uv";
                                     nbUVs++;
                                     xml.readNext();
                                     listUV<<xml.text().toString();
@@ -118,13 +129,30 @@ try{
                             }
 
                             Semestre s(saison, annee);
+                            qDebug()<<s.getAnnee();
+                            qDebug()<<s.getSaison();
+
 
                             c=new ChoixAppliSemestre(id, d, s, parent, credits, nbUVs);
                             parent->ajouter_proposition(c);
                             qDebug()<<"dans le choix appli combien de semestres "<<parent->getNbSemestres();
 
-                            //cree une completion simple et gere les uvs dans la suite
+
                         }//fin if pour uv
+
+                        if(xml.name() == "reponse") {
+                            qDebug()<<"reponse";
+                            xml.readNext(); r=xml.text().toString();
+                            qDebug()<<r;
+                            reponse=StringToReponse(r);
+
+                            parent->setReponse(reponse);
+                            qDebug()<<parent->getReponse();
+                            DossierManager& dm=DossierManager::getInstance();
+                            d=dm.trouverDossier(numDossier);
+                        }
+
+
 
 
                     }
@@ -197,6 +225,8 @@ for (unsigned int j=0; j<nbPropositions; j++)
          QString saisonString= SaisonToString(saison);
          stream.writeTextElement("saison",saisonString);
          stream.writeTextElement("annee",annee);
+         stream.writeEndElement();
+
          QString credits=QString::number(choix->getNbCredits());
          stream.writeTextElement("credits",credits);
          qDebug()<<"point4";
@@ -204,14 +234,16 @@ for (unsigned int j=0; j<nbPropositions; j++)
 
          //ecriture des UV
 
-
+         stream.writeStartElement("uvs");
          for(QMap<QString,UV*>::iterator it=choix->getQmapIteratorUVbegin();it!=choix->getQmapIteratorUVend(); it++)
          {
              stream.writeTextElement("uv",it.key());
-             //ecriture du resultat correspondant
+
          }
 
-         stream.writeEndElement();
+         stream.writeEndElement();//fin uv
+         stream.writeTextElement("reponse", ReponseToString(ensemblePropositions[j]->getReponse()));
+
 
           qDebug()<<"3";
           stream.writeEndElement();
