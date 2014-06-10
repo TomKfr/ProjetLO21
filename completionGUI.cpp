@@ -25,7 +25,7 @@ QString ReponseToString(Reponse c){
         case Refuser: return "Refuser";
         case Retarder: return "Retarder";
         case Avancer: return "Avancer";
-        default: throw UTProfilerException("erreur, categorie non traitee",__FILE__,__LINE__);
+        default: throw UTProfilerException("erreur, reponse non traitee",__FILE__,__LINE__);
         }
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
@@ -318,6 +318,7 @@ bool Proposition::verifierValiditeSemestre(Semestre s, ChoixAppli * c){
 void Proposition::afficher_proposition() {
     //Recuperer le semestre
 
+    ChoixManager& c=ChoixManager::getInstance();
 
     qDebug()<<"afficher proposition1";
     Semestre s(Printemps, 2014);
@@ -332,10 +333,9 @@ void Proposition::afficher_proposition() {
     s.setAnnee(n2);
 
     qDebug()<<"afficher proposition 4"; // OK
-    ChoixManager& c=ChoixManager::getInstance();
     qDebug()<<"afficher proposition 5";
     ChoixAppli * currentChoixAppli=c.getLastProposition();
-    if (!verifierValiditeSemestre(s, currentChoixAppli)) QMessageBox::information(this,"Modification","Semestre invalide",QMessageBox::Ok);
+    if (!verifierValiditeSemestre(s, currentChoixAppli)) QMessageBox::information(this,"Modification","Semestre lors duquel vous aurez sûrement fini vos études!",QMessageBox::Ok);
 
     else {
     qDebug()<<"afficher proposition 6 "<<currentChoixAppli;
@@ -402,10 +402,7 @@ qDebug()<<"dans afficher proposition";
     this->setLayout(couche);
     qDebug()<<"dans afficher proposition5";
 
-
     QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
-
-
 }
 
 void AfficherProposition::fin() {this->close();}
@@ -421,6 +418,7 @@ QString texte="";
 ChoixManager& cm=ChoixManager::getInstance();
 
 ChoixAppli ** choixDossier = cm.trouverPropositionsDossier(dos);
+unsigned int nb= cm.trouverNbPropositionsDossier(dos);
 qDebug()<<"Choix dossier : "<<choixDossier;
 
 if (choixDossier==0) texte="Aucune proposition n'a été générée jusqu'à ce jour.";
@@ -430,7 +428,7 @@ else {
 
     qDebug()<<"ici 1";
 
-    for (unsigned int i=0; i<cm.getNbPropositions(); i++)
+    for (unsigned int i=0; i<nb; i++)
     {
         qDebug()<<"ici 2, i="<<i;
         ChoixAppliSemestre** ensemble=choixDossier[i]->getListePropositions();
@@ -512,11 +510,18 @@ void MenuCompletion::saisir_previsions() {
 
 void MenuCompletion::lancer_completion() {
 
-    //LANCER LE CALCUL A CE NIVEAU
     ChoixManager& cm=ChoixManager::getInstance();
-    cm.calculCompletion(dos);
-    Proposition * fenetre=new Proposition(dos);
-    fenetre->show();
+    if (!(cm.verifCompletion(dos))) //si la formation a un nb de credits et des uvs incohérents
+          QMessageBox::information(this,"Impossible","Calcul impossible étant donnée la formation ! Modifiez la formation !",QMessageBox::Ok);
+
+    else { cm.calculCompletion(dos);
+
+        if (cm.getCreationLastProposition()==false)  QMessageBox::information(this,"Impossible","Vous avez déjà terminé vos études : aucune proposition générée",QMessageBox::Ok);
+        else {
+           Proposition * fenetre=new Proposition(dos);
+           fenetre->show();
+          }
+    }
 }
 
 menuprevision::menuprevision(Dossier *d): dos(d)

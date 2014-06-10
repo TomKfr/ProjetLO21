@@ -28,6 +28,7 @@ public :
 class ChoixManager{
     ChoixAppli ** ensemblePropositions; //l'integralite des propositions de l'appli
     ChoixAppli* lastProposition;
+    bool creationLastProposition; //le dernier calcul a t il généré un nouveau choix appli ?
     unsigned int nbPropositions; //sert de compteur pour les id des choix appli
     unsigned int nbPropositionsMax;
     unsigned int nbChoixAppliSemestre; //sert de compteur pour les id des chois appli semestre
@@ -59,15 +60,18 @@ public :
     unsigned int getNbChoixSemestre() const {return nbChoixAppliSemestre; }
     unsigned int getNbPropositions() const {return nbPropositions; }
     ChoixAppli* getLastProposition() const {return lastProposition;}
+    bool getCreationLastProposition() const {return creationLastProposition;}
 
     void setNbChoixSemestre(unsigned int i) {nbChoixAppliSemestre=i;}
     void setSemestreActuel(Semestre s) {SemestreActuel=s;}
     void setLastProposition(ChoixAppli * p) {lastProposition=p;}
+    void setCreationLastProposition(bool b) {creationLastProposition=b;}
 
     static ChoixManager& getInstance();
     static void libererInstance();
 
     void ajouterProposition(ChoixAppli* c);
+    bool verifCompletion(Dossier * d) const ;
     ChoixAppli* calculCompletion(Dossier * d) {return (completion.algoCompletion(*this, d ));}
 
 

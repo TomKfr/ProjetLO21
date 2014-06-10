@@ -110,6 +110,7 @@ public:
     void supprimer_UV(const QString &code);
     unsigned int getNbSem() const {return nbSemestres;}
     unsigned int getCrRequis(Categorie cat) const;
+    QMap<Categorie,unsigned int> getMapCrRequis() const {return credits_requis; }
     /**
      * @brief Fixe le nombre de crédits requis pour valider la formation dans une certaine catégorie
      * @param cat Catégorie concernée
