@@ -1,3 +1,6 @@
+/// \file dossierGUI2.h
+/// \brief Ce fichier contient les déclarations de classes d'objets qui permettent à l'utilisateur d'internvenir sur les paramètres des dossiers.
+
 #ifndef DOSSIERGUI_H
 #define DOSSIERGUI_H
 

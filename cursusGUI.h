@@ -1,3 +1,7 @@
+/// \file cursusGUI.h
+/// \brief Ce fichier contient les déclarations des classes d'objets graphiques permettant à l'utilisateur d'agir sur
+/// les paramètres des différents cursus.
+
 #ifndef CURSUSGUI_H
 #define CURSUSGUI_H
 

@@ -1,3 +1,6 @@
+///\file completion.h
+///\brief Ce fichier contient classes d'objets gérant la complétion automatique du cursus d'un étudiant.
+
 #ifndef COMPLETION_H
 #define COMPLETION_H
 #include"UTProfiler.h"
@@ -13,18 +16,29 @@ enum Reponse {Valider, Refuser,Avancer, Retarder};
 Reponse StringToReponse(const QString& s);
 QString ReponseToString(Reponse c);
 
+/*!
+ * \brief Classe abstraite mettant en place une interface unique pour exécuter un algorithme de complétion automatique.
+ *
+ * Cette classe fait partie de l'implémentation du design pattern <em>Strategy</em>, elle définit une interface unique
+ * <em>algoCompletion</em> pour le calcul d'une solution, permettant par l'héritage de développer plus tard différents algorithmes
+ * capables de traiter différamment les données pour proposer une solution.
+ */
 class Strategie {
 
 public :
     virtual ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const=0;
 };
-
+/*!
+ * \brief Hérite de la classe Strategie, cette classe implémente l'algorithme de complétion choisi pour l'application.
+ */
 class StrategieConcrete : public Strategie {
 
 public :
     ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const ; //a completer
 };
-
+/*!
+ * \brief Singleton en charge du calcul des différentes proposition de complétion automatique.
+ */
 class ChoixManager{
     ChoixAppli ** ensemblePropositions; //l'integralite des propositions de l'appli
     ChoixAppli* lastProposition;
@@ -75,7 +89,11 @@ public :
     void save_completion();
 
 };
-
+/*!
+ * \brief classe représentant les décisions prises par l'algorithme quant aux UVs sur un seul semestre.
+ *
+ * Un objet de cette classe est un conteneur reflétant une proposition de l'application pour un semestre.
+ */
 class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
     //faire un load pour ça aussi .. ? comment on sorganise ?
 
@@ -123,7 +141,11 @@ public :
     void calculerProposition();//A DEFINIR
 
 };
-
+/*!
+ * \brief Classe représentant les décisions prises par l'algorithme pour compléter la formation d'un étudiant.
+ *
+ * Un objet de la classe ChoixAppli est un conteneur reflétant une proposition de l'application jusqu'à la fin du cursus de l'étudiant.
+ */
 class ChoixAppli { //regroupe tous les semestres proposes jusqu'à la fin des etudes
 
     unsigned int idProposition;
@@ -149,7 +171,9 @@ public :
         void ajouter_proposition(ChoixAppliSemestre * prop); //une methode de suppression est-elle nécessaire ? je ne pense pas ..
 
 };
-
+/*!
+ * \brief Classe d'objets conteneurs pour le stockage des souhaits d'un étudiant concernant les UVs.
+ */
 class souhaits
 {
     friend class DossierManager;
@@ -178,6 +202,9 @@ public:
     void setPreferences(QSet<QString> s) {preferences=s;}
 };
 
+/*!
+ * \brief Classe d'objets conteneurs pour le stockage d'une prévision de semestre à l'étranger.
+ */
 class prevision
 {
     QString destination;

@@ -4,7 +4,12 @@
 #include<QSet>
 
 
-
+/*!
+ * \brief Algorithme de complétion automatique, génère une propsition pour le dossier en cours.
+ * \param cm référence vers le ChoixManager
+ * \param d pointeur vers le dossier concerné
+ * \return une proposition de fin de cursus sous forme d'un objet ChoixAppli.
+ */
 ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
     qDebug()<<"DANS LE CALCUL DE COMPLETION";
     UVManager& uvm=UVManager::getInstance();

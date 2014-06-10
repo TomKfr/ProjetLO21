@@ -7,7 +7,9 @@
 #include<QDebug>
 #include<sstream>
 
-
+/*!
+ * \brief Constructeur de la fenêtre de gestion des dossiers
+ */
 MenuDossier::MenuDossier() {
 
     qDebug()<<"constructeur de menudossier";
@@ -48,6 +50,9 @@ MenuDossier::MenuDossier() {
     QObject::connect(completion, SIGNAL(clicked()),this, SLOT(calcul_completion()));
 
 }
+/*!
+ * \brief Ouvre le menu de complétion automatique
+ */
 void MenuDossier::calcul_completion() {
     bool ok;
     QString n1=dossiers->currentText();
@@ -59,7 +64,9 @@ void MenuDossier::calcul_completion() {
     fenetre->show();
 
 }
-
+/*!
+ * \brief Ouvre le menu de création d'un dossier
+ */
 void MenuDossier::ajout() {
     bool ok;
     QString n1=dossiers->currentText();
@@ -70,12 +77,16 @@ void MenuDossier::ajout() {
     DossierAjout * fenetre= new DossierAjout(*dman,this, dos);
     fenetre->show();
 }
-
+/*!
+ * \brief Ferme ce menu
+ */
 void MenuDossier::fin() {
 
     this->close();
 }
-
+/*!
+ * \brief Ouvre la fenêtre de modification du dossier
+ */
 void MenuDossier::modif() {
     bool ok;
     QString n1=dossiers->currentText();
@@ -86,7 +97,9 @@ void MenuDossier::modif() {
     qDebug()<<"juste avant l'ouverture";
     fenetre->show();
 }
-
+/*!
+ * \brief Supprime le dossier sélectionné
+ */
 void MenuDossier::suppression() {
     bool ok;
 
@@ -97,7 +110,9 @@ void MenuDossier::suppression() {
     update();
 
 }
-
+/*!
+ * \brief Supprime le dossier sélectionné
+ */
 void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
     Dossier* dos=dm.trouverDossier(num);
     try{
@@ -109,7 +124,9 @@ void MenuDossier::supDossier(unsigned int num, DossierManager& dm) {
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
-
+/*!
+ * \brief Mets à jour les champs de la fenêtre
+ */
 void MenuDossier::update()
 {
     dossiers->clear();
@@ -118,7 +135,9 @@ void MenuDossier::update()
         dossiers->addItem(QString::number(it.courant()->getNumero()));
     }
 }
-
+/*!
+ * \brief Lance la sauvegarde des dossiers
+ */
 void MenuDossier::sauvegarder()
 {
     dman->save();

@@ -1,3 +1,7 @@
+///\file completionGUI.h
+/// \brief Ce fichier contient les déclarations des classes d'objets gérant l'interface graphique de la fonctionnalité de
+/// complétion automatique d'un cursus.
+
 #ifndef COMPLETIONGUI_H
 #define COMPLETIONGUI_H
 
@@ -16,6 +20,9 @@
 class souhaits;
 class Dossier;
 
+/*!
+ * \brief Fenêtre d'acceuil de la partie complétion, elle permet de lancer le calcul d'une solution et de consulter celles précédemment calculées.
+ */
 class MenuCompletion : public QWidget{ //dans ce menu on peut consulter l'historique des propositions, remplir ses souhaits,
     //et ses previsions pour les semestres à venir
 
@@ -45,7 +52,9 @@ public slots :
     void fin();
 
 };
-
+/*!
+ * \brief Fenêtre d'affichage d'une proposition.
+ */
 class Proposition : public QWidget {
 Q_OBJECT
     //affiche toutes les propositions et demande la réponse
@@ -78,7 +87,6 @@ public slots :
 class AfficherProposition : public QWidget {
     Q_OBJECT
 
-
     QLabel * blabla ;
     QLabel * credits ;
     QLabel * uvs ;
@@ -100,7 +108,9 @@ public slots :
 
 
 };
-
+/*!
+ * \brief Menu permettant à l'utilisateur de saisir un éventuel semestre à l'étranger prévu.
+ */
 class menuprevision : public QWidget
 {
     Q_OBJECT
@@ -137,7 +147,9 @@ public:
 public slots:
     void valider_prev();
 };
-
+/*!
+ * \brief Menu permettant de saisir les souhaits d'UVs de l'étudiant.
+ */
 class MenuSouhaits : public QWidget
 {
     Q_OBJECT
@@ -191,7 +203,9 @@ public slots:
     void suprrejet();
     void fermer();
 };
-
+/*!
+ * \brief Fenêtre permettant d'afficher l'historiques des propositions.
+ */
 class Historique : public QWidget {
 
 Q_OBJECT

@@ -8,7 +8,14 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-
+/*!
+ * \brief Crée un nouveau dossier
+ * \param n numero du dossier
+ * \param name nom de l'étudiant
+ * \param firstname prénom de l'étudiant
+ * \param form formation
+ * \param nb numéro du semestre
+ */
 void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form, unsigned int nb){
     try{
         if (trouverDossier(n)) {
@@ -33,8 +40,10 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
 
 }
 
-
-
+/*!
+ * \brief suppime un dossier
+ * \param dsup pointeur vers le dossier à supprimer
+ */
 void DossierManager::removeDossier(Dossier* dsup){
     qDebug()<<"remove dossier";
 
@@ -52,11 +61,18 @@ void DossierManager::removeDossier(Dossier* dsup){
     cm.save_completion();
   }
 
-
+/*!
+ * \brief Ajoute une UV réalisée au dossier
+ * \param code code de l'uv
+ * \param n résultat obtenu
+ */
 void Dossier::ajouterUV(const QString& code, Note n) {
     listeUV.insert(code,n);
 }
-
+/*!
+ * \brief retire une uv réalisée du dossier
+ * \param uv pointeur vers l'uv à retirer
+ */
 void Dossier::supprimerUV(UV* uv) {
 /*unsigned int i=0;
 while (listeUV[i]!=uv) i++;
@@ -81,7 +97,11 @@ nbResultats--;*/
     }
 
 }
-
+/*!
+ * \brief Vérifie si l'UV passée en paramètre est validée
+ * \param code code de l'uv
+ * \return true si l'uv est validée, false sinon.
+ */
 bool Dossier::estValidee(const QString &code)
 {
     if(listeUV.contains(code))
@@ -92,12 +112,20 @@ bool Dossier::estValidee(const QString &code)
     }
     else return false;
 }
-
+/*!
+ * \brief recherche une uv dans le dossier
+ * \param code code de l'uv à rechercher
+ * \return un const_iterateur sur l'uv recherchée.
+ */
 const QMap<QString,Note>::const_iterator Dossier::trouverUV(const QString &code)
 {
     return listeUV.find(code);
 }
-
+/*!
+ * \brief rehcerche un dossier dans ceux connus du DossierManager
+ * \param n numéro du dossier recherché
+ * \return  un pointeur sur le dossier recherché s'il existe, 0 sinon.
+ */
 Dossier* DossierManager::trouverDossier(unsigned int n)const{
     qDebug()<<nbDos;
     for(unsigned int i=0; i<nbDos; i++)
@@ -105,7 +133,9 @@ Dossier* DossierManager::trouverDossier(unsigned int n)const{
     return 0;
 }
 
-
+/*!
+ * \brief Destructeur du DossierManager
+ */
 DossierManager::~DossierManager(){
     qDebug() << "Destructeur DossiersManager";
     for(unsigned int i=0; i<nbDos; i++) delete tabDossiers[i];
@@ -129,21 +159,35 @@ iterateur<UV>& Dossier::getIterateurUV()
     iterateur<UV>* it=new iterateur<UV>(listeUV,nbUV);
     return *it;
 }*/
-
+/*!
+ * \brief Exécute la méthode visit du visiteur
+ * \param v pointeur vers le visiteur
+ */
 void DossierManager::accept(visiteur2* v) {
     v->visitDossierManager(this);
 }
 
-
+/*!
+ * \brief Exécute la méthode visit du visiteur
+ * \param v pointeur vers le visiteur
+ */
 void Dossier::acceptCompletion(visiteurCompletion* v) {
     v->visitDossierManager(this);
 }
+/*!
+ * \brief Renvoie un itérateur permettant de parcourir les dossiers
+ * \return un iterateur
+ */
 iterateur<Dossier>& DossierManager::getIterateurDos()
 {
     iterateur<Dossier>* it=new iterateur<Dossier>(tabDossiers,nbDos);
     return *it;
 }
-
+/*!
+ * \brief Modifie le résultat enregistré pour une UV
+ * \param code code de l'uv
+ * \param n résultat à enregistrer
+ */
 void Dossier::setResultat(const QString &code, Note n)
 {
     QMap<QString,Note>::iterator it=listeUV.find(code);
