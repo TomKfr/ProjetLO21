@@ -283,7 +283,15 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
        TM_obligatoires_restantes.erase(it);
        qDebug()<<"termine pour les tm";
-       qDebug()<<"je retourne au while car je suis gentil";
+/*
+while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty()) ) ||  ( nbRestantsCreditsObligatoiresTM>0 && !(TM_obligatoires_restantes.empty()))
+         || ( nbRestantsCreditsObligatoiresTSH>0 && !(TSH_obligatoires_restantes.empty())) ||
+         ( nbRestantsCreditsObligatoiresSP>0 && !(SP_obligatoires_restants.empty())) ) && nbUV<=7 && nbCredits<=35 && stage==0)*/
+       qDebug()<<nbRestantsCreditsObligatoiresCS<<" "<<nbRestantsCreditsObligatoiresTM<<" "<<nbRestantsCreditsObligatoiresTSH<<" "<<nbRestantsCreditsObligatoiresSP<<" "<<nbUV<<" "<<nbCredits<<" "<<stage;
+       qDebug()<<!(CS_obligatoires_restantes.empty());
+       qDebug()<<!(TM_obligatoires_restantes.empty());
+       qDebug()<<!(TSH_obligatoires_restantes.empty());
+       qDebug()<<!(SP_obligatoires_restants.empty());
         //retour au while
         }
 

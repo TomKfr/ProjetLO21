@@ -17,10 +17,41 @@
 class visiteur2;
 class visiteurCompletion;
 class UV;
-class souhaits;
 class prevision;
 class ChoixAppli;
 class ChoixAppliSemestre;
+class Dossier;
+
+
+class souhaits
+{
+    friend class DossierManager;
+
+    Dossier *dos;
+    QSet<QString> exigences;
+    QSet<QString> preferences;
+    QSet<QString> rejets;
+
+public:
+    souhaits(Dossier* d, QSet<QString>& e, QSet<QString>& p, QSet<QString>& r): dos(d), exigences(e), preferences(p), rejets(r) {}
+    souhaits() {}
+    void Ajt_exigence(const QString& code);
+    void Ajt_preference(const QString& code);
+    void Ajt_rejet(const QString& code);
+    void Suppr_exigence(const QString& code);
+    void Suppr_prefernce(const QString& code);
+    void Suppr_rejet(const QString& code);
+    bool estExigee(const QString& code) const {return exigences.contains(code);}
+    bool estPreferee(const QString& code) const {return preferences.contains(code);}
+    bool estRejetee(const QString& code) const {return rejets.contains(code);}
+
+    QSet<QString> getExigences() const {return exigences; }
+    QSet<QString> getPreferences() const {return preferences; }
+    QSet<QString> getRejets() const {return rejets; }
+    void setExigences(QSet<QString> s) {exigences=s;}
+    void setPreferences(QSet<QString> s) {preferences=s;}
+};
+
 
 /*!
  * \brief Un objet équivalences permet de stocker d'éventuelles équivalences de crédits obtenues.
@@ -63,10 +94,11 @@ class Dossier {
 
     Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
         nbSemestre(nb), nbEquivalences(0), semestreprevu(0),
-        Souhaits(0), Completion(0), nbPropositions(0), nbMaxPropositions(0)
+         Completion(0), nbPropositions(0), nbMaxPropositions(0)
     {
         equivalence=new Equivalences*[5];
         for (unsigned int i=0; i<5; i++) equivalence[i]=0;
+        Souhaits= new souhaits();
     }
 
     friend class DossierManager;
