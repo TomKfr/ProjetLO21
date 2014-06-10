@@ -20,7 +20,7 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
     qDebug()<<semestre.getAnnee();
     qDebug()<<semestre.getSaison();
 
-
+    cm.setCreationLastProposition(0);
     bool first=0;
     bool stage=0;
 
@@ -62,6 +62,11 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
     qDebug()<<nbCreditsRequisTSH;
     qDebug()<<nbCreditsRequisSP;
 
+    qDebug()<<nbTotalCreditsCS;
+    qDebug()<<nbTotalCreditsTM;
+    qDebug()<<nbTotalCreditsTSH;
+    qDebug()<<nbTotalCreditsSP;
+
 
     int nbRestantsCreditsCS=nbCreditsRequisCS-nbTotalCreditsCS;
     int nbRestantsCreditsTM=nbCreditsRequisTM-nbTotalCreditsTM;
@@ -78,6 +83,7 @@ ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) con
 
 while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 || nbRestantsCreditsSP >0) {
         //ALORS LETUDIANT NA PAS FINI SES ETUDES : ON VA GENERER UN CHOIX DE LAPPLICATION POUR UN SEMESTRE
+        cm.setCreationLastProposition(1);
 
         qDebug()<<"Calcul d'une propositionSemestre";
         stage=0; //indique qu'on ne cherche plus d'uv car il y a deja un stage
@@ -151,7 +157,6 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
          }
 
         qDebug()<<"liste obligatoires remplies";
-        qDebug()<<*(TM_obligatoires_restantes.begin());
 
         //OK
 
@@ -261,6 +266,7 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        it=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), code_ajout);
        CS_obligatoires_restantes.erase(it);//on met à jour la liste des uv obligatoires
        qDebug()<<"termine ici";
+       qDebug()<<"je vais quelque part";
        //retour au while
         }
 
@@ -282,6 +288,7 @@ while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty
        it=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), code_ajout);
        TM_obligatoires_restantes.erase(it);
        qDebug()<<"termine pour les tm";
+       qDebug()<<"je retourne au while car je suis gentil";
         //retour au while
         }
 

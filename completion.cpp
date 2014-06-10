@@ -5,6 +5,44 @@
 #include <QXmlStreamWriter>
 #include <QFile>
 #include <QDir>
+
+/*!
+ * \brief Vérifie si le nombre de crédits souhaités et les UVs de la formation sont compatibles.
+ * \param dos pointeur vers le dossier concerné
+ * \return true si le calcul d'une solution est possible, false sinon.
+ */
+bool ChoixManager::verifCompletion(Dossier * dos) const { //calcule si le nb de credits souhaites et les uvs de la formation sont compatibles
+
+    cursusManager& cm=cursusManager::getInstance();
+    formation * f=cm.trouverForm(dos->getFormation());
+
+    QMap<Categorie,unsigned int> const creditsVoulus=f->getMapCrRequis();
+    QMap<QString,UV*> const uvs=f->getUVFormation();
+    unsigned int totalCumulableCS=0; unsigned int totalCumulableTM=0; unsigned int totalCumulableTSH=0; unsigned int totalCumulableSP=0;
+
+    for (QMap<QString, UV*>::const_iterator it=uvs.begin(); it!=uvs.end(); ++it) {
+        if (it.value()->getCategorie()==CS) totalCumulableCS+=it.value()->getNbCredits();
+        else if (it.value()->getCategorie()==TM) totalCumulableTM+=it.value()->getNbCredits();
+        else if (it.value()->getCategorie()==TSH) totalCumulableTSH+=it.value()->getNbCredits();
+        else if (it.value()->getCategorie()==SP) totalCumulableSP+=it.value()->getNbCredits();
+    }
+
+    for (QMap<Categorie,unsigned int>::const_iterator it=creditsVoulus.begin(); it!=creditsVoulus.end(); ++it) {
+        //si on demande plus que ce qui est possible avec les uvs de la formation, alors cest impossible
+
+        if (it.key()==CS) {
+            if (it.value()>totalCumulableCS) return false; }
+        else if (it.key()==TM){
+            if (it.value()>totalCumulableTM) return false; }
+        else if (it.key()==TSH){
+            if (it.value()>totalCumulableTSH) return false; }
+        else if (it.key()==SP){
+            if (it.value()>totalCumulableSP) return false; }
+    }
+
+    return true; //sinon le calcul est possible
+}
+
 /*!
  * \brief ajoute une UV à la liste des UVs exigées par l'étudiant
  * \param code code de l'UV à ajouter
