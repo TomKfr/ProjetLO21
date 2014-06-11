@@ -30,6 +30,11 @@ void StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
     unsigned int nbTotalCreditsTSH=0;
     unsigned int nbTotalCreditsSP=0;
 
+    int nbRestantsCreditsObligatoiresCS=0;
+    int nbRestantsCreditsObligatoiresTM=0;
+    int nbRestantsCreditsObligatoiresTSH=0;
+    int nbRestantsCreditsObligatoiresSP=0;
+
     for (typename QMap<QString,Note>::const_iterator it=d->getQmapIteratorUVbegin(); it!=d->getQmapIteratorUVend(); ++it) {
         if (d->estValidee(it.key())) {
                                         UV* uv_concernee = uvm.trouverUV(it.key());
@@ -80,6 +85,89 @@ void StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
 
     qDebug()<<"avant while";
 
+    const QSet<QString>& copie_UVsOblig=f->getUVsObligatoires();
+
+    QSet<QString> CS_obligatoires_restantes;
+    QSet<QString> TM_obligatoires_restantes;
+    QSet<QString> TSH_obligatoires_restantes;
+    QSet<QString> SP_obligatoires_restants;
+
+    //construction de la liste des uvs obligatoires restantes
+
+    for (QSet<QString>::const_iterator it=copie_UVsOblig.begin(); it!=copie_UVsOblig.end(); ++it)
+    {
+        qDebug()<<"une uv obligatoire";
+        UV* uv=uvm.trouverUV(*it); //pointeur vers l'uv en elle meme
+        qDebug()<<uv->getCode();
+
+        QMap<QString,Note> listeUV=d->getListeUV();
+
+        const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
+
+        if (uvDossier==listeUV.end() || (uvDossier!=listeUV.end() && !(d->estValidee(uv->getCode())))) {
+            //alors letudiant n'a pas fait cette uv obligatoire ou il a echoue
+            qDebug()<<"UV non faite";
+            unsigned int nb=uv->getNbCredits();
+            if (uv->getCategorie()==CS) {qDebug()<<"une cs obligatoire"; CS_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresCS+=nb;}
+            else if (uv->getCategorie()==TM) {qDebug()<<"une tm obligatoire";TM_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTM+=nb;}
+            else if (uv->getCategorie()==TSH) {TSH_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTSH+=nb;}
+            else if (uv->getCategorie()==SP)  {SP_obligatoires_restants.insert(*it); nbRestantsCreditsObligatoiresSP+=nb;}
+            }
+     }
+
+    qDebug()<<"liste obligatoires remplies";
+
+    //OK
+
+    //les uvs non obligatoires de la formation restantes
+    QSet<QString> CS_formation;
+    QSet<QString> TM_formation;
+    QSet<QString> TSH_formation;
+    QSet<QString> SP_formation;
+
+    QSet<QString>::const_iterator it2;
+
+    qDebug()<<"avant liste2";
+
+    QMap<QString,UV*> uvFormation=f->getUVFormation();
+    qDebug()<<uvFormation;
+    qDebug()<<uvFormation.begin().key();//OK
+
+    for ( QMap<QString,UV*>::const_iterator it3=uvFormation.begin(); it3!=uvFormation.end(); ++it3)
+    {
+        qDebug()<<"encore une uv!";
+        UV* uv=uvm.trouverUV(it3.key()); //pointeur vers l'uv en elle meme
+        qDebug()<< it3.key(); qDebug()<<uv ;
+        QString code=uv->getCode();
+        const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
+        //renvoie un it pointant sur l'uv dans la liste d'uv du dossier
+
+        if (uvDossier==(d->getListeUV()).end() || (uvDossier!=(d->getListeUV()).end() && !(d->estValidee(uv->getCode())))) {
+            //alors letudiant n'a pas fait cette uv ou il a echoue : il lui reste potentiellement cette uv à faire
+            unsigned int nb=uv->getNbCredits();
+            if (uv->getCategorie()==CS) {
+                it2=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), it3.key());
+                if (it2!=CS_obligatoires_restantes.end()) break;
+                CS_formation.insert(code); nbRestantsCreditsObligatoiresCS+=nb;}
+
+            else if (uv->getCategorie()==TM) {
+                it2=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), it3.key());
+                if (it2!=TM_obligatoires_restantes.end()) break;
+                TM_formation.insert(code);
+                qDebug()<<"insertion tm :"<<code;
+                nbRestantsCreditsObligatoiresTM+=nb;}
+            else if (uv->getCategorie()==TSH) {
+                it2=find(TSH_obligatoires_restantes.begin(), TSH_obligatoires_restantes.end(), it3.key());
+                if (it2!=TSH_obligatoires_restantes.end()) break;
+                TSH_formation.insert(code);
+                nbRestantsCreditsObligatoiresTSH+=nb;}
+            else if (uv->getCategorie()==SP)  {it2=find(SP_obligatoires_restants.begin(), SP_obligatoires_restants.end(), it3.key());
+                if (it2!=SP_obligatoires_restants.end()) break;
+                SP_formation.insert(code);
+                nbRestantsCreditsObligatoiresSP+=nb;}
+            }
+     }
+
 while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 || nbRestantsCreditsSP >0) {
         //ALORS LETUDIANT NA PAS FINI SES ETUDES : ON VA GENERER UN CHOIX DE LAPPLICATION POUR UN SEMESTRE
         cm.setCreationLastProposition(1);
@@ -118,95 +206,15 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
         unsigned int nbTSHSemestre=0; //pas plus de 4 tsh par semestre
         unsigned int nbSPSemestre=0; //pas plus de 1 stage par semestre
 
-        int nbRestantsCreditsObligatoiresCS=0;
-        int nbRestantsCreditsObligatoiresTM=0;
-        int nbRestantsCreditsObligatoiresTSH=0;
-        int nbRestantsCreditsObligatoiresSP=0;
+        nbRestantsCreditsObligatoiresCS=0;
+        nbRestantsCreditsObligatoiresTM=0;
+        nbRestantsCreditsObligatoiresTSH=0;
+        nbRestantsCreditsObligatoiresSP=0;
 
         unsigned int nbUV=0; //<7 sur le semestre
         unsigned int nbCredits=0 ; //<35 sur le semestre
 
-        const QSet<QString>& copie_UVsOblig=f->getUVsObligatoires();
 
-        QSet<QString> CS_obligatoires_restantes;
-        QSet<QString> TM_obligatoires_restantes;
-        QSet<QString> TSH_obligatoires_restantes;
-        QSet<QString> SP_obligatoires_restants;
-
-        //construction de la liste des uvs obligatoires restantes
-
-        for (QSet<QString>::const_iterator it=copie_UVsOblig.begin(); it!=copie_UVsOblig.end(); ++it)
-        {
-            qDebug()<<"une uv obligatoire";
-            UV* uv=uvm.trouverUV(*it); //pointeur vers l'uv en elle meme
-            qDebug()<<uv->getCode();
-
-            QMap<QString,Note> listeUV=d->getListeUV();
-
-            const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
-
-            if (uvDossier==listeUV.end() || (uvDossier!=listeUV.end() && !(d->estValidee(uv->getCode())))) {
-                //alors letudiant n'a pas fait cette uv obligatoire ou il a echoue
-                qDebug()<<"UV non faite";
-                unsigned int nb=uv->getNbCredits();
-                if (uv->getCategorie()==CS) {qDebug()<<"une cs obligatoire"; CS_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresCS+=nb;}
-                else if (uv->getCategorie()==TM) {qDebug()<<"une tm obligatoire";TM_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTM+=nb;}
-                else if (uv->getCategorie()==TSH) {TSH_obligatoires_restantes.insert(*it); nbRestantsCreditsObligatoiresTSH+=nb;}
-                else if (uv->getCategorie()==SP)  {SP_obligatoires_restants.insert(*it); nbRestantsCreditsObligatoiresSP+=nb;}
-                }
-         }
-
-        qDebug()<<"liste obligatoires remplies";
-
-        //OK
-
-        //les uvs non obligatoires de la formation restantes
-        QSet<QString> CS_formation;
-        QSet<QString> TM_formation;
-        QSet<QString> TSH_formation;
-        QSet<QString> SP_formation;
-
-        QSet<QString>::const_iterator it2;
-
-        qDebug()<<"avant liste2";
-
-        QMap<QString,UV*> uvFormation=f->getUVFormation();
-        qDebug()<<uvFormation;
-        qDebug()<<uvFormation.begin().key();//OK
-
-        for ( QMap<QString,UV*>::const_iterator it3=uvFormation.begin(); it3!=uvFormation.end(); ++it3)
-        {
-            qDebug()<<"encore une uv!";
-            UV* uv=uvm.trouverUV(it3.key()); //pointeur vers l'uv en elle meme
-            qDebug()<< it3.key(); qDebug()<<uv ;
-            QString code=uv->getCode();
-            const QMap<QString,Note>::const_iterator uvDossier = d->trouverUV(uv->getCode());
-            //renvoie un it pointant sur l'uv dans la liste d'uv du dossier
-
-            if (uvDossier==(d->getListeUV()).end() || (uvDossier!=(d->getListeUV()).end() && !(d->estValidee(uv->getCode())))) {
-                //alors letudiant n'a pas fait cette uv ou il a echoue : il lui reste potentiellement cette uv à faire
-                unsigned int nb=uv->getNbCredits();
-                if (uv->getCategorie()==CS) {
-                    it2=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), it3.key());
-                    if (it2!=CS_obligatoires_restantes.end()) break;
-                    CS_formation.insert(code); nbRestantsCreditsObligatoiresCS+=nb;}
-
-                else if (uv->getCategorie()==TM) {
-                    it2=find(TM_obligatoires_restantes.begin(), TM_obligatoires_restantes.end(), it3.key());
-                    if (it2!=TM_obligatoires_restantes.end()) break;
-                    TM_formation.insert(code);
-                    nbRestantsCreditsObligatoiresTM+=nb;}
-                else if (uv->getCategorie()==TSH) {
-                    it2=find(TSH_obligatoires_restantes.begin(), TSH_obligatoires_restantes.end(), it3.key());
-                    if (it2!=TSH_obligatoires_restantes.end()) break;
-                    TSH_formation.insert(code);
-                    nbRestantsCreditsObligatoiresTSH+=nb;}
-                else if (uv->getCategorie()==SP)  {it2=find(SP_obligatoires_restants.begin(), SP_obligatoires_restants.end(), it3.key());
-                    if (it2!=SP_obligatoires_restants.end()) break;
-                    SP_formation.insert(code);
-                    nbRestantsCreditsObligatoiresSP+=nb;}
-                }
-         }
 
 
 while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty()) ) ||  ( nbRestantsCreditsObligatoiresTM>0 && !(TM_obligatoires_restantes.empty()))
@@ -552,6 +560,7 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
            nbCredits+=uv_ajout->getNbCredits();
            nbRestantsCreditsTM-=uv_ajout->getNbCredits();
            itAjoute=find(TM_formation.begin(), TM_formation.end(), code_ajout);
+           qDebug()<<*itAjoute;
            TM_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
             //retour au while
 
