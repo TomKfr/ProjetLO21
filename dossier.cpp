@@ -45,13 +45,18 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
  * \param dsup pointeur vers le dossier à supprimer
  */
 void DossierManager::removeDossier(Dossier* dsup){
-    qDebug()<<"remove dossier";
+    qDebug()<<"remove du dossier numero : "<<dsup->getNumero();
 
     unsigned int i=0;
     while (tabDossiers[i]!=dsup) i++;
     Dossier* tmp ;
-    for (unsigned int j=i; j<nbDos-2; j++) {tmp=tabDossiers[j]; tabDossiers[j]=tabDossiers[j+1]; tabDossiers[j+1]=tmp;}
+    qDebug()<<"i :"<<i;
+    qDebug()<<"nbDos :"<<nbDos;
+    int k=nbDos-2;
+    for (int j=i; j<k; j++) { tmp=tabDossiers[j]; tabDossiers[j]=tabDossiers[j+1]; tabDossiers[j+1]=tmp;}
+    qDebug()<<"ici";
     delete tabDossiers[nbDos-1];
+    qDebug()<<"la";
     nbDos--;
 
     //il faut aussi supprimer les choix correspondant

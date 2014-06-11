@@ -149,7 +149,10 @@ ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
  */
 ChoixAppli * ChoixManager::trouverProposition(unsigned int id) {
 
-    for (unsigned int i=0; i<nbPropositions; i++) {if (ensemblePropositions[i]->getIdentifiant()==id) return ensemblePropositions[i];}
+    qDebug()<<"dans trouver proposition, id = "<<id<<" pour un nb propositions de : "<<nbPropositions;
+
+    for (unsigned int i=0; i<nbPropositions; i++) { qDebug()<<ensemblePropositions[i]->getIdentifiant();
+        if (ensemblePropositions[i]->getIdentifiant()==id) return ensemblePropositions[i];}
     return 0;
 
 }

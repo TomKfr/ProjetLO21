@@ -48,7 +48,6 @@ try{
 
                 while(!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "completion")) {
                     if(xml.tokenType() == QXmlStreamReader::StartElement) {
-                        qDebug()<<"completions6";
 
                         if(xml.name() == "identifiant") {
                             qDebug()<<"je pecho un identifiant";
@@ -68,7 +67,9 @@ try{
                             xml.readNext(); idChoixAppli=xml.text().toUInt();
 
                             ChoixManager& cm=ChoixManager::getInstance();
-                            parent=cm.trouverProposition(id);
+                            qDebug()<<"j'ai lu l'id choix appli : "<<idChoixAppli;
+                            parent=cm.trouverProposition(idChoixAppli);
+                            qDebug()<<"est ce que jai trouve la proposition"<<parent;
                             if (parent==0) { parent=new ChoixAppli(id,d); cm.ajouterProposition(parent);
                                 qDebug()<<"dans le manager : nb choix appli"<<cm.getNbPropositions();}
                             qDebug()<<xml.name();
@@ -102,7 +103,6 @@ try{
                                     }
                                 }
 
-                        qDebug()<<"completions7";
                         qDebug()<<xml.name();
 
                         if(xml.name() == "credits") {
@@ -120,7 +120,6 @@ try{
                             {
                                 if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="uv")
                                 {
-                                    qDebug()<<"une uv";
                                     nbUVs++;
                                     xml.readNext();
                                     listUV<<xml.text().toString();

@@ -184,7 +184,7 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
             //renvoie un it pointant sur l'uv dans la liste d'uv du dossier
 
             if (uvDossier==(d->getListeUV()).end() || (uvDossier!=(d->getListeUV()).end() && !(d->estValidee(uv->getCode())))) {
-                //alors letudiant n'a pas fait cette uv ou il a echoue
+                //alors letudiant n'a pas fait cette uv ou il a echoue : il lui reste potentiellement cette uv à faire
                 unsigned int nb=uv->getNbCredits();
                 if (uv->getCategorie()==CS) {
                     it2=find(CS_obligatoires_restantes.begin(), CS_obligatoires_restantes.end(), it3.key());
@@ -334,6 +334,7 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
     UV* uv_ajout;
     QSet<QString>::const_iterator itRejets;
     QSet<QString>::iterator itAjoute;
+    QSet<QString>::iterator itRestantes;
     QString code_ajout;
 
     //qDebug()<<"while des uvs non obligatoires";
@@ -343,11 +344,6 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
         QSet<QString>::const_iterator it=copie_exigences.begin();
 
         uv_ajout= uvm.trouverUV(*it);
-
-        itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
-
-        if (itRejets==copie_rejets.end()) {
-            //alors cette uv ne fait pas partie des rejets et on peut continuer
 
               if (uv_ajout->getCategorie()==SP && nbRestantsCreditsSP>0 && nbSPSemestre <1) {
                    //alors on ajoute un stage souhaité, par ex un TN07
@@ -359,6 +355,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
                   nbUV++;
                   nbCredits+=uv_ajout->getNbCredits();
                   nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+                  itRestantes=find(SP_formation.begin(), SP_formation.end(), *it);
+                  if (itRestantes!=SP_formation.end()) SP_formation.erase(itRestantes);
+                  //comme on a ajoute cette uv on la retire des stages restants dans la formation
                   itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                   copie_exigences.erase(itAjoute);//on met à jour la liste des uv
                    //retour au while
@@ -374,6 +373,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
                nbRestantsCreditsCS-=uv_ajout->getNbCredits();
+               itRestantes=find(CS_formation.begin(), CS_formation.end(), *it);
+               if (itRestantes!=CS_formation.end()) CS_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
@@ -387,6 +389,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
 
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
+               itRestantes=find(TM_formation.begin(), TM_formation.end(), *it);
+               if (itRestantes!=TM_formation.end()) TM_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
@@ -401,23 +406,21 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
 
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
+               itRestantes=find(TSH_formation.begin(), TSH_formation.end(), *it);
+               if (itRestantes!=TSH_formation.end()) TSH_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_exigences.begin(), copie_exigences.end(), *it);
                copie_exigences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
                 }
         }
-   } // fin if not in rejets pour les exigences
+
 
     if (!(copie_preferences.empty()))
          {
         QSet<QString>::const_iterator it=copie_preferences.begin();
 
         uv_ajout= uvm.trouverUV(*it);
-
-        itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
-
-        if (itRejets==copie_rejets.end()) {
-            //alors cette uv ne fait pas partie des rejets et on peut continuer
 
              if (uv_ajout->getCategorie()==SP && nbRestantsCreditsSP>0 && nbSPSemestre <4) {
                    //alors on ajoute un stage
@@ -429,6 +432,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
                   nbUV++;
                   nbCredits+=uv_ajout->getNbCredits();
                   nbRestantsCreditsSP-=uv_ajout->getNbCredits();
+                  itRestantes=find(SP_formation.begin(), SP_formation.end(), *it);
+                  if (itRestantes!=SP_formation.end()) SP_formation.erase(itRestantes);
+                  //comme on a ajoute cette uv on la retire des stages restants dans la formation
                   itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                   copie_preferences.erase(itAjoute);//on met à jour la liste des uv
                  //retour au while
@@ -444,6 +450,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
                nbRestantsCreditsCS-=uv_ajout->getNbCredits();
+               itRestantes=find(CS_formation.begin(), CS_formation.end(), *it);
+               if (itRestantes!=CS_formation.end()) CS_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
@@ -457,6 +466,9 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
 
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
+               itRestantes=find(TM_formation.begin(), TM_formation.end(), *it);
+               if (itRestantes!=TM_formation.end()) TM_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
@@ -471,13 +483,14 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
 
                nbUV++;
                nbCredits+=uv_ajout->getNbCredits();
+               itRestantes=find(TSH_formation.begin(), TSH_formation.end(), *it);
+               if (itRestantes!=TSH_formation.end()) TSH_formation.erase(itRestantes);
+               //comme on a ajoute cette uv on la retire des stages restants dans la formation
                itAjoute=find(copie_preferences.begin(), copie_preferences.end(), *it);
                copie_preferences.erase(itAjoute);//on met à jour la liste des uv
                 //retour au while
                 }
         }
-
-   } // fin if not in rejets pour les preferences
 
 //ensuite on prend les uvs restantes quelconques : ajout rejet
 
@@ -485,6 +498,11 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
            //alors on ajoute un stage
           code_ajout=*(SP_formation.begin());
           uv_ajout= uvm.trouverUV(code_ajout);
+
+          itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
+
+          if (itRejets==copie_rejets.end()) {
+              //alors cette uv ne fait pas partie des rejets et on peut continuer
 
           propositionSemestre->ajoutUV(uv_ajout);
 
@@ -495,12 +513,18 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
           SP_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
            //retour au while
            }
+       }
 
 
        else if (nbRestantsCreditsCS>0 && nbCSSemestre <4 && !(CS_formation.empty())) {
             //alors on ajoute une CS
            code_ajout=*(CS_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
+
+           itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
+
+           if (itRejets==copie_rejets.end()) {
+               //alors cette uv ne fait pas partie des rejets et on peut continuer
 
            propositionSemestre->ajoutUV(uv_ajout);
 
@@ -511,10 +535,16 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
            CS_formation.erase(itAjoute);//on met à jour la liste des uv obligatoires
             //retour au while
             }
+       }
         else if (nbRestantsCreditsTM>0 && nbTMSemestre <4 && !(TM_formation.empty())) {
             //alors on ajoute une TM
            code_ajout=*(TM_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
+
+           itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
+
+           if (itRejets==copie_rejets.end()) {
+               //alors cette uv ne fait pas partie des rejets et on peut continuer
 
            propositionSemestre->ajoutUV(uv_ajout);
 
@@ -526,11 +556,17 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
             //retour au while
 
             }
+       }
 
         else if (nbRestantsCreditsTSH>0 && nbTSHSemestre <4 && !(TSH_formation.empty())) {
             //alors on ajoute une TSH
            code_ajout=*(TSH_formation.begin());
            uv_ajout= uvm.trouverUV(code_ajout);
+
+           itRejets=find(copie_rejets.begin(), copie_rejets.end(), uv_ajout->getCode());
+
+           if (itRejets==copie_rejets.end()) {
+               //alors cette uv ne fait pas partie des rejets et on peut continuer
 
            propositionSemestre->ajoutUV(uv_ajout);
 
@@ -542,6 +578,7 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
             //retour au while
 
             }
+       }
 
 
 }//fin while des autres Uvs
