@@ -21,7 +21,7 @@ menuFormation::menuFormation()
     visualiser=new QPushButton("Voir les détails",this);
     ajouter=new QPushButton("Ajouter une formation",this);
     modifier=new QPushButton("Modifier",this);
-    fil=new QPushButton("Gérer les filières",this);
+    //fil=new QPushButton("Gérer les filières",this);
     ajfil=new QPushButton("Gérer les filières de cette formation",this);
     supprimer=new QPushButton("Supprimer",this);
     quit=new QPushButton("Quitter",this);
@@ -35,7 +35,7 @@ menuFormation::menuFormation()
     hbox2->addWidget(visualiser);
     hbox2->addWidget(ajouter);
     hbox2->addWidget(modifier);
-    hbox2->addWidget(fil);
+    //hbox2->addWidget(fil);
     hbox2->addWidget(ajfil);
     hbox2->addWidget(supprimer);
     hbox2->addWidget(sauver);
@@ -44,7 +44,7 @@ menuFormation::menuFormation()
     QObject::connect(visualiser,SIGNAL(clicked()),this,SLOT(voir()));
     QObject::connect(ajouter,SIGNAL(clicked()),this, SLOT(ajout()));
     QObject::connect(modifier,SIGNAL(clicked()),this, SLOT(modif()));
-    QObject::connect(fil,SIGNAL(clicked()),this,SLOT(filir()));
+    //QObject::connect(fil,SIGNAL(clicked()),this,SLOT(filir()));
     QObject::connect(ajfil,SIGNAL(clicked()),this,SLOT(ajfilir()));
     QObject::connect(supprimer,SIGNAL(clicked()),this, SLOT(suppr()));
     QObject::connect(quit,SIGNAL(clicked()),this,SLOT(close()));
@@ -107,15 +107,15 @@ void menuFormation::modif()
     }
     catch(UTProfilerException& e) {QMessageBox::warning(this,"Erreur",e.getInfo());}
 }
-
+/*
 /*!
  * \brief Affiche la fenêtre menuFiliere.
- */
+
 void menuFormation::filir()
 {
     menuFiliere* f=new menuFiliere();
     f->show();
-}
+}*/
 /*!
  * \brief Affiche la fenêtre GestionFiliereFormation.
  */

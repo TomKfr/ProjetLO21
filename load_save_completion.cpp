@@ -247,7 +247,7 @@ for (unsigned int j=0; j<nbPropositions; j++)
 
           qDebug()<<"3";
           stream.writeEndElement();
-          stream.writeEndElement();
+         // stream.writeEndElement();
           qDebug()<<"4";
      }
 }

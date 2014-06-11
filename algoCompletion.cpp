@@ -5,7 +5,7 @@
 
 
 
-ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
+void StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
     qDebug()<<"DANS LE CALCUL DE COMPLETION";
     UVManager& uvm=UVManager::getInstance();
     cursusManager& curMan=cursusManager::getInstance();
@@ -99,6 +99,7 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
         qDebug()<<"avant creation de proposition semestre, ";
         ++semestre;
         ChoixAppliSemestre * propositionSemestre = new ChoixAppliSemestre(++id2, d, semestre, propositionFinale);
+        cm.setNbChoixSemestre(id2);
         qDebug()<<"proposition semestre creee";
         qDebug()<<propositionFinale;
         qDebug()<<propositionSemestre; // OK
@@ -202,9 +203,6 @@ while(nbRestantsCreditsCS>0 || nbRestantsCreditsTM >0 || nbRestantsCreditsTSH>0 
                     nbRestantsCreditsObligatoiresSP+=nb;}
                 }
          }
-
-        qDebug()<<"autres listes remplies";
-
 
 
 while (( (nbRestantsCreditsObligatoiresCS>0 && !(CS_obligatoires_restantes.empty()) ) ||  ( nbRestantsCreditsObligatoiresTM>0 && !(TM_obligatoires_restantes.empty()))
@@ -477,7 +475,7 @@ while ((nbRestantsCreditsCS>0 || nbRestantsCreditsTM>0 || nbRestantsCreditsTSH>0
 
    } // fin if not in rejets pour les preferences
 
-//ensuite on prend les uvs restantes quelconques
+//ensuite on prend les uvs restantes quelconques : ajout rejet
 
        if (nbRestantsCreditsSP>0 && nbSPSemestre <1 && !(SP_formation.empty())) {
            //alors on ajoute un stage

@@ -37,7 +37,7 @@ class menuFormation : public QWidget
     QPushButton* visualiser;
     QPushButton* ajouter;
     QPushButton* modifier;
-    QPushButton* fil;
+    //QPushButton* fil;
     QPushButton* ajfil;
     QPushButton* supprimer;
     QPushButton* quit;
@@ -50,7 +50,7 @@ public slots:
     void voir();
     void ajout();
     void modif();
-    void filir();
+    //void filir();
     void ajfilir();
     void suppr();
     void update();

@@ -38,7 +38,7 @@ class Semestre {
     Saison saison;
     unsigned int annee;
 public:
-    Semestre(Saison s=Automne, unsigned int a=0):saison(s),annee(a){try{ if (annee<1972||annee>2099) throw UTProfilerException("annee non valide"); }catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());} }
+    Semestre(Saison s=Automne, unsigned int a=0):saison(s),annee(a){}
     Saison getSaison() const { return saison; }
     unsigned int getAnnee() const { return annee; }
     void setSaison(Saison s) { saison=s; }

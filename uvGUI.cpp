@@ -361,6 +361,7 @@ void UVAjout::slot_ajoutUV() {
     M.ajouterUV(code->text(), titre->toPlainText(), credits->value(), Categorie(categorie->currentIndex()), automne->isChecked(), printemps->isChecked());
     //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "UV sauvegardee");
+    this->close();
 }
 
 

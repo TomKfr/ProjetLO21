@@ -16,13 +16,13 @@ QString ReponseToString(Reponse c);
 class Strategie {
 
 public :
-    virtual ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const=0;
+    virtual void algoCompletion(ChoixManager& cm, Dossier * d) const=0;
 };
 
 class StrategieConcrete : public Strategie {
 
 public :
-    ChoixAppli* algoCompletion(ChoixManager& cm, Dossier * d) const ; //a completer
+    void algoCompletion(ChoixManager& cm, Dossier * d) const ;
 };
 
 class ChoixManager{
@@ -33,10 +33,10 @@ class ChoixManager{
     unsigned int nbPropositionsMax;
     unsigned int nbChoixAppliSemestre; //sert de compteur pour les id des chois appli semestre
     QString file;
-    const StrategieConcrete& completion;
+    const Strategie& completion;
     Semestre SemestreActuel;
 
-    ChoixManager(const StrategieConcrete & s) : ensemblePropositions(0), nbPropositions(0), lastProposition(0), nbPropositionsMax(0), nbChoixAppliSemestre(0), completion(s) {}
+    ChoixManager(const Strategie & s) : ensemblePropositions(0), nbPropositions(0), lastProposition(0), nbPropositionsMax(0), nbChoixAppliSemestre(0), completion(s) {}
     ~ChoixManager() {}
     void operator=(const ChoixManager&);
     ChoixManager(const ChoixManager&);
@@ -72,7 +72,7 @@ public :
 
     void ajouterProposition(ChoixAppli* c);
     bool verifCompletion(Dossier * d) const ;
-    ChoixAppli* calculCompletion(Dossier * d) {return (completion.algoCompletion(*this, d ));}
+    void calculCompletion(Dossier * d) {completion.algoCompletion(*this, d );}
 
 
     void load_completion();
