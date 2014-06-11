@@ -1,3 +1,6 @@
+/// \file menu.h
+/// \brief Fichier contenant la déclaration de la classe MenuDebut
+
 #ifndef MENU_H
 #define MENU_H
 

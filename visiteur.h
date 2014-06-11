@@ -1,3 +1,8 @@
+/*!
+ *  \file visiteur.h
+ *  \brief Fichier contenant la déclaration du premier visiteur.
+ */
+
 #ifndef VISITEUR_H
 #define VISITEUR_H
 

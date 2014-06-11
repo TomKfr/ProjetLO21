@@ -16,7 +16,7 @@
  * \param form formation
  * \param nb numéro du semestre
  */
-void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form, unsigned int nb){
+void DossierManager::ajouterDossier(unsigned int n, const QString& name, const QString& firstname, const QString& form, const QString& fil, unsigned int nb){
     try{
         if (trouverDossier(n)) {
             throw UTProfilerException(QString("erreur, DossierManager, Dossier ")+n+QString("d�ja existant"));
@@ -31,7 +31,7 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
                 delete[] old;
             }
 
-            tabDossiers[nbDos]=new Dossier(n, name, firstname, form ,nb);
+            tabDossiers[nbDos]=new Dossier(n, name, firstname, form, fil ,nb);
             nbDos++;
         }
     }

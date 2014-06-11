@@ -1,3 +1,8 @@
+/*!
+ *  \file visiteur_completion.h
+ *  \brief Fichier contenant la déclaration du visiteur utilisé lors de la complétion.
+ */
+
 #ifndef VISITEUR_COMPLETION_H
 #define VISITEUR_COMPLETION_H
 #include"completion.h"
@@ -9,6 +14,9 @@ class UVManager;
 class DossierManager;
 class ChoixAppliSemestre;
 
+/*!
+ * \brief Classe implémentant le design pattern visiteur.
+ */
 class visiteurCompletion
 {
     ChoixAppliSemestre * choix;

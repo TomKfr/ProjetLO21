@@ -1,3 +1,6 @@
+/// \file iterateur.h
+/// \brief fichier contenant la définition du template itérateur.
+
 #ifndef ITERATEUR_H
 #define ITERATEUR_H
 

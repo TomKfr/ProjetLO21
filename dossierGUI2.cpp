@@ -19,7 +19,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     numLabel=new QLabel("numero de dossier", this);
     nomLabel=new QLabel("nom de l'etudiant", this);
     prenomLabel=new QLabel("prenom de l'etudiant", this);
-    formationLabel=new QLabel("formation suivie", this);
+    formationLabel=new QLabel("formation suivie :", this);
+    filiereLabel=new QLabel("Filière suivie :", this);
     semestreLabel=new QLabel("numero de semestre actuel", this);
     SelectUV= new QPushButton("2 - Remplir la liste des UVs");
     SelectEquivalences=new QPushButton("3 - Saisir des equivalences");
@@ -36,6 +37,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     {
         f->addItem(it.key());
     }
+    fil=new QComboBox(this);
+
     semestre=new QSpinBox(this);
     semestre->setRange(1,8);
     semestre->setValue(1);
@@ -53,6 +56,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     coucheH2=new QHBoxLayout;
     coucheH2->addWidget(formationLabel);
     coucheH2->addWidget(f);
+    coucheH2->addWidget(filiereLabel);
+    coucheH2->addWidget(fil);
     coucheH2->addWidget(semestreLabel);
     coucheH2->addWidget(semestre);
 
@@ -76,6 +81,8 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
 
     setLayout(couche);
 
+    setrightFil();
+
     qDebug()<<"iciii dans dossier ajout avant cliquer";
 
     QMessageBox::information(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
@@ -89,6 +96,7 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     qDebug()<<"iciii dans dossier ajout avant cliquer5";
     QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(disable()));
     QObject::connect(quitter,SIGNAL(clicked()),this,SLOT(close()));
+    QObject::connect(f,SIGNAL(currentTextChanged(QString)),this,SLOT(setrightFil()));
 }
 
 /*!
@@ -105,7 +113,7 @@ void DossierAjout::slot_ajoutDossier() {
     const QString& F=f->currentText();
 
 
-    M.ajouterDossier(n, name , fn, F, ns);
+    M.ajouterDossier(n, name , fn, F, fil->currentText(), ns);
     Dossier* d=M.trouverDossier(n);
     dos=d;
 
@@ -127,6 +135,21 @@ void DossierAjout::slot_selectUV() {
     fenetre->show();
 }
 void DossierAjout::disable(){sauver->setDisabled(true);}
+/*!
+ * \brief Mets à jour le champ de sélection des filières en fonction de la formation sélectionnée.
+ */
+void DossierAjout::setrightFil()
+{
+    fil->clear();
+    fil->addItem("");
+    cursusManager& cman=cursusManager::getInstance();
+    formation* form=cman.trouverForm(f->currentText());
+    for(QSet<QString>::iterator it=form->getFilBegin();it!=form->getFilEnd();it++)
+    {
+        fil->addItem(*it);
+    }
+}
+
 // PAUSE!!!!!
 /*!
  * \brief constructeur de la fenêtre d'ajout d'une UV dans un dossier
@@ -244,7 +267,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     prenom=new QLineEdit(pn, this);
     prenomLabel= new QLabel("prenom de l'etudiant : ", this);;
 
-    formationLabel=new QLabel("formation suivie : "+forma, this);
+    formationLabel=new QLabel("formation suivie : "+forma+"  filière : "+d->getFiliere(), this);
     semestreLabel=new QLabel("Numéro de semestre actuel :",this);
     modifUV=new QPushButton("voir / modifier les UVs de ce dossier et les resultats", this);
     modifFormation=new QPushButton("modifier la formation de l'etudiant", this);
@@ -299,6 +322,7 @@ void ModifierDossier::slot_modifFormation() {
  */
 void ModifFormation::enregistrer_formation() {
       dossier->setFormation(f->currentText());
+      dossier->setFiliere(fil->currentText());
       QMessageBox::information(this, "sauvegarde", "Formation enregistree");
       this->close();
 }
@@ -312,7 +336,9 @@ ModifFormation ::ModifFormation(Dossier * d)
     dossier=d;
     formationLabel=new QLabel("Choisissez une formation", this);
     f= new QComboBox;
-    update();
+    filiereLabel=new QLabel("Choisissez une filière", this);
+    fil= new QComboBox;
+
     valider=new QPushButton("Valider", this);
 
     coucheH1=new QHBoxLayout;
@@ -320,28 +346,47 @@ ModifFormation ::ModifFormation(Dossier * d)
     coucheH1->addWidget(f);
 
     coucheH2=new QHBoxLayout;
-    coucheH2->addWidget(valider);
+    coucheH2->addWidget(filiereLabel);
+    coucheH2->addWidget(fil);
 
     couche=new QVBoxLayout;
     couche->addLayout(coucheH1);
     couche->addLayout(coucheH2);
-
+    couche->addWidget(valider);
     setLayout(couche);
-    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer_formation()));
 
+    update();
+    setrightFil();
+
+    QObject::connect(valider, SIGNAL(clicked()), this, SLOT(enregistrer_formation()));
+    QObject::connect(f,SIGNAL(currentTextChanged(QString)),this,SLOT(setrightFil()));
 }
 /*!
  * \brief Mise à jour des champs de la fenêtre
  */
 void ModifFormation::update() {
 
-        f->clear();
-        cursusManager& m=cursusManager::getInstance();
-        for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
-        {
-            f->addItem(it.key());
-        }
+    f->clear();
+    cursusManager& m=cursusManager::getInstance();
+    for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
+    {
+        f->addItem(it.key());
+    }
+    f->setCurrentText(dossier->getFormation());
 }
+void ModifFormation::setrightFil()
+{
+    fil->clear();
+    fil->addItem("");
+    cursusManager& cman=cursusManager::getInstance();
+    formation* form=cman.trouverForm(f->currentText());
+    for(QSet<QString>::iterator it=form->getFilBegin();it!=form->getFilEnd();it++)
+    {
+        fil->addItem(*it);
+    }
+    fil->setCurrentText(dossier->getFiliere());
+}
+
 /*!
  * \brief exécute la modification du Dossier
  */

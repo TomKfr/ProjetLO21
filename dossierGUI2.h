@@ -80,6 +80,8 @@ class DossierAjout : public QWidget{
     QLabel* prenomLabel;
     QComboBox* f;
     QLabel* formationLabel;
+    QComboBox* fil;
+    QLabel* filiereLabel;
     QLabel * semestreLabel;
     QSpinBox * semestre;
 
@@ -110,6 +112,7 @@ public slots:
  void update();
  void select_equivalences();
  void disable();
+ void setrightFil();
 };
 
 
@@ -193,6 +196,8 @@ class ModifFormation : public QWidget
     Dossier * dossier;
     QLabel * formationLabel;
     QComboBox* f;
+    QLabel * filiereLabel;
+    QComboBox* fil;
     QPushButton* valider;
     QVBoxLayout * couche;
     QHBoxLayout* coucheH1;
@@ -204,6 +209,7 @@ public :
 public slots :
    void enregistrer_formation();
    void update();
+   void setrightFil();
 };
 
 /*!

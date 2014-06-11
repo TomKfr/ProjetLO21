@@ -26,7 +26,9 @@ class ChoixAppli;
 class ChoixAppliSemestre;
 class Dossier;
 
-
+/*!
+ * \brief Les objets de type \"souhaits\" contiennent les souhaits émis par un utilisateur concernant les UVs.
+ */
 class souhaits
 {
     friend class DossierManager;
@@ -85,6 +87,7 @@ class Dossier {
     QString nom;
     QString prenom;
     QString F;
+    QString filiere;
     unsigned int nbSemestre; //GI 01/02/03
     QMap<QString,Note> listeUV; //Code de l'UV + note obtenue !!
     Equivalences** equivalence;
@@ -96,7 +99,7 @@ class Dossier {
     unsigned int nbPropositions;
     unsigned int nbMaxPropositions;
 
-    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb) : numero(num), nom(n), prenom(p), F(f),
+    Dossier(unsigned int num, const QString& n, const QString& p, const QString& f,const QString& fil, unsigned int nb) : numero(num), nom(n), prenom(p), F(f), filiere(fil),
         nbSemestre(nb), nbEquivalences(0), semestreprevu(0),
          Completion(0), nbPropositions(0), nbMaxPropositions(0)
     {
@@ -114,6 +117,7 @@ public :
     const QString& getNom() const {return nom;}
     const QString& getPrenom() const {return prenom;}
     const QString& getFormation() const {return F;}
+    const QString& getFiliere() const {return filiere;}
     unsigned int getNumSemestre() const {return nbSemestre;}
     Equivalences ** getEquivalences() const {return equivalence;}
     souhaits * getSouhaits() const {return Souhaits;}
@@ -126,6 +130,7 @@ public :
     void setNom(const QString& n) { nom=n; }
     void setPrenom(const QString& n) { prenom=n; }
     void setFormation(const QString& f) { F=f; }
+    void setFiliere(const QString& fil) {filiere=fil;}
     void setSemestre(unsigned int nb) { this->nbSemestre=nb; }
     void setResultat(const QString& code, Note n);
     void setEquivalences(Equivalences** l) { equivalence=l; }
@@ -185,7 +190,7 @@ public:
     unsigned int getnbMaxDos() const {return nbMaxDos;}
     Dossier* trouverDossier(unsigned int n) const;
 
-    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f, unsigned int nb);
+    void ajouterDossier(unsigned int num, const QString& n, const QString& p, const QString& f, const QString& fil, unsigned int nb);
     void removeDossier(Dossier * dos);
 
     void addItem(Dossier* dos);

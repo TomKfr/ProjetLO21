@@ -83,7 +83,9 @@ public slots :
     void enregistrer_reponse();
 
 };
-
+/*!
+ * \brief Classe dont les objets permettent d'afficher les détails d'unbe proposition à l'écran.
+ */
 class AfficherProposition : public QWidget {
     Q_OBJECT
 

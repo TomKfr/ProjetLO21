@@ -1,3 +1,6 @@
+///\file algoCompletion.cpp
+///\brief fichier contenant l'algorithme utilisé pour générer une proposition.
+
 #include "completion.h"
 #include "cursus.h"
 #include "dossier.h"

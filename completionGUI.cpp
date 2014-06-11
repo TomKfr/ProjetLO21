@@ -1,6 +1,7 @@
 #include "completionGUI.h"
 #include "UTProfiler.h"
 #include "completion.h"
+#include "cursus.h"
 
 #include <QMessageBox>
 #include<QDir>
@@ -124,6 +125,9 @@ MenuSouhaits::MenuSouhaits(Dossier *d, souhaits *sht)
 void MenuSouhaits::update()
 {
     UVManager& uman=UVManager::getInstance();
+    cursusManager& cman=cursusManager::getInstance();
+    QString txtform=dos->getFormation();
+    formation* form=cman.trouverForm(txtform);
     choix1->clear();
     choix2->clear();
     choix3->clear();
@@ -156,7 +160,7 @@ void MenuSouhaits::update()
                     }
                     else
                     {
-                        choix1->addItem(it.courant()->getCode());
+                        if(!form->estObligatoire(it.courant()->getCode())) choix1->addItem(it.courant()->getCode());
                     }
                 }
             }

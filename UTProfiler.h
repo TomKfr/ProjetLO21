@@ -33,7 +33,9 @@ enum Saison { Automne, Printemps };
 Saison StringToSaison(const QString& s);
 QString SaisonToString(Saison c);
 inline QTextStream& operator<<(QTextStream& f, const Saison& s) { if (s==Automne) f<<"A"; else f<<"P"; return f;}
-
+/*!
+ * \brief Classes permettant de gérer les Semestres comme des objets.
+ */
 class Semestre {
     Saison saison;
     unsigned int annee;
@@ -50,7 +52,9 @@ public:
 };
 
 inline QTextStream& operator<<(QTextStream& f, const Semestre& s) { return f<<s.getSaison()<<s.getAnnee()%100; }
-
+/*!
+ * \brief Un objet de type \"UV\" contient tous les détails relatifs à une UV.
+ */
 class UV {
     QString code;
     QString titre;
@@ -80,7 +84,9 @@ public:
 
 QTextStream& operator<<(QTextStream& f, const UV& uv);
 
-
+/*!
+ * \brief Singleton gérant les UVs.
+ */
 class UVManager {
 private:
     UV** uvs;
@@ -189,19 +195,6 @@ public:
     FilterIterator getFilterIterator(Categorie c) {
         return FilterIterator(uvs,nbUV,c);
     }*/
-};
-
-
-class Inscription {
-    const UV* uv;
-    Semestre semestre;
-    Note resultat;
-public:
-    Inscription(const UV& u, const Semestre& s, Note res=EC):uv(&u),semestre(s),resultat(res){}
-    const UV& getUV() const { return *uv; }
-    Semestre getSemestre() const { return semestre; }
-    Note getResultat() const { return resultat; }
-    void setResultat(Note newres) { resultat=newres; }
 };
 
 #endif

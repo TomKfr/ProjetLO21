@@ -1,7 +1,15 @@
+/*!
+ *  \file visiteur.cpp
+ *  \brief Fichier contenant la définition des méthodes du premier visiteur.
+ */
+
 #include "visiteur.h"
 #include "UTProfiler.h"
 #include "cursus.h"
 
+/*!
+ * \brief Visite l'UVManager pour retrouver les pointeurs d'UVs correspondants à la liste stockéen en attribut.
+ */
 void visiteur::visitUVmanager()
 {
     //aller dans l'uv manager pour récupérer un tableau de pointeurs d'uvs correspondant à l'attribut stringlist
@@ -12,7 +20,11 @@ void visiteur::visitUVmanager()
         listuvs.insert(newuv.getCode(),&newuv);
     }
 }
-
+/*!
+ * \brief Visite le cursusManager pour ajouter les UVs aux formations ou aux filières.
+ * \param cman pointeur vers le cursusManager
+ * \param c indique le type de donnée à traiter
+ */
 void visiteur::visitCursusManager(cursusManager* cman, QString c)
 {
     //retrouver le cursus qui vient d'être créée dans le cursus manager.

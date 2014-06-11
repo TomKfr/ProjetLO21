@@ -1,9 +1,17 @@
+/*!
+ *  \file uvGUI.cpp
+ *  \brief Fichier contenant les définitions des méthodes des classes permettant à l'utilisateur de gérer les UV connues de l'application.
+ */
+
 #include "uvGUI.h"
 #include "UTProfiler.h"
 #include "cursus.h"
 #include<QDebug>
 #include<QString>
 
+/*!
+ * \brief Constructeur du menu initial de gestion des UVs.
+ */
 Debut::Debut() {
     qDebug()<<"coucou1";
 
@@ -40,7 +48,9 @@ Debut::Debut() {
     qDebug()<<"coucou";
 
 }
-
+/*!
+ * \brief Mise à jour des champs du menu.
+ */
 void Debut::update() {
 
     liste->clear();
@@ -50,7 +60,9 @@ void Debut::update() {
         liste->addItem(it.courant()->getCode());
     }
 }
-
+/*!
+ * \brief Ouvre la fenêtre permettant la visualisation des détails d'une UV.
+ */
 void Debut::afficher() {
     UVManager& uvm=UVManager::getInstance();
     UV* up=uvm.trouverUV(liste->currentText());
@@ -58,7 +70,11 @@ void Debut::afficher() {
     fenetre-> show();
 }
 
-
+/*!
+ * \brief Constructeur de la fenêtre de visualisation des détails d'une UV
+ * \param u pointeur vers l'UV à afficher
+ * \param uvm référence vers l'UVManager
+ */
 UvAfficheur::UvAfficheur(UV& u, UVManager & uvm) : uv(u), M(uvm) {
 
 
@@ -112,11 +128,12 @@ UvAfficheur::UvAfficheur(UV& u, UVManager & uvm) : uv(u), M(uvm) {
        setLayout(couche);
 
        QObject::connect(fin, SIGNAL(clicked()), this, SLOT(termine()));
-
-};
+}
 
 void UvAfficheur::termine() {this->close();}
-
+/*!
+ * \brief Exécute la suppression d'une UV.
+ */
 void Debut::suppression() { //lancement de la fenetre de suppression pour rentrer le code
     bool found;
     UVManager& uvm=UVManager::getInstance();
@@ -155,7 +172,11 @@ void Debut::suppression() { //lancement de la fenetre de suppression pour rentre
 void Debut::fin() {
     this->close();
 }
-
+/*!
+ * \brief Ouvre la fenêtre de modification d'une UV.
+ *
+ * La méthode vérifie si l'UV n'appartient pas à une formation ou à une filière avant d'autoriser la modification pour assurer l'intégrité des données.
+ */
 void Debut::modif() {
 
     bool found=false;
@@ -191,7 +212,9 @@ void Debut::modif() {
     }
 
 }
-
+/*!
+ * \brief Ouvre la fenêtre de création d'une nouvelle UV.
+ */
 void Debut::ajout() {
 
     UVManager& m=UVManager::getInstance();
@@ -200,7 +223,12 @@ void Debut::ajout() {
     fenetre->show();
 }
 
-
+/*!
+ * \brief Constructeur de la fenêtre de modification d'une UV.
+ * \param uvToEdit référence vers l'UV à modifier
+ * \param uvm référence vers l'UVManager
+ * \param parent fenêtre parente
+ */
 UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(parent), uv(uvToEdit), M(uvm) {
 
     this->setWindowTitle(QString("Edition de l'UV")+uv.getCode());
@@ -266,7 +294,9 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
 
 }
 
-
+/*!
+ * \brief Valide la modification et auvegarde l'UV.
+ */
 void UVEditeur::sauverUV()
 {
     uv.setCode(code->text());  //modification du texte avec ce qu'à rentré l'utilisateur dans la QlineEdit
@@ -283,7 +313,10 @@ void UVEditeur::sauverUV()
 /*void UVEditeur::activerSauver(QString s){
     sauver->setEnabled(true); //une modification entraine une activation du bouton sauver
 }*/
-
+/*!
+ * \brief Constructeur de la fenêtre de création d'une UV
+ * \param uvm référence vers l'UVManager.
+ */
 UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
 
     this->setWindowTitle(QString("Ajout d'une UV"));
@@ -355,7 +388,9 @@ UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
    //pour que ça sactive que si modif :
    //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
-
+/*!
+ * \brief Exécute l'ajout d'une nouvelle UV.
+ */
 void UVAjout::slot_ajoutUV() {
 
     M.ajouterUV(code->text(), titre->toPlainText(), credits->value(), Categorie(categorie->currentIndex()), automne->isChecked(), printemps->isChecked());

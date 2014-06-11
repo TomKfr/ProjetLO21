@@ -1,3 +1,8 @@
+/*!
+ *  \file UTprofiler.cpp
+ *  \brief Fichier développé lors des scéances de TD.
+ */
+
 #include "UTProfiler.h"
 #include "visiteur.h"
 #include <sstream>

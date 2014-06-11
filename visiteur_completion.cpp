@@ -1,3 +1,8 @@
+/*!
+ *  \file visiteur_completion.cpp
+ *  \brief Fichier contenant la définition des méthodes du visiteur utilisé lors de la complétion.
+ */
+
 #include "visiteur_completion.h"
 #include "UTProfiler.h"
 #include "dossier.h"
@@ -5,7 +10,9 @@
 
 class Dossier;
 
-
+/*!
+ * \brief Visite l'UVManager pour retrouver les pointeurs d'UVs correspondants à la liste stockéen en attribut.
+ */
 void visiteurCompletion::visitUVmanager()
 {
     //aller dans l'uv manager pour récupérer un tableau de pointeurs d'uvs correspondant à l'attribut stringlist
@@ -27,6 +34,10 @@ void visiteurCompletion::visitUVmanager()
     qDebug()<<"fin de visitUVManager";
 }
 
+/*!
+ * \brief Visite le DossierManager pour ajouter les solutions de complétion aux dossiers.
+ * \param d pointeur vers le Dossier concerné
+ */
 void visiteurCompletion::visitDossierManager(Dossier* d)
 {
     //retrouver la completion qui vient detre creee dans le dossier

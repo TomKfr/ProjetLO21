@@ -1,3 +1,6 @@
+/// \file exception.h
+/// \brief Fichier contenant la déclaration de la classe permeattant de gérer les exceptions dans l'application.
+
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 

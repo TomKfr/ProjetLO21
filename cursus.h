@@ -119,6 +119,8 @@ public:
     void setNbCrRequis(Categorie cat, unsigned int nb);
     QMap<Categorie,unsigned int>::iterator getCrRequisBegin() {return credits_requis.begin();}
     QMap<Categorie,unsigned int>::iterator getCrRequisEnd() {return credits_requis.end();}
+    QSet<QString>::iterator getFilBegin() {return filieresAssoc.begin();}
+    QSet<QString>::iterator getFilEnd() {return filieresAssoc.end();}
     /**
      * @brief Ajoute une UV obligatoire dans la formation
      * @param code Code de l'UV à ajouter

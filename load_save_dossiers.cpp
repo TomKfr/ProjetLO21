@@ -57,6 +57,7 @@ void DossierManager::load()
                 QString nom;
                 QString prenom;
                 QString formation;
+                QString filiere;
                 unsigned int numSemestre;
                 QStringList listUV;
                 QStringList listResult;
@@ -91,6 +92,9 @@ void DossierManager::load()
                         if(xml.name() == "formation") {
                             xml.readNext(); formation=xml.text().toString();
                         }
+                        if(xml.name() == "filiere") {
+                            xml.readNext(); filiere=xml.text().toString();
+                        }
                         if(xml.name() == "semestre") {
                             xml.readNext(); numSemestre=xml.text().toUInt();
                         }
@@ -117,7 +121,7 @@ void DossierManager::load()
                                 xml.readNext();
                             }
 
-                            ajouterDossier(numero,nom, prenom, formation, numSemestre);
+                            ajouterDossier(numero,nom, prenom, formation, filiere, numSemestre);
                         }//fin if pour uv
 
                         if(xml.name() == "equivalences")
@@ -272,6 +276,7 @@ void DossierManager::save(){
         stream.writeTextElement("nom",tabDossiers[i]->getNom());
         stream.writeTextElement("prenom",tabDossiers[i]->getPrenom());
         stream.writeTextElement("formation",tabDossiers[i]->getFormation());
+        stream.writeTextElement("filiere",tabDossiers[i]->getFiliere());
         qDebug()<<"point4";
         stream.writeTextElement("semestre",QString::number(tabDossiers[i]->getNumSemestre()));
         qDebug()<<"point5";

@@ -1,3 +1,8 @@
+/*!
+ *  \file visiteur2.cpp
+ *  \brief Fichier contenant la définition des méthodes du second visiteur.
+ */
+
 #include "visiteur2.h"
 #include "UTProfiler.h"
 #include "dossier.h"
@@ -5,7 +10,9 @@
 
 class Dossier;
 
-
+/*!
+ * \brief Visite l'UVManager pour retrouver les pointeurs d'UVs correspondants à la liste stockéen en attribut.
+ */
 void visiteur2::visitUVmanager()
 {
     //aller dans l'uv manager pour récupérer un tableau de pointeurs d'uvs correspondant à l'attribut stringlist
@@ -27,7 +34,10 @@ void visiteur2::visitUVmanager()
 
     qDebug()<<"fin de visitUVManager";
 }
-
+/*!
+ * \brief Visite le cursusManager pour ajouter les UVs aux dossiers.
+ * \param man pointeur vers le DossierManager
+ */
 void visiteur2::visitDossierManager(DossierManager* man)
 {
     //retrouver le dossier qui vient d'être créée dans le dossier manager.

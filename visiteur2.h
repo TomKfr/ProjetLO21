@@ -1,3 +1,9 @@
+/*!
+ *  \file visiteur2.h
+ *  \brief Fichier contenant la déclaration du second visiteur.
+ */
+
+
 #ifndef VISITEUR2_H
 #define VISITEUR2_H
 
@@ -8,6 +14,9 @@ class UV;
 class UVManager;
 class DossierManager;
 
+/*!
+ * \brief Classe implémentant le design pattern visiteur.
+ */
 class visiteur2
 {
     unsigned int num;
