@@ -31,7 +31,11 @@ QString ReponseToString(Reponse c){
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     return "";
 }
-
+/*!
+ * \brief Fenêtre de gestion des souhaits
+ * \param d pointeur vers le dossier concerné
+ * \param sht pointeur vers l'objet souhaits du dossier (vaut 0 si non créé)
+ */
 MenuSouhaits::MenuSouhaits(Dossier *d, souhaits *sht)
 {
     this->setWindowTitle("Gérer les souhaits");
@@ -114,7 +118,9 @@ MenuSouhaits::MenuSouhaits(Dossier *d, souhaits *sht)
 
     update();
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void MenuSouhaits::update()
 {
     UVManager& uman=UVManager::getInstance();
@@ -161,7 +167,9 @@ void MenuSouhaits::update()
         listrejetees->setText(list3);
     }
 }
-
+/*!
+ * \brief Ajoute une UV à la liste correspondante au radio-bouton coché.
+ */
 void MenuSouhaits::ajUV()
 {
     if(exigeebutton->isChecked()) objet->Ajt_exigence(choix1->currentText());
@@ -169,21 +177,33 @@ void MenuSouhaits::ajUV()
     if(rejeteebutton->isChecked()) objet->Ajt_rejet(choix1->currentText());
     update();
 }
+/*!
+ * \brief Appelle la méthode de retrait d'une UV de la liste des UVs exigées.
+ */
 void MenuSouhaits::suprexigee()
 {
     objet->Suppr_exigence(choix2->currentText());
     update();
 }
+/*!
+ * \brief Appelle la méthode de retrait d'une UV de la liste des UVs préférées.
+ */
 void MenuSouhaits::suprpref()
 {
     objet->Suppr_prefernce(choix3->currentText());
     update();
 }
+/*!
+ * \brief Appelle la méthode de retrait d'une UV de la liste des UVs rejetées.
+ */
 void MenuSouhaits::suprrejet()
 {
      objet->Suppr_rejet(choix4->currentText());
      update();
 }
+/*!
+ * \brief Sauvegarde le dossier et ferme la fenêtre.
+ */
 void MenuSouhaits::fermer()
 {
     DossierManager& dman=DossierManager::getInstance();
@@ -192,7 +212,10 @@ void MenuSouhaits::fermer()
 }
 
 //commenté car pb d'inclusion empechant la compilation
-
+/*!
+ * \brief Affiche le menu de gestion de la complétion automatique.
+ * \param d Pointeur vers le dossier sur lequel on veut travailler.
+ */
 MenuCompletion::MenuCompletion(Dossier* d) : dos(d) {
     this->setWindowTitle("Choix de l'operation");
 
@@ -232,18 +255,25 @@ MenuCompletion::MenuCompletion(Dossier* d) : dos(d) {
     QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
 
 }
-
+/*!
+ * \brief Charge les complétions éventuellement réalisées et ferme la fenêtre.
+ */
 void MenuCompletion::fin() {
     ChoixManager& cm=ChoixManager::getInstance();
     cm.load_completion();
     this->close();}
-
+/*!
+ * \brief Affiche la fenêtre permettant de consulter l'historique des propositions.
+ */
 void MenuCompletion::consulter_historique() {
     qDebug()<<"dans le slot";
     Historique * fenetre = new Historique(dos);
     fenetre->show();
 }
-
+/*!
+ * \brief Fenêtre d'affichage d'une proposition
+ * \param dossier pointeur vers le dossier concerné
+ */
 Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
     this->setWindowTitle(QString("Propositions jusqu'à la fin de vos études"));
@@ -296,7 +326,9 @@ Proposition::Proposition(Dossier * dossier) : d(dossier) {
 
 
 }
-
+/*!
+ * \brief Enregistre la réponse donnée par l'utilisateur pour la proposition en cours.
+ */
 void Proposition::enregistrer_reponse() {
     ChoixManager& cm=ChoixManager::getInstance();
     ChoixAppli * c = cm.getLastProposition();
@@ -305,7 +337,12 @@ void Proposition::enregistrer_reponse() {
     cm.save_completion();
     this->close();
 }
-
+/*!
+ * \brief vérifie si une proposition a été faite pour un semestre donné
+ * \param s semetre donné
+ * \param c proposition globale
+ * \return vrai si il existe une proposition pour le semestre passé en paramètre, faux sinon.
+ */
 bool Proposition::verifierValiditeSemestre(Semestre s, ChoixAppli * c){
 
     //s'il fait partie des semestres de choix appli concerne
@@ -314,12 +351,13 @@ bool Proposition::verifierValiditeSemestre(Semestre s, ChoixAppli * c){
     return 0;
 
 }
-
+/*!
+ * \brief Ouvre la fenêtre d'affichage d'une proposition
+ */
 void Proposition::afficher_proposition() {
     //Recuperer le semestre
 
     ChoixManager& c=ChoixManager::getInstance();
-
     qDebug()<<"afficher proposition1";
     Semestre s(Printemps, 2014);
     qDebug()<<"afficher proposition2";
@@ -351,7 +389,10 @@ void Proposition::afficher_proposition() {
     }
 
 }
-
+/*!
+ * \brief constructeur de la fenêtre d'affcihage d'une proposition
+ * \param choix pointeur vers la proposition à afficher
+ */
 AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
 
 qDebug()<<"dans afficher proposition";
@@ -407,7 +448,10 @@ qDebug()<<"dans afficher proposition";
 
 void AfficherProposition::fin() {this->close();}
 
-
+/*!
+ * \brief Historique::Historique
+ * \param d pointeur vers le dossier.
+ */
 Historique::Historique(Dossier * d) : dos(d) {
 
 intitule=new QLabel("Récapitulatif des propositions de l'application pour votre dossier : ", this);
@@ -496,18 +540,24 @@ this->setLayout(couche);
 
 void Historique::fin() {this->close();}
 
-
+/*!
+ * \brief Ouvre la fenêtre permettant à l'utilisateur de saisir ses souhaits.
+ */
 void MenuCompletion::saisir_souhaits() {
     MenuSouhaits* fenetre=new MenuSouhaits(dos, dos->getSouhaits());
     fenetre->show();
 }
-
+/*!
+ * \brief Ouvre la fenêtre permettant à l'tilisateur de saisir un semestre prévu
+ */
 void MenuCompletion::saisir_previsions() {
 
     menuprevision * fenetre= new menuprevision(dos);
     fenetre->show();
 }
-
+/*!
+ * \brief Lance l'exécution du calcul de complétion automatique
+ */
 void MenuCompletion::lancer_completion() {
 
     ChoixManager& cm=ChoixManager::getInstance();
@@ -523,7 +573,10 @@ void MenuCompletion::lancer_completion() {
           }
     }
 }
-
+/*!
+ * \brief constructeur de la fenêtre de saisie d'un semestre prévu.
+ * \param d pointeur vers le dossier concerné
+ */
 menuprevision::menuprevision(Dossier *d): dos(d)
 {
     this->setWindowTitle("Saisie d'une prévision");
@@ -582,7 +635,9 @@ menuprevision::menuprevision(Dossier *d): dos(d)
 
     this->setLayout(mainbox);
 }
-
+/*!
+ * \brief Mise à jour des champs de la fenêtre
+ */
 void menuprevision::update()
 {
     prevision* prev=dos->getprevisions();
@@ -597,7 +652,9 @@ void menuprevision::update()
        bornesupTSH->setValue(prev->getbsTSH());
     }
 }
-
+/*!
+ * \brief valide et ajoute la prévision au dossier.
+ */
 void menuprevision::valider_prev()
 {
     dos->setprevision(new prevision(destination->text(),bornesupCS->value(),borneinfCS->value(),bornesupTM->value(),borneinfTM->value(),bornesupTSH->value(),borneinfTSH->value()));

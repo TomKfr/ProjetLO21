@@ -1,3 +1,6 @@
+///\file completion.h
+///\brief Ce fichier contient classes d'objets gérant la complétion automatique du cursus d'un étudiant.
+
 #ifndef COMPLETION_H
 #define COMPLETION_H
 #include"UTProfiler.h"
@@ -13,18 +16,29 @@ enum Reponse {Valider, Refuser,Avancer, Retarder};
 Reponse StringToReponse(const QString& s);
 QString ReponseToString(Reponse c);
 
+/*!
+ * \brief Classe abstraite mettant en place une interface unique pour exécuter un algorithme de complétion automatique.
+ *
+ * Cette classe fait partie de l'implémentation du design pattern <em>Strategy</em>, elle définit une interface unique
+ * <em>algoCompletion</em> pour le calcul d'une solution, permettant par l'héritage de développer plus tard différents algorithmes
+ * capables de traiter différamment les données pour proposer une solution.
+ */
 class Strategie {
 
 public :
     virtual void algoCompletion(ChoixManager& cm, Dossier * d) const=0;
 };
-
+/*!
+ * \brief Hérite de la classe Strategie, cette classe implémente l'algorithme de complétion choisi pour l'application.
+ */
 class StrategieConcrete : public Strategie {
 
 public :
     void algoCompletion(ChoixManager& cm, Dossier * d) const ;
 };
-
+/*!
+ * \brief Singleton en charge du calcul des différentes proposition de complétion automatique.
+ */
 class ChoixManager{
     ChoixAppli ** ensemblePropositions; //l'integralite des propositions de l'appli
     ChoixAppli* lastProposition;
@@ -79,7 +93,11 @@ public :
     void save_completion();
 
 };
-
+/*!
+ * \brief classe représentant les décisions prises par l'algorithme quant aux UVs sur un seul semestre.
+ *
+ * Un objet de cette classe est un conteneur reflétant une proposition de l'application pour un semestre.
+ */
 class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
     //faire un load pour ça aussi .. ? comment on sorganise ?
 
@@ -127,7 +145,11 @@ public :
     void calculerProposition();//A DEFINIR
 
 };
-
+/*!
+ * \brief Classe représentant les décisions prises par l'algorithme pour compléter la formation d'un étudiant.
+ *
+ * Un objet de la classe ChoixAppli est un conteneur reflétant une proposition de l'application jusqu'à la fin du cursus de l'étudiant.
+ */
 class ChoixAppli { //regroupe tous les semestres proposes jusqu'à la fin des etudes
 
     unsigned int idProposition;
@@ -155,6 +177,40 @@ public :
 };
 
 
+/*!
+ * \brief Classe d'objets conteneurs pour le stockage des souhaits d'un étudiant concernant les UVs.
+ */
+class souhaits
+{
+    friend class DossierManager;
+
+    Dossier *dos;
+    QSet<QString> exigences;
+    QSet<QString> preferences;
+    QSet<QString> rejets;
+
+public:
+    souhaits(Dossier* d, QSet<QString>& e, QSet<QString>& p, QSet<QString>& r): dos(d), exigences(e), preferences(p), rejets(r) {}
+    void Ajt_exigence(const QString& code);
+    void Ajt_preference(const QString& code);
+    void Ajt_rejet(const QString& code);
+    void Suppr_exigence(const QString& code);
+    void Suppr_prefernce(const QString& code);
+    void Suppr_rejet(const QString& code);
+    bool estExigee(const QString& code) const {return exigences.contains(code);}
+    bool estPreferee(const QString& code) const {return preferences.contains(code);}
+    bool estRejetee(const QString& code) const {return rejets.contains(code);}
+
+    QSet<QString> getExigences() const {return exigences; }
+    QSet<QString> getPreferences() const {return preferences; }
+    QSet<QString> getRejets() const {return rejets; }
+    void setExigences(QSet<QString> s) {exigences=s;}
+    void setPreferences(QSet<QString> s) {preferences=s;}
+};
+
+/*!
+ * \brief Classe d'objets conteneurs pour le stockage d'une prévision de semestre à l'étranger.
+ */
 class prevision
 {
     QString destination;

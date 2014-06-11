@@ -9,7 +9,9 @@
 #include <QFileDialog>
 
 
-
+/*!
+ * \brief Charge les solutions proposées par l'algorihtme de completion automatique précédemment sauvegardées
+ */
 void ChoixManager::load_completion()
 {
 try{
@@ -181,7 +183,9 @@ try{
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
-
+/*!
+ * \brief Sauvegarde dans le fichier completions.xml les solutions en mémoire.
+ */
 void ChoixManager::save_completion(){
     qDebug() << "Save Completions";
     file=QDir::currentPath()+"/completions.xml";

@@ -1,3 +1,7 @@
+/// \file dossier.h
+/// \brief Ce fichier contient les déclarations de classes d'objets conteneurs et manipulateurs
+/// de données des dossiers étudiants.
+
 #ifndef DOSSIER_H
 #define DOSSIER_H
 

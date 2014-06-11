@@ -36,7 +36,9 @@
 */
 
 
-
+/*!
+ * \brief Récupère les dossiers sauvegardés dans le fichiers dossiers.xml et les charge en mémoire.
+ */
 void DossierManager::load()
 {
     try{
@@ -243,6 +245,9 @@ void DossierManager::load()
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
 
+/*!
+ * \brief Sauvegarde les dossiers en mémoire dans le fichier dossiers.xml
+ */
 void DossierManager::save(){
 
     qDebug() << "Save Dossier";

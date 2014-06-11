@@ -6,6 +6,11 @@
 #include <QFile>
 #include <QDir>
 
+/*!
+ * \brief Vérifie si le nombre de crédits souhaités et les UVs de la formation sont compatibles.
+ * \param dos pointeur vers le dossier concerné
+ * \return true si le calcul d'une solution est possible, false sinon.
+ */
 bool ChoixManager::verifCompletion(Dossier * dos) const { //calcule si le nb de credits souhaites et les uvs de la formation sont compatibles
 
     cursusManager& cm=cursusManager::getInstance();
@@ -38,36 +43,69 @@ bool ChoixManager::verifCompletion(Dossier * dos) const { //calcule si le nb de 
     return true; //sinon le calcul est possible
 }
 
-
+/*!
+ * \brief ajoute une UV à la liste des UVs exigées par l'étudiant
+ * \param code code de l'UV à ajouter
+ */
 void souhaits::Ajt_exigence(const QString& code)
 {
     exigences.insert(code);
 }
+/*!
+ * \brief ajoute une UV à la liste des UVs préférées par l'étudiant
+ * \param code code de l'UV à ajouter
+ */
 void souhaits::Ajt_preference(const QString& code)
 {
     preferences.insert(code);
 }
+/*!
+ * \brief ajoute une UV à la liste des UVs rejetées par l'étudiant
+ * \param code code de l'UV à ajouter
+ */
 void souhaits::Ajt_rejet(const QString& code)
 {
     rejets.insert(code);
 }
+/*!
+ * \brief retire une UV de la liste des UVs exigées par l'étudiant
+ * \param code code de l'UV à retirer
+ */
 void souhaits::Suppr_exigence(const QString& code)
 {
     exigences.remove(code);
 }
+/*!
+ * \brief retire une UV de la liste des UVs preférées par l'étudiant
+ * \param code code de l'UV à retirer
+ */
 void souhaits::Suppr_prefernce(const QString& code)
 {
     preferences.remove(code);
 }
+/*!
+ * \brief retire une UV de la liste des UVs rejetées par l'étudiant
+ * \param code code de l'UV à retirer
+ */
 void souhaits::Suppr_rejet(const QString& code)
 {
     rejets.remove(code);
 }
 
-
+/*!
+ * \brief Ajoute une UV à une proposition pour un semestre
+ * \param uv pointeur vers l'UV à ajouter
+ */
 void ChoixAppliSemestre::ajoutUV(UV* uv) {propositionUV.insert(uv->getCode(),uv); nbUV++; }
+/*!
+ * \brief retire une UV d'une proposition pour un semestre
+ * \param uv pointeur vers l'UV à retirer
+ */
 void ChoixAppliSemestre::supprimerUV(UV* uv) {propositionUV.erase(propositionUV.find(uv->getCode())); nbUV--; }
-
+/*!
+ * \brief Ajoute une proposition sur un semestre à une proposition globale
+ * \param prop pointeur vers la proposition à ajouter
+ */
 void ChoixAppli::ajouter_proposition(ChoixAppliSemestre* prop) {
 
 if (nbSemestre==nbMaxSemestre) {
@@ -83,6 +121,11 @@ listePropositions[nbSemestre++]=prop;
 
 }
 
+/*!
+ * \brief Permet de trouver la/les propositions faites par l'application pour un semestre donné
+ * \param S semestre pour lequel on souhaite retrouver la proposition
+ * \return Une proposition sur un semestre
+ */
 ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
 
 
@@ -99,14 +142,17 @@ ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
 
     return 0;
 }
-
+/*!
+ * \brief Retrouve une proposition à partir d'un identifiant donné
+ * \param id identifiant de la proposition recherchée.
+ * \return une proposition sur un semestre.
+ */
 ChoixAppli * ChoixManager::trouverProposition(unsigned int id) {
 
     for (unsigned int i=0; i<nbPropositions; i++) {if (ensemblePropositions[i]->getIdentifiant()==id) return ensemblePropositions[i];}
     return 0;
 
 }
-
 
 
 ChoixManager::Handler ChoixManager::handler=Handler();
@@ -123,6 +169,10 @@ void ChoixManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
+/*!
+ * \brief Ajoute une nouvelle proposition à celles connues par le ChoixManager
+ * \param c pointeur vers la proposition à ajouter
+ */
 void ChoixManager::ajouterProposition(ChoixAppli* c) {
     try{
         if (trouverProposition(c->getIdentifiant())) {
@@ -144,7 +194,11 @@ void ChoixManager::ajouterProposition(ChoixAppli* c) {
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
-
+/*!
+ * \brief Retrouve la/les propositions qui ont été faites pour un dossier donné.
+ * \param d pointeur vers le dossier concerné
+ * \return une proposition globale
+ */
 ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
 
     qDebug()<<"dans la recherche de la proposition";
@@ -177,7 +231,11 @@ ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
    return result;
 
 }
-
+/*!
+ * \brief Calcule le nombre de propositions existantes pour un dossier.
+ * \param d pointeur vers le dossier concerné
+ * \return nombre de propositions.
+ */
 unsigned int ChoixManager::trouverNbPropositionsDossier(Dossier *d) {
     qDebug()<<"dans le calcul du nb de propositions";
 
@@ -190,7 +248,10 @@ unsigned int ChoixManager::trouverNbPropositionsDossier(Dossier *d) {
    return nbResult;
 }
 
-
+/*!
+ * \brief Supprime toutes les propositions existantes pour un dossier donné.
+ * \param d pointeur vers le dossier concerné.
+ */
 void ChoixManager::removeChoix(Dossier * d) {
     qDebug()<<"dans la suppression des choix";
 

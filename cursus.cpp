@@ -15,8 +15,10 @@ cursusManager::Handler cursusManager::handler=Handler();
 
 class visiteur;
 
-// ///////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////
+
 void abstract_cursus_item::ajouter_UV(UV *newuv) {uvs.insert(newuv->getCode(),newuv);}
+
 void abstract_cursus_item::supprimer_UV(const QString &code)
 {
     if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV "+code+" ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
@@ -24,6 +26,7 @@ void abstract_cursus_item::supprimer_UV(const QString &code)
         uvs.remove(code);
     }
 }
+
 UV* abstract_cursus_item::trouverUV(const QString &code)
 {
     if(uvs.contains(code))
@@ -45,22 +48,27 @@ void formation::supprimer_UV(const QString& code)
         uvs.remove(code);
     }
 }
+
 unsigned int formation::getCrRequis(Categorie cat) const
 {
     return credits_requis.find(cat).value();
 }
+
 void formation::setNbCrRequis(Categorie cat, unsigned int nb)
 {
     credits_requis.insert(cat,nb);
 }
+
 void formation::ajt_UV_obligatoire(const QString &code)
 {
     UVs_obligatoires.insert(code);
 }
+
 void formation::suppr_UV_obligatoire(const QString &code)
 {
     UVs_obligatoires.remove(code);
 }
+
 bool formation::estObligatoire(const QString &code) const
 {
     return UVs_obligatoires.contains(code);
@@ -115,7 +123,6 @@ formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, u
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
     return 0;
 }
-
 void cursusManager::ajouterFiliere(const QString &nom, unsigned int c)
 {
     try{
@@ -130,7 +137,6 @@ void cursusManager::ajouterFiliere(const QString &nom, unsigned int c)
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
-
 void cursusManager::supprimerFormation(const QString &nom)
 {
     formations.erase(formations.find(nom));
