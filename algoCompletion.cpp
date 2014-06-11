@@ -2,20 +2,14 @@
 #include "cursus.h"
 #include "dossier.h"
 #include<QSet>
-
-
-<<<<<<< HEAD
-
-void StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
-=======
 /*!
  * \brief Algorithme de complétion automatique, génère une propsition pour le dossier en cours.
  * \param cm référence vers le ChoixManager
  * \param d pointeur vers le dossier concerné
  * \return une proposition de fin de cursus sous forme d'un objet ChoixAppli.
  */
-ChoixAppli* StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
->>>>>>> 8fd48befb6645fcf78b8373e80ebedcc593f9405
+void StrategieConcrete::algoCompletion(ChoixManager& cm, Dossier * d) const {
+
     qDebug()<<"DANS LE CALCUL DE COMPLETION";
     UVManager& uvm=UVManager::getInstance();
     cursusManager& curMan=cursusManager::getInstance();
