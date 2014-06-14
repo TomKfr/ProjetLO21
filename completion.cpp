@@ -31,12 +31,16 @@ bool ChoixManager::verifCompletion(Dossier * dos) const { //calcule si le nb de 
         //si on demande plus que ce qui est possible avec les uvs de la formation, alors cest impossible
 
         if (it.key()==CS) {
+            qDebug()<<"vous pouvez avoir en cs : "<<totalCumulableCS;
             if (it.value()>totalCumulableCS) return false; }
         else if (it.key()==TM){
+            qDebug()<<"vous pouvez avoir en tm : "<<totalCumulableTM;
             if (it.value()>totalCumulableTM) return false; }
         else if (it.key()==TSH){
+            qDebug()<<"vous pouvez avoir en tsh : "<<totalCumulableTSH;
             if (it.value()>totalCumulableTSH) return false; }
         else if (it.key()==SP){
+            qDebug()<<"vous pouvez avoir en sp : "<<totalCumulableSP;
             if (it.value()>totalCumulableSP) return false; }
     }
 

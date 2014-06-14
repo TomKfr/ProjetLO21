@@ -117,6 +117,16 @@ formation* cursusManager::ajouterFormation(const QString& nom, unsigned int c, u
             newform->setNbCrRequis(TSH,ctsh);
             newform->setNbCrRequis(SP,csp);
             formations.insert(nom,newform);
+
+            UVManager& uman=UVManager::getInstance();
+            for(iterateur<UV> it=uman.getIterateurForm(); !it.isDone(); it.next())
+            {
+                if(it.courant()->getCategorie()==TSH)
+                {
+                    newform->ajouter_UV(it.courant());
+                }
+            }
+
             return newform;
         }
     }

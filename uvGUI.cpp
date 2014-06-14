@@ -247,8 +247,8 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
     categorie=new QComboBox(this);
     categorie->addItem("CS");
     categorie->addItem("TM");
-    categorie->addItem("SP");
     categorie->addItem("TSH");
+    categorie->addItem("SP");
     categorie->setCurrentIndex(int(uv.getCategorie()));
 
     automne=new QCheckBox("automne", this);
@@ -336,8 +336,9 @@ UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
     categorie=new QComboBox(this);
     categorie->addItem("CS");
     categorie->addItem("TM");
-    categorie->addItem("SP");
+
     categorie->addItem("TSH");
+    categorie->addItem("SP");
     categorie->setCurrentIndex(0);
 
     automne=new QCheckBox("automne", this);
@@ -392,7 +393,7 @@ UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
  * \brief Exécute l'ajout d'une nouvelle UV.
  */
 void UVAjout::slot_ajoutUV() {
-
+qDebug()<<categorie->currentIndex();
     M.ajouterUV(code->text(), titre->toPlainText(), credits->value(), Categorie(categorie->currentIndex()), automne->isChecked(), printemps->isChecked());
     //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "UV sauvegardee");
