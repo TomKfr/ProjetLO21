@@ -23,8 +23,7 @@ class Dossier;
 /*!
  * \brief Fenêtre d'acceuil de la partie complétion, elle permet de lancer le calcul d'une solution et de consulter celles précédemment calculées.
  */
-class MenuCompletion : public QWidget{ //dans ce menu on peut consulter l'historique des propositions, remplir ses souhaits,
-    //et ses previsions pour les semestres à venir
+class MenuCompletion : public QWidget{
 
      Q_OBJECT
 

@@ -31,16 +31,12 @@ bool ChoixManager::verifCompletion(Dossier * dos) const { //calcule si le nb de 
         //si on demande plus que ce qui est possible avec les uvs de la formation, alors cest impossible
 
         if (it.key()==CS) {
-            qDebug()<<"vous pouvez avoir en cs : "<<totalCumulableCS;
             if (it.value()>totalCumulableCS) return false; }
         else if (it.key()==TM){
-            qDebug()<<"vous pouvez avoir en tm : "<<totalCumulableTM;
             if (it.value()>totalCumulableTM) return false; }
         else if (it.key()==TSH){
-            qDebug()<<"vous pouvez avoir en tsh : "<<totalCumulableTSH;
             if (it.value()>totalCumulableTSH) return false; }
         else if (it.key()==SP){
-            qDebug()<<"vous pouvez avoir en sp : "<<totalCumulableSP;
             if (it.value()>totalCumulableSP) return false; }
     }
 
@@ -134,14 +130,8 @@ ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
 
 
     for (unsigned int i=0; i<nbSemestre; i++) {
-        qDebug()<<"recherche";
-        qDebug()<<listePropositions[i]->getSemestre().getAnnee();
-        qDebug()<<S.getAnnee();
-        qDebug()<<listePropositions[i]->getSemestre().getSaison();
-        qDebug()<<S.getSaison();
         if ( ( listePropositions[i]->getSemestre() ) ==S)
-        { qDebug()<<"trouve";
-          return listePropositions[i]; }
+        { return listePropositions[i]; }
     }
 
     return 0;
@@ -152,8 +142,6 @@ ChoixAppliSemestre* ChoixAppli::trouverChoix(Semestre S) {
  * \return une proposition sur un semestre.
  */
 ChoixAppli * ChoixManager::trouverProposition(unsigned int id) {
-
-    qDebug()<<"dans trouver proposition, id = "<<id<<" pour un nb propositions de : "<<nbPropositions;
 
     for (unsigned int i=0; i<nbPropositions; i++) { qDebug()<<ensemblePropositions[i]->getIdentifiant();
         if (ensemblePropositions[i]->getIdentifiant()==id) return ensemblePropositions[i];}
@@ -208,20 +196,14 @@ void ChoixManager::ajouterProposition(ChoixAppli* c) {
  */
 ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
 
-    qDebug()<<"dans la recherche de la proposition";
-    qDebug()<<"dossier : "<<d;
-    qDebug()<<nbPropositions;
-
     ChoixAppli ** result=0;
     unsigned int nbResult=0;
     unsigned int nbResultMax=0;
 
     for (unsigned int i=0; i<nbPropositions; i++) {
-        qDebug()<<ensemblePropositions[i]->getDossier();
         if (ensemblePropositions[i]->getDossier()==d)
         {
             //alors on complete le resultat
-            qDebug()<<"jen ai trouve un";
             if (nbResult==nbResultMax){
                 ChoixAppli** newtab=new ChoixAppli*[nbResultMax+5];
                 for(unsigned int i=0; i<nbResult; i++) newtab[i]=result[i];
@@ -244,7 +226,6 @@ ChoixAppli** ChoixManager::trouverPropositionsDossier(Dossier * d) {
  * \return nombre de propositions.
  */
 unsigned int ChoixManager::trouverNbPropositionsDossier(Dossier *d) {
-    qDebug()<<"dans le calcul du nb de propositions";
 
     unsigned int nbResult=0;
 
@@ -260,34 +241,21 @@ unsigned int ChoixManager::trouverNbPropositionsDossier(Dossier *d) {
  * \param d pointeur vers le dossier concerné.
  */
 void ChoixManager::removeChoix(Dossier * d) {
-    qDebug()<<"dans la suppression des choix";
 
     ChoixAppli** aSupprimer = trouverPropositionsDossier(d); //tous les choix appli à supprimer
     unsigned int nb=trouverNbPropositionsDossier(d);//leur nombre
     qDebug()<<nb;
 
     for (unsigned int i=0; i<nb; i++) { //pour chaque choix appli à supprimer
-        qDebug()<<"je supprime";
-
         unsigned int j=0;
         while (ensemblePropositions[j]!=aSupprimer[i]) j++; //j represente alors l'indice du choix appli à supprimer dans la liste du manager
         ChoixAppli* tmp ;
 
-        for (unsigned int k=j; k<nbPropositions-1; k++) {qDebug()<<"je supprime";
-            tmp=ensemblePropositions[k]; ensemblePropositions[k]=ensemblePropositions[k+1]; ensemblePropositions[k+1]=tmp;}
-        qDebug()<<"avant delete";
-        //removeSemestres(ensemblePropositions[nbPropositions-1]);
+        for (unsigned int k=j; k<nbPropositions-1; k++) {tmp=ensemblePropositions[k]; ensemblePropositions[k]=ensemblePropositions[k+1]; ensemblePropositions[k+1]=tmp;}
+
         delete[] ensemblePropositions[nbPropositions-1];
         nbPropositions--;
     }
 }
 
-/*void ChoixManager::removeSemestres(ChoixAppli *c) {
-
-    ChoixAppliSemestre ** listeChoix=c->getListePropositions();
-
-    for (unsigned int i=0; i<c->getNbSemestres(); i++) {delete listeChoix[i]; }
-    c->setNbSemestres(0);
-
-}*/
 

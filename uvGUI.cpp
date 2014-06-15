@@ -72,7 +72,6 @@ void Debut::afficher() {
  */
 UvAfficheur::UvAfficheur(UV& u, UVManager & uvm) : uv(u), M(uvm) {
 
-
        codeLabel = new QLabel("Code : "+uv.getCode(), this);
        titreLabel= new QLabel("Intitule : "+uv.getTitre(), this);
        unsigned int n=uv.getNbCredits();
@@ -332,11 +331,8 @@ UVAjout::UVAjout(UVManager& uvm, Debut * p) : M(uvm), parent(p) {
     categorie->setCurrentIndex(0);
 
     automne=new QCheckBox("automne", this);
-    //automne->setChecked(true);
 
     printemps=new QCheckBox("printemps", this);
-    //printemps->setChecked(uv.ouvertureAutomne());
-
     sauver=new QPushButton("Sauver", this);
     annuler=new QPushButton("Annuler", this);
 
@@ -379,7 +375,6 @@ UVAjout::UVAjout(UVManager& uvm, Debut * p) : M(uvm), parent(p) {
 void UVAjout::slot_ajoutUV() {
 qDebug()<<categorie->currentIndex();
     M.ajouterUV(code->text(), titre->toPlainText(), credits->value(), Categorie(categorie->currentIndex()), automne->isChecked(), printemps->isChecked());
-    //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "UV sauvegardee");
     parent->update();
     this->close();

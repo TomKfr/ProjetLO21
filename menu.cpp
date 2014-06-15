@@ -106,7 +106,6 @@ Saison s= StringToSaison(saison->currentText()) ;
 bool ok;
 QString n1=Annee->currentText();
 unsigned int n2=n1.toInt(&ok);
-qDebug()<<"saison : "<<s<<" annee :"<<n2;
 
 Semestre * sem= new Semestre(s, n2);
 
@@ -126,10 +125,6 @@ void MenuDebut::lancer_UV() {
  * \brief Ouvre le menu de gestion des dossiers
  */
 void MenuDebut::lancer_Dossiers() {
-    qDebug()<<"avant le constructeur";
-    //DossierManager& d=DossierManager::getInstance();
-    //d.load();
-
     enregistrer_semestre();
 
     MenuDossier * fenetre= new MenuDossier();
@@ -157,82 +152,3 @@ void MenuDebut::lancer_rien(){
     this->close();
 }
 
-/*void MenuDebut::launch_this_fucking_initial_load()
-{
-    UVManager& uman=UVManager::getInstance();
-    cursusManager& cman=cursusManager::getInstance();
-
-    QString fileout= QFileDialog::getOpenFileName(this);
-    qDebug()<<"Ouverture du fichier "<<fileout;
-    QFile fin(fileout);
-    if (!fin.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug()<<"erreur ouverture fichier !!";
-        exit(2);
-    }
-    QXmlStreamReader xml(&fin);
-    while(!xml.atEnd() && !xml.hasError())
-    {
-        QXmlStreamReader::TokenType token = xml.readNext();
-        if(token == QXmlStreamReader::StartDocument) continue;
-        if(token == QXmlStreamReader::StartElement)
-        {
-            if(xml.name()=="UVSection") xml.readNext();
-            if(xml.name()=="uv")
-            {
-                QString form;
-                QString uv;
-                QString titre;
-                QString cat;
-                unsigned int cr=0;
-                xml.readNext();
-                xml.readNext();
-                while(!(xml.tokenType()==QXmlStreamReader::EndElement && xml.name()=="uv"))
-                {
-                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="code")
-                    {
-                        xml.readNext();
-                        uv=xml.text().toString();
-                    }
-                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="nom")
-                    {
-                        xml.readNext();
-                        titre=xml.text().toString();
-                    }
-                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="credit")
-                    {
-                        QXmlStreamAttributes attr=xml.attributes();
-                        cat=attr.value("type").toString();
-                        xml.readNext();
-                        cr=xml.text().toUInt();
-                    }
-                    if(xml.tokenType()==QXmlStreamReader::StartElement && xml.name()=="branche")
-                    {
-                        xml.readNext();
-                        form=xml.text().toString();
-                        formation* newform=cman.trouverForm(form);
-                        if(!newform)
-                        {
-                            qDebug()<<"erreur ajout formation ! Création d'une nouvelle";
-                            newform=cman.ajouterFormation(form,0,0,0,0,0, 0);
-                        }
-                        else
-                        {
-                            UV* newuv=uman.trouverUV(uv);
-                            if(newuv)
-                            {
-                                newform->ajouter_UV(newuv);
-                            }
-                            else
-                            {
-                                qDebug()<<"UV non trouvée, création d'une nouvelle";
-                                newuv=uman.ajouterUV(uv,titre,cr,StringToCategorie(cat),false,false);
-                            }
-                        }
-                    }
-                    xml.readNext();
-                }
-            }
-        }
-        xml.readNext();
-    }
-}*/

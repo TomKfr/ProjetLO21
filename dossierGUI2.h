@@ -35,7 +35,6 @@ class MenuDossier : public QWidget {
     DossierManager* dman;
     QLabel * numero;
     QComboBox* dossiers;
-    //QPushButton* visu;
     QPushButton* modifier;
     QPushButton* sup;
     QPushButton* sauver;
@@ -264,7 +263,7 @@ class ModifResult : public QWidget
 public : ModifResult(Dossier* d, ModifUV* mu) ;
 
 public slots :
-    void update(); //avec que les uvs et les resultats du dossier
+    void update();
     void enregistrer();
     void fin2();
     void affResult();

@@ -68,7 +68,6 @@ public :
     ChoixAppli** trouverPropositionsDossier(Dossier * d) ; //trouver toutes les propositions pour un dossier en particulier
     unsigned int trouverNbPropositionsDossier(Dossier * d);
     void removeChoix(Dossier * d);
-    //void removeSemestres(ChoixAppli* c);
 
     Semestre getSemestreActuel() const {return SemestreActuel; }
     unsigned int getNbChoixSemestre() const {return nbChoixAppliSemestre; }
@@ -99,15 +98,14 @@ public :
  * Un objet de cette classe est un conteneur reflétant une proposition de l'application pour un semestre.
  */
 class ChoixAppliSemestre {//proposition pour 1 semestre donne par l'application
-    //faire un load pour ça aussi .. ? comment on sorganise ?
 
     unsigned int idChoix;
 
     QMap<QString,UV*> propositionUV;
     Semestre semestre_concerne;
-    unsigned int nbCredits ; //nb de credits accumules avec ce semestre : pas plus de 35
-    unsigned int nbUV ; //pas plus de 7
-    bool stage ; //l'etudiant est-il en stage pendant tout le semestre ? 1 oui 0 non
+    unsigned int nbCredits ;
+    unsigned int nbUV ;
+    bool stage ; //l'etudiant est-il en stage pendant tout le semestre ?
     ChoixAppli * parent;
 
     Dossier* dos; //dossier concerne
@@ -138,11 +136,8 @@ public :
     void setNbUVs(unsigned int i) {nbUV=i;}
     void setStage(bool s) {stage=s; }
 
-
     QMap<QString,UV*>::iterator getQmapIteratorUVbegin() {return propositionUV.begin();}
     QMap<QString,UV*>::iterator getQmapIteratorUVend() {return propositionUV.end();}
-
-    void calculerProposition();//A DEFINIR
 
 };
 /*!
@@ -157,7 +152,7 @@ class ChoixAppli { //regroupe tous les semestres proposes jusqu'à la fin des et
     unsigned int nbSemestre;
     unsigned int nbMaxSemestre ;
     Dossier * dossier;
-    Reponse rep; //reponse donnee par l'etudiant
+    Reponse rep;
 
 public :
         ChoixAppli(unsigned int i, Dossier* d) : idProposition(i), listePropositions(0), nbSemestre(0), nbMaxSemestre(0), dossier(d) {}
@@ -168,11 +163,11 @@ public :
         Dossier * getDossier() const {return dossier;}
 
         void setReponse(Reponse r) {rep=r;}
-        void setNbSemestres(unsigned int i) {nbSemestre=0;}
+        void setNbSemestres(unsigned int i) {nbSemestre=i;}
 
         ChoixAppliSemestre* trouverChoix(Semestre S) ;
 
-        void ajouter_proposition(ChoixAppliSemestre * prop); //une methode de suppression est-elle nécessaire ? je ne pense pas ..
+        void ajouter_proposition(ChoixAppliSemestre * prop);
 
 };
 
@@ -186,12 +181,6 @@ class prevision
     QPair<unsigned int, unsigned int> bornesCS; //first=borne inférieure, second=borne supérieure
     QPair<unsigned int, unsigned int> bornesTM;
     QPair<unsigned int, unsigned int> bornesTSH;
-    /*unsigned int borneSupCS;
-    unsigned int borneInfCS;
-    unsigned int borneSupTM;
-    unsigned int borneInfTM;
-    unsigned int borneSupTSH;
-    unsigned int borneInfTSH;*/
 
 public:
     prevision(const QString& d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh): destination(d)
@@ -210,14 +199,6 @@ public:
     unsigned int getbiCS() {return bornesCS.first;}
     unsigned int getbiTM() {return bornesTM.first;}
     unsigned int getbiTSH() {return bornesTSH.first;}
-    /*
-     * unsigned int getbsCS() {return borneSupCS;}
-    unsigned int getbsTM() {return borneSupTM;}
-    unsigned int getbsTSH() {return borneSupTSH;}
-    unsigned int getbiCS() {return borneInfCS;}
-    unsigned int getbiTM() {return borneInfTM;}
-    unsigned int getbiTSH() {return borneInfTSH;}
-     */
 };
 
 

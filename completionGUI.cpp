@@ -362,34 +362,25 @@ void Proposition::afficher_proposition() {
     //Recuperer le semestre
 
     ChoixManager& c=ChoixManager::getInstance();
-    qDebug()<<"afficher proposition1";
     Semestre s(Printemps, 2014);
-    qDebug()<<"afficher proposition2";
     Saison  s2=StringToSaison(saison_concernee->currentText());
-    qDebug()<<"la saison : "<<s2;
-    qDebug()<<"afficher proposition3";// OK
     s.setSaison(s2);
     bool ok;
     const QString& n1=annee_concernee->currentText();
     unsigned int n2=n1.toInt(&ok);
     s.setAnnee(n2);
 
-    qDebug()<<"afficher proposition 4"; // OK
-    qDebug()<<"afficher proposition 5";
     ChoixAppli * currentChoixAppli=c.getLastProposition();
     if (!verifierValiditeSemestre(s, currentChoixAppli)) QMessageBox::information(this,"Modification","Semestre lors duquel vous aurez sûrement fini vos études!",QMessageBox::Ok);
 
     else {
-    qDebug()<<"afficher proposition 6 "<<currentChoixAppli;
-
     ChoixAppliSemestre * choix = currentChoixAppli->trouverChoix(s);
-    qDebug()<<"afficher proposition 7";
+
     //puis faire appel à la fenetre daffichage
-    qDebug()<<choix; //OK
 
     AfficherProposition * fenetre = new AfficherProposition(choix);
     fenetre->show();
-    qDebug()<<"afficher proposition 8";
+
     }
 
 }
@@ -398,18 +389,13 @@ void Proposition::afficher_proposition() {
  * \param choix pointeur vers la proposition à afficher
  */
 AfficherProposition::AfficherProposition(ChoixAppliSemestre *choix) : c(choix) {
-
-qDebug()<<"dans afficher proposition";
-
     QString listeUV="UVs proposees  : ";
 
 
     for (QMap<QString,UV*>::const_iterator it=c->getQmapIteratorUVbegin(); it!=c->getQmapIteratorUVend(); ++it) {
         listeUV+=it.key()+" ; ";
-
     }
 
-    qDebug()<<"dans afficher proposition2";
     QString semestre=SaisonToString(c->getSemestre().getSaison());
     semestre+=" ";
     semestre+=QString::number(c->getSemestre().getAnnee());
@@ -417,16 +403,12 @@ qDebug()<<"dans afficher proposition";
     blabla = new QLabel("Proposition pour le semestre : "+semestre, this);
 
     credits = new QLabel ("Cette proposition vous rapporte "+QString::number(c->getNbCredits())+" credits." , this);
-    qDebug()<<"dans afficher proposition3";
     uvs = new QLabel(listeUV, this);
 
     terminer= new QPushButton("Retourner consulter un autre semestre proposé", this);
 
-     qDebug()<<"dans afficher proposition4";
-
      coucheH1=new QHBoxLayout;
      coucheH1->addWidget(blabla);
-
 
      coucheH2=new QHBoxLayout;
      coucheH2->addWidget(uvs);
@@ -445,7 +427,6 @@ qDebug()<<"dans afficher proposition";
 
 
     this->setLayout(couche);
-    qDebug()<<"dans afficher proposition5";
 
     QObject::connect(terminer,SIGNAL(clicked()),this,SLOT(fin()));
 }
@@ -467,48 +448,36 @@ ChoixManager& cm=ChoixManager::getInstance();
 
 ChoixAppli ** choixDossier = cm.trouverPropositionsDossier(dos);
 unsigned int nb= cm.trouverNbPropositionsDossier(dos);
-qDebug()<<"Choix dossier : "<<choixDossier;
 
 if (choixDossier==0) texte="Aucune proposition n'a été générée jusqu'à ce jour.";
 
 else {
 
-
-    qDebug()<<"ici 1";
-
     for (unsigned int i=0; i<nb; i++)
     {
-        qDebug()<<"ici 2, i="<<i;
         ChoixAppliSemestre** ensemble=choixDossier[i]->getListePropositions();
 
         texte+="Identifiant de la proposition : "+QString::number(choixDossier[i]->getIdentifiant())+"\n";
 
         for (unsigned int j=0; j<choixDossier[i]->getNbSemestres(); j++) {
 
-            qDebug()<<"ici 2, j="<<j;
             QString semestre=SaisonToString(ensemble[j]->getSemestre().getSaison());
             semestre+=" ";
             semestre+=QString::number(ensemble[j]->getSemestre().getAnnee());
-            qDebug()<<semestre;
 
             texte+="\n Pour le semestre "+semestre;
 
             texte+="\n Les UVs proposees sont  : ";
 
-            qDebug()<<texte;
-
             for (QMap<QString,UV*>::const_iterator it=ensemble[j]->getQmapIteratorUVbegin(); it!=ensemble[j]->getQmapIteratorUVend(); ++it) {
-                qDebug()<<it.key();
                 texte+=it.key()+" ; ";
 
             }
 
             texte+="\n Credits rapportés : "+QString::number(ensemble[j]->getNbCredits())+"\n";
 
-
         }//fin for j
         QString rep = ReponseToString(choixDossier[i]->getReponse());
-        qDebug()<<rep ;
         texte+="\nReponse accordee à cette proposition : "+rep;
         texte+="\n \n \n";
 

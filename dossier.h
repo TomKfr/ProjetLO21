@@ -89,12 +89,11 @@ class Dossier {
     QString F;
     QString filiere;
     unsigned int nbSemestre; //GI 01/02/03
-    QMap<QString,Note> listeUV; //Code de l'UV + note obtenue !!
+    QMap<QString,Note> listeUV; //Code de l'UV + note obtenue
     Equivalences** equivalence;
     unsigned int nbEquivalences;
     prevision* semestreprevu;
     souhaits * Souhaits;
-    //QMap<QString,prevision*> previsions; //tableau pour stocker les prévisions.
     ChoixAppli** Completion;
     unsigned int nbPropositions;
     unsigned int nbMaxPropositions;
@@ -156,8 +155,6 @@ public :
 
     QMap<QString,Note>::iterator getQmapIteratorUVbegin() {return listeUV.begin();}
     QMap<QString,Note>::iterator getQmapIteratorUVend() {return listeUV.end();}
-    //QMap<QString,prevision*>::iterator getPrevisionsBegin() {return previsions.begin();}
-    //QMap<QString,prevision*>::iterator getPrevisionEnd() {return previsions.end();}
     void acceptCompletion(visiteurCompletion* v);
 
 };
