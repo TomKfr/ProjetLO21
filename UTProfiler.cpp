@@ -272,7 +272,6 @@ void UVManager::save(){
 }
 
 UVManager::~UVManager(){
-    qDebug() << "Destructeur";
     save();
     for(unsigned int i=0; i<nbUV; i++) delete uvs[i];
     delete[] uvs;
@@ -344,7 +343,7 @@ unsigned int i=0;
 while (uvs[i]!=u) i++;
 UV* tmp ;
  int nb=nbUV-2;
-for (unsigned int j=i; j<nb; j++) {tmp=uvs[j]; uvs[j]=uvs[j+1]; uvs[j+1]=tmp;}
+for (int j=i; j<nb; j++) {tmp=uvs[j]; uvs[j]=uvs[j+1]; uvs[j+1]=tmp;}
 delete uvs[nbUV-1];
 nbUV--;
 

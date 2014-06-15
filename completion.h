@@ -50,7 +50,7 @@ class ChoixManager{
     const Strategie& completion;
     Semestre SemestreActuel;
 
-    ChoixManager(const Strategie & s) : ensemblePropositions(0), nbPropositions(0), lastProposition(0), nbPropositionsMax(0), nbChoixAppliSemestre(0), completion(s) {}
+    ChoixManager(const Strategie & s) : ensemblePropositions(0), lastProposition(0), nbPropositions(0), nbPropositionsMax(0), nbChoixAppliSemestre(0), completion(s) {}
     ~ChoixManager() {}
     void operator=(const ChoixManager&);
     ChoixManager(const ChoixManager&);

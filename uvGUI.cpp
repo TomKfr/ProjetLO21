@@ -285,7 +285,6 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
     setLayout(couche);
 
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(sauverUV()));
-
 }
 
 /*!
@@ -304,9 +303,6 @@ void UVEditeur::sauverUV()
 }
 
 
-/*void UVEditeur::activerSauver(QString s){
-    sauver->setEnabled(true); //une modification entraine une activation du bouton sauver
-}*/
 /*!
  * \brief Constructeur de la fenêtre de création d'une UV
  * \param uvm référence vers l'UVManager.
@@ -375,13 +371,7 @@ UVAjout::UVAjout(UVManager& uvm, Debut * p) : M(uvm), parent(p) {
 
     setLayout(couche);
 
-    //bouton desactive par defaut
-    //sauver->setEnabled(false);
-
    QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutUV()));
-
-   //pour que ça sactive que si modif :
-   //QObject::connect(code, SIGNAL(textEdited(QString)), this, SLOT(activerSauverUV(QString)));
 }
 /*!
  * \brief Exécute l'ajout d'une nouvelle UV.

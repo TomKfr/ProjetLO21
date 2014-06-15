@@ -41,7 +41,6 @@ class menuFormation : public QWidget
     QPushButton* visualiser;
     QPushButton* ajouter;
     QPushButton* modifier;
-    //QPushButton* fil;
     QPushButton* ajfil;
     QPushButton* supprimer;
     QPushButton* quit;
@@ -54,7 +53,6 @@ public slots:
     void voir();
     void ajout();
     void modif();
-    //void filir();
     void ajfilir();
     void suppr();
     void update();
@@ -215,7 +213,6 @@ class GestionFiliereFormation : public QWidget
     UVManager& uman;
     cursusManager& cman;
     formation* objet;
-    //menuFiliere* parent;
     QVBoxLayout* mainbox;
     QHBoxLayout* hbox1;
     QVBoxLayout* vbox1;

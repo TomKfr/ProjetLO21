@@ -19,10 +19,7 @@
 #include <QStringList>
 #include <QMap>
 
-//class UV;
-//class UVManager;
 class visiteur;
-//enum Categorie;
 
 /**
  * @brief Superclasse dont héritent les classes formation et filière qui factorise les attributs et méthodes communs aux deux sous classes.
@@ -256,9 +253,6 @@ public:
 
     static cursusManager& getInstance();
     static void libererInstance();
-
-    /*class iterateur<formation>;
-    iterateur<formation>& getIterateurForm();*/
 };
 
 #endif // CURSUS_H
