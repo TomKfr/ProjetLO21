@@ -54,23 +54,6 @@ public slots:
     void update();
 };
 
-/*
-
-
-class UVModif : public QWidget {
-    Q_OBJECT
-    UVManager& M;
-    QLabel* codeLabel;
-    QLineEdit* code;
-    QPushButton* submit;
-    QHBoxLayout* coucheH;
-    QVBoxLayout* coucheV;
-
-public : UVModif(UVManager & uvm);
-
-public slots :
-    void modifUV();
-};*/
 
 /*!
  * \brief Fenêtre de création d'une UV
@@ -105,7 +88,6 @@ public:
  UVAjout(UVManager & uvm, Debut* p);
 public slots:
  void slot_ajoutUV();
- //void activerSauver(QString str="");
 
 };
 
@@ -113,7 +95,7 @@ public slots:
  * \brief Fenêtre permettant la modification d'une UV existante.
  */
 class UVEditeur : public QWidget {
-    Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
+    Q_OBJECT
     UV& uv;
     UVManager& M;
 
@@ -147,7 +129,7 @@ public slots:
  * \brief Fenêtre permettant de visualiser les caractéristiques d'une UV.
  */
 class UvAfficheur : public QWidget {
-    Q_OBJECT //macro qui déploie toutes les instructions pour gérer signaux et slots
+    Q_OBJECT
     UV& uv;
     UVManager& M;
 

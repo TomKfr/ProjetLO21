@@ -11,8 +11,6 @@
  * \brief Constructeur de la fenêtre de gestion des dossiers
  */
 MenuDossier::MenuDossier() {
-
-    qDebug()<<"constructeur de menudossier";
     this->setWindowTitle(QString("Opération choisie sur les dossiers ?"));
     dman=&DossierManager::getInstance();
     dossiers=new QComboBox(this);
@@ -94,7 +92,6 @@ void MenuDossier::modif() {
 
     Dossier* dos=dman->trouverDossier(n2);
     ModifierDossier * fenetre= new ModifierDossier(*dman,dos, this);
-    qDebug()<<"juste avant l'ouverture";
     fenetre->show();
 }
 /*!
@@ -141,7 +138,6 @@ void MenuDossier::update()
 void MenuDossier::sauvegarder()
 {
     dman->save();
-    qDebug()<<"sortie du save";
     QMessageBox::information(this,"sauvegarde","liste de dossiers enregistrée");
 }
 

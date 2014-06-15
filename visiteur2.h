@@ -30,7 +30,6 @@ public:
     visiteur2(unsigned int n, const QStringList& l, const QStringList& l2): num(n), list(l), list2(l2),  tab(0), taille(list.length())
     {
             tabRes= new QString[taille];
-            qDebug()<<"constructeur de visiteur2";
             for (int i=0; i<taille; i++) {tabRes[i]=list2[i]; qDebug()<<tabRes[i]; }
     }
     void visitUVmanager();

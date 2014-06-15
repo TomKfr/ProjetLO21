@@ -12,7 +12,6 @@
  * \param d pointeur vers le dossier
  */
 DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos(d), nbUV(0), nbMaxUV(0), M(dm), parent(p) {
-    qDebug()<<"ici";
 
     this->setWindowTitle(QString("Ajout d'un Dossier"));
 
@@ -82,18 +81,10 @@ DossierAjout::DossierAjout(DossierManager& dm, MenuDossier* p, Dossier* d) : dos
     setLayout(couche);
 
     setrightFil();
-
-    qDebug()<<"iciii dans dossier ajout avant cliquer";
-
     QMessageBox::information(this, "Attention", "Sauvegarder le dossier avant d'y ajouter des UVs !",QMessageBox::Ok);
-    qDebug()<<"iciii dans dossier ajout avant cliquer2";
     QObject::connect(sauver, SIGNAL(clicked()), this, SLOT(slot_ajoutDossier()));
-    qDebug()<<"iciii dans dossier ajout avant cliquer3";
     QObject::connect(SelectUV, SIGNAL(clicked()), this, SLOT(slot_selectUV()));
-    qDebug()<<"iciii dans dossier ajout avant cliquer4";
     QObject::connect(SelectEquivalences, SIGNAL(clicked()), this, SLOT(select_equivalences()));
-    //update();
-    qDebug()<<"iciii dans dossier ajout avant cliquer5";
     QObject::connect(sauver,SIGNAL(clicked()),this,SLOT(disable()));
     QObject::connect(quitter,SIGNAL(clicked()),this,SLOT(close()));
     QObject::connect(f,SIGNAL(currentTextChanged(QString)),this,SLOT(setrightFil()));
@@ -116,8 +107,6 @@ void DossierAjout::slot_ajoutDossier() {
     M.ajouterDossier(n, name , fn, F, fil->currentText(), ns);
     Dossier* d=M.trouverDossier(n);
     dos=d;
-
-    qDebug()<<"apres ajout";
 
     QMessageBox::information(this, "sauvegarde", "Dossier sauvegarde");
     parent->update();
@@ -150,7 +139,6 @@ void DossierAjout::setrightFil()
     }
 }
 
-// PAUSE!!!!!
 /*!
  * \brief constructeur de la fenêtre d'ajout d'une UV dans un dossier
  * \param d dossier concerné
@@ -198,7 +186,6 @@ AjoutUV::AjoutUV(Dossier*d, DossierAjout* dossier) {
  */
 void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque appui sur le bouton submit
 {
-    qDebug()<<"uv ajoutee";
     UVManager& m=UVManager::getInstance();
     UV* nouvelleUV=m.trouverUV(Liste->currentText());
     QString res=Result->currentText();
@@ -213,13 +200,9 @@ void AjoutUV::ajout_UVDossier() //Le slot ajout_UVDossier est appelé à chaque 
 void DossierAjout::update()
 {
     f->clear();
-    qDebug()<<"update1";
     cursusManager& m=cursusManager::getInstance();
     for(QMap<QString,formation*>::iterator it=m.getQmapIteratorFormbegin();it!=m.getQmapIteratorFormend();it++)
-    {qDebug()<<"update2";
         f->addItem(it.value()->getNom());
-    }
-    qDebug()<<"update3";
 }
 
 /*!
@@ -241,7 +224,7 @@ void AjoutUV::update()
 void AjoutUV::end_listeUV() {
     this->close();
 }
-//MODIF
+
 /*!
  * \brief constructeur de la fenêtre ModifierDossier
  * \param dm pointeur vers le dossierManager
@@ -253,8 +236,7 @@ ModifierDossier::ModifierDossier(DossierManager& dm, Dossier* d, MenuDossier * m
     this->setWindowTitle(QString("Modification d'un dossier"));
 
     unsigned int n1=d->getNumero();
-   QString n2=QString::number(n1);
-
+    QString n2=QString::number(n1);
 
     const QString& name=d->getNom();
     const QString& pn=d->getPrenom();
@@ -538,7 +520,6 @@ void ModifResult::enregistrer() {
  */
 void ModifResult::update() {
 
-    qDebug()<<"dans modifresult";
     uvs->clear();
     resultats->clear();
     resultats->addItem("A");
@@ -697,7 +678,6 @@ AjoutEquivalences::AjoutEquivalences(Dossier * d, ModifEquivalences * m) : dos(d
  */
 void DossierAjout::select_equivalences(){
     AjoutEquivalences* fenetre = new AjoutEquivalences(dos);
-    qDebug()<<"dos dans dossier ajout"<<dos;
     fenetre->show();
 }
 /*!
@@ -712,20 +692,13 @@ void AjoutEquivalences::ajouter_equivalence() {
     const QString& desc = description->text();
     unsigned int n2=n1.toInt(&ok);
 
-    qDebug()<<"dans ajouter aquivalence";
-    qDebug()<<dos;
-
     Equivalences ** tab=dos->getEquivalences();
-    qDebug()<<tab;
     unsigned int nb = dos->getNbEquivalences();
-    qDebug()<<"dans ajouter aquivalence2";
 
     tab[nb]= new Equivalences(truc, n2, desc);
-    qDebug()<<"ici la";
     nb++;
     dos->setNbEquivalences(nb);
 
-    qDebug()<<"equivalence ajoutée!";
     QMessageBox::information(this, "sauvegarde", "Equivalence ajoutee");
 
    if (me!=0) me->update();
@@ -780,12 +753,9 @@ void ModifEquivalences::update() { // FONCTIONNE
     unsigned int i=0;
 
     choix->clear();
-    qDebug()<<"update";
-    qDebug()<<dossier->getNbEquivalences();
-    qDebug()<<tab[i];
+
     if (dossier->getNbEquivalences()!=0)
    {  while (tab[i]!=0) {
-        qDebug()<<tab[i]->getDescription();
         choix->addItem(tab[i]->getDescription());
         i++;}
     }
@@ -870,7 +840,6 @@ void EquivalenceEditeur::modifier_equivalence() {//MARCHE
 void ModifEquivalences::slot_valider() {
 
     Equivalences** tab=dossier->getEquivalences();
-    //unsigned int nb=dossier->getNbEquivalences();
     unsigned int i=0;
 
     while (tab[i]->getDescription()!=choix->currentText()) {i++;}
@@ -889,23 +858,15 @@ void  ModifEquivalences::slot_supprimer() {
     int nb=dossier->getNbEquivalences();
     unsigned int i=0;
 
-    qDebug()<<"dans suppr";
-
     while (tab[i]->getDescription()!=choix->currentText()) {i++;}
-    qDebug()<<"nombre deq : "<<nb;//OK
-    qDebug()<<tab[i]->getDescription();//OK
-    qDebug()<<i;//OK
 
     Equivalences* tmp;
 
     for (int j=i; j<nb-2; j++) {tmp=tab[i]; tab[j]=tab[j+1], tab[j+1]=tmp;}
-    qDebug()<<"apres le for";
 
     delete tab[nb-1];
-    qDebug()<<"apres le delete";
     nb--;
     dossier->setNbEquivalences(nb);
-    qDebug()<<"a la fin de la suppression";
 
     update();
 

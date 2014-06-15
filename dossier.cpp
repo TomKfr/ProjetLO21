@@ -45,7 +45,6 @@ void DossierManager::ajouterDossier(unsigned int n, const QString& name, const Q
  * \param dsup pointeur vers le dossier à supprimer
  */
 void DossierManager::removeDossier(Dossier* dsup){
-    qDebug()<<"remove du dossier numero : "<<dsup->getNumero();
 
     unsigned int i=0;
     while (tabDossiers[i]!=dsup) i++;
@@ -79,22 +78,6 @@ void Dossier::ajouterUV(const QString& code, Note n) {
  * \param uv pointeur vers l'uv à retirer
  */
 void Dossier::supprimerUV(UV* uv) {
-/*unsigned int i=0;
-while (listeUV[i]!=uv) i++;
-int limit=nbUV;
-
-limit-=2;
-
-UV* tmp ;
-QString tmp2;
-
-for (int j=i; j<limit; j++) {tmp=listeUV[j]; listeUV[j]=listeUV[j+1]; listeUV[j+1]=tmp;}
-for (int j=i; j<limit; j++) {tmp2=listeResultats[j]; listeResultats[j]=listeResultats[j+1]; listeResultats[j+1]=tmp2;}
-
-listeUV[nbUV-1]=0;//pour pas effacer l'uv si on fait un delete
-nbUV--;
-nbResultats--;*/
-
 
     if(QMessageBox::information(0,"Retrait d'une UV","Voulez vous retirer l'UV du dossier ?",QMessageBox::Ok,QMessageBox::Cancel)==QMessageBox::Ok)
     {
@@ -132,7 +115,6 @@ const QMap<QString,Note>::const_iterator Dossier::trouverUV(const QString &code)
  * \return  un pointeur sur le dossier recherché s'il existe, 0 sinon.
  */
 Dossier* DossierManager::trouverDossier(unsigned int n)const{
-    qDebug()<<nbDos;
     for(unsigned int i=0; i<nbDos; i++)
         if (n==tabDossiers[i]->getNumero()) return tabDossiers[i];
     return 0;
@@ -142,7 +124,6 @@ Dossier* DossierManager::trouverDossier(unsigned int n)const{
  * \brief Destructeur du DossierManager
  */
 DossierManager::~DossierManager(){
-    qDebug() << "Destructeur DossiersManager";
     for(unsigned int i=0; i<nbDos; i++) delete tabDossiers[i];
     delete[] tabDossiers;
 }
@@ -158,12 +139,6 @@ void DossierManager::libererInstance() {
     if (handler.instance) { delete handler.instance; handler.instance=0; }
 }
 
-/*
-iterateur<UV>& Dossier::getIterateurUV()
-{
-    iterateur<UV>* it=new iterateur<UV>(listeUV,nbUV);
-    return *it;
-}*/
 /*!
  * \brief Exécute la méthode visit du visiteur
  * \param v pointeur vers le visiteur
@@ -198,45 +173,6 @@ void Dossier::setResultat(const QString &code, Note n)
     QMap<QString,Note>::iterator it=listeUV.find(code);
     it.value()=n;
 }
-
-/*void Dossier::ajouterResultat(const QString & res){ PLUS NECESSAIRE
-
-     qDebug()<<"ajouter resultat";
-
-     qDebug()<<nbResultats;
-     qDebug()<<nbMaxResultats;
-
-     //inversion quelque part
-
-
-        if (nbResultats==nbMaxResultats){
-            qDebug()<<"1";
-            QString * newtab=new QString[nbMaxResultats+5];
-            qDebug()<<"2";
-            for(unsigned int i=0; i<nbResultats; i++) newtab[i]=listeResultats[i];
-            nbMaxResultats+=5;
-            qDebug()<<"3";
-            QString* old=listeResultats;
-            qDebug()<<"4";
-            listeResultats=newtab;
-            qDebug()<<"5";
-            delete[] old;
-            qDebug()<<"6";
-        }
-
-         qDebug()<<"ici";
-        listeResultats[nbResultats++]=res;
-
-}*/
-
-/*void Dossier::ajt_prevision(const QString &d, unsigned int scs, unsigned int ics, unsigned int stm, unsigned int itm, unsigned int stsh, unsigned int itsh)
-{
-    previsions.insert(d,new prevision(d,scs,ics,stm,itm,stsh,itsh));
-}
-void Dossier::sup_prevision(const QString &d)
-{
-    previsions.remove(d);
-}*/
 
 
 
