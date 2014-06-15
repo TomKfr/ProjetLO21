@@ -78,7 +78,7 @@ public slots :
 class UVAjout : public QWidget{
     Q_OBJECT
 
-
+    Debut * parent;
     UVManager& M;
 
     QLineEdit* code;
@@ -102,7 +102,7 @@ class UVAjout : public QWidget{
     QHBoxLayout* coucheH4;
 
 public:
- UVAjout(UVManager & uvm);
+ UVAjout(UVManager & uvm, Debut* p);
 public slots:
  void slot_ajoutUV();
  //void activerSauver(QString str="");

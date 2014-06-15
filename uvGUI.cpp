@@ -13,8 +13,6 @@
  * \brief Constructeur du menu initial de gestion des UVs.
  */
 Debut::Debut() {
-    qDebug()<<"coucou1";
-
     this->setWindowTitle(QString("Operation choisie sur les UVs ?"));
     liste=new QComboBox;
     update();
@@ -44,9 +42,6 @@ Debut::Debut() {
     QObject::connect(modifier, SIGNAL(clicked()), this, SLOT(modif()));
     QObject::connect(consulter, SIGNAL(clicked()), this, SLOT(afficher()));
     QObject::connect(terminer, SIGNAL(clicked()), this, SLOT(fin()));
-
-    qDebug()<<"coucou";
-
 }
 /*!
  * \brief Mise à jour des champs du menu.
@@ -219,7 +214,7 @@ void Debut::ajout() {
 
     UVManager& m=UVManager::getInstance();
 
-    UVAjout * fenetre= new UVAjout(m);
+    UVAjout * fenetre= new UVAjout(m, this);
     fenetre->show();
 }
 
@@ -259,7 +254,6 @@ UVEditeur::UVEditeur(UV& uvToEdit, UVManager& uvm, QWidget* parent) : QWidget(pa
 
     sauver=new QPushButton("Sauver", this);
     annuler=new QPushButton("Annuler", this);
-    //on cree plusieurs couches horizontales qu'on superpose ensuite en une couche veerticale
     coucheH1=new QHBoxLayout;
     coucheH1->addWidget(codeLabel);
     coucheH1->addWidget(code);
@@ -317,7 +311,7 @@ void UVEditeur::sauverUV()
  * \brief Constructeur de la fenêtre de création d'une UV
  * \param uvm référence vers l'UVManager.
  */
-UVAjout::UVAjout(UVManager& uvm) : M(uvm) {
+UVAjout::UVAjout(UVManager& uvm, Debut * p) : M(uvm), parent(p) {
 
     this->setWindowTitle(QString("Ajout d'une UV"));
 
@@ -397,6 +391,7 @@ qDebug()<<categorie->currentIndex();
     M.ajouterUV(code->text(), titre->toPlainText(), credits->value(), Categorie(categorie->currentIndex()), automne->isChecked(), printemps->isChecked());
     //void ajouterUV(const QString& c, const QString& t, unsigned int nbc, Categorie cat, bool a, bool p);
     QMessageBox::information(this, "sauvegarde", "UV sauvegardee");
+    parent->update();
     this->close();
 }
 

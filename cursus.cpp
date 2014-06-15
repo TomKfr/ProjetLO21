@@ -35,10 +35,6 @@ UV* abstract_cursus_item::trouverUV(const QString &code)
     }
     return 0;
 }
-/*const QMap<QString,UV*>::const_iterator abstract_cursus_item::trouverUV(const QString &code)
-{
-    return uvs.constFind(code);
-}*/
 // ///////////////////////////////////////////////////////////////////
 
 void formation::supprimer_UV(const QString& code)
@@ -301,7 +297,6 @@ try{
 
 void cursusManager::chargerCursus()
 {
-    // nécessaire de lire les filières d'abord pour pouvoir ajouter les formations !
     QString fileOut = QDir::currentPath()+ "/filieres.xml";
     qDebug()<<"Ouverture du fichier "<<fileOut;
     try{
@@ -481,12 +476,6 @@ void cursusManager::chargerCursus()
     }
     catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
 }
-
-/*iterateur<formation>& cursusManager::getIterateurForm()
-{
-    iterateur<formation>* it=new iterateur<formation>(formations,nbFor);
-    return *it;
-}*/
 
 void cursusManager::accept(visiteur *v,QString type){v->visitCursusManager(this,type);}
 

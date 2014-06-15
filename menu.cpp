@@ -34,7 +34,6 @@ MenuDebut::MenuDebut() {
     op_Formations=new QPushButton("Les formations", this);
     op_Filieres= new QPushButton("Les filières", this);
     no_op= new QPushButton("Terminer", this);
-    initload= new QPushButton("Fucking load this !", this);
     SemestreActuel= new QLabel("Quel est le semestre actuel :", this);
     saison = new QComboBox(this);
     saison->addItem("Automne");
@@ -84,7 +83,6 @@ MenuDebut::MenuDebut() {
     coucheV->addLayout(coucheH4);
     coucheV->addLayout(coucheH5);
     coucheV->addLayout(coucheH6);
-    coucheV->addWidget(initload);
 
 
     setLayout(coucheV);
@@ -94,7 +92,6 @@ MenuDebut::MenuDebut() {
     QObject::connect(op_Formations, SIGNAL(clicked()), this, SLOT(lancer_Formations()));
     QObject::connect(op_Filieres, SIGNAL(clicked()), this, SLOT(lancer_Filieres()));
     QObject::connect(no_op, SIGNAL(clicked()), this, SLOT(lancer_rien()));
-    QObject::connect(initload,SIGNAL(clicked()),this,SLOT(launch_this_fucking_initial_load()));
 
 }
 
@@ -160,7 +157,7 @@ void MenuDebut::lancer_rien(){
     this->close();
 }
 
-void MenuDebut::launch_this_fucking_initial_load()
+/*void MenuDebut::launch_this_fucking_initial_load()
 {
     UVManager& uman=UVManager::getInstance();
     cursusManager& cman=cursusManager::getInstance();
@@ -238,4 +235,4 @@ void MenuDebut::launch_this_fucking_initial_load()
         }
         xml.readNext();
     }
-}
+}*/

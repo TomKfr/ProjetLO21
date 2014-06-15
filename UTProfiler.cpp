@@ -81,39 +81,29 @@ Categorie StringToCategorie(const QString& str){
 
 Note String2Note(const QString& n)
 {
-    try{
-        if(n=="A") return A;
-        if(n=="B") return B;
-        if(n=="C") return C;
-        if(n=="D") return D;
-        if(n=="E") return E;
-        if(n=="F") return F;
-        if(n=="FX") return FX;
-        if(n=="RES") return RES;
-        if(n=="ABS") return ABS;
-        if(n=="EC") return EC;
-        else throw UTProfilerException("Note "+n+" inconnue !");
-    }
-    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
-    return EC;
+    if(n=="A") return A;
+    if(n=="B") return B;
+    if(n=="C") return C;
+    if(n=="D") return D;
+    if(n=="E") return E;
+    if(n=="F") return F;
+    if(n=="FX") return FX;
+    if(n=="RES") return RES;
+    if(n=="ABS") return ABS;
+    if(n=="EC") return EC;
 }
 QString Note2String(Note n)
 {
-    try{
-        if(n==A) return "A";
-        if(n==B) return "B";
-        if(n==C) return "C";
-        if(n==D) return "D";
-        if(n==E) return "E";
-        if(n==F) return "F";
-        if(n==FX) return "FX";
-        if(n==RES) return "RES";
-        if(n==ABS) return "ABS";
-        if(n==EC) return "EC";
-        else throw UTProfilerException("Note inconnue !");
-    }
-    catch(UTProfilerException& e){QMessageBox::warning(0,"Erreur",e.getInfo());}
-    return "EC";
+    if(n==A) return "A";
+    if(n==B) return "B";
+    if(n==C) return "C";
+    if(n==D) return "D";
+    if(n==E) return "E";
+    if(n==F) return "F";
+    if(n==FX) return "FX";
+    if(n==RES) return "RES";
+    if(n==ABS) return "ABS";
+    if(n==EC) return "EC";
 }
 
 
@@ -353,7 +343,8 @@ void UVManager::removeItem(UV* u){ //FONCTION QUI MARCHE A NE PAS MODIFIER
 unsigned int i=0;
 while (uvs[i]!=u) i++;
 UV* tmp ;
-for (unsigned int j=i; j<nbUV-2; j++) {tmp=uvs[j]; uvs[j]=uvs[j+1]; uvs[j+1]=tmp;}
+ int nb=nbUV-2;
+for (unsigned int j=i; j<nb; j++) {tmp=uvs[j]; uvs[j]=uvs[j+1]; uvs[j+1]=tmp;}
 delete uvs[nbUV-1];
 nbUV--;
 
